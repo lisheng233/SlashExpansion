@@ -6,7 +6,7 @@ plugins {
 
 // 修改这里
 group = 'com.lisheng.slashexpansion'
-version = '1.0'
+version = '1.1'
 
 base {
 

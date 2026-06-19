@@ -5,7 +5,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -17,18 +16,14 @@ public class FrostDomain {
         if (player.level().isClientSide()) return;
 
         Level world = player.level();
-        int range = 24;
+        int range = 20;
         AABB aabb = player.getBoundingBox().inflate(range);
-        
-        // ★ 使用 TargetSelector
-        List<Entity> entityTargets = TargetSelector.getTargettableEntitiesWithinAABB(world, player, aabb);
-        List<LivingEntity> targets = entityTargets.stream()
-                .filter(e -> e instanceof LivingEntity)
-                .map(e -> (LivingEntity) e)
-                .filter(e -> e != player && e.isAlive() && !e.isSpectator())
-                .toList();
 
-        // 冰霜粒子领域
+        // ★ 直接用 TargetSelector.test 过滤
+        List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
+                e -> e != player && e.isAlive() && !e.isSpectator()
+                        && TargetSelector.test.test(player, e));
+
         if (world instanceof ServerLevel serverLevel) {
             for (int i = 0; i < 100; i++) {
                 double x = player.getX() + (world.random.nextDouble() - 0.5) * range * 2;

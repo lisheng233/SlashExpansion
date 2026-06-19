@@ -3,7 +3,6 @@ package com.lisheng.slashexpansion.specialattack;
 import com.lisheng.slashexpansion.entity.SenbonzakuraSwordEntity;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
 import mods.flammpfeil.slashblade.util.TargetSelector;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -18,14 +17,11 @@ public class Senbonzakura {
         Level world = player.level();
         int range = 30;
         AABB aabb = player.getBoundingBox().inflate(range);
-        
-        // ★ 使用 TargetSelector
-        List<Entity> entityTargets = TargetSelector.getTargettableEntitiesWithinAABB(world, player, aabb);
-        List<LivingEntity> targets = entityTargets.stream()
-                .filter(e -> e instanceof LivingEntity)
-                .map(e -> (LivingEntity) e)
-                .filter(e -> e != player && e.isAlive() && !e.isSpectator())
-                .toList();
+
+        // ★ 直接用 TargetSelector.test 过滤
+        List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
+                e -> e != player && e.isAlive() && !e.isSpectator()
+                        && TargetSelector.test.test(player, e));
 
         if (targets.isEmpty()) return;
 
