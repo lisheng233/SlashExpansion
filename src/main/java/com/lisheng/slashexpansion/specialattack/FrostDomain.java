@@ -1,9 +1,11 @@
 package com.lisheng.slashexpansion.specialattack;
 
+import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -15,10 +17,16 @@ public class FrostDomain {
         if (player.level().isClientSide()) return;
 
         Level world = player.level();
-        int range = 15;
+        int range = 24;
         AABB aabb = player.getBoundingBox().inflate(range);
-        List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
-                e -> e != player && e.isAlive() && !e.isSpectator());
+        
+        // ★ 使用 TargetSelector
+        List<Entity> entityTargets = TargetSelector.getTargettableEntitiesWithinAABB(world, player, aabb);
+        List<LivingEntity> targets = entityTargets.stream()
+                .filter(e -> e instanceof LivingEntity)
+                .map(e -> (LivingEntity) e)
+                .filter(e -> e != player && e.isAlive() && !e.isSpectator())
+                .toList();
 
         // 冰霜粒子领域
         if (world instanceof ServerLevel serverLevel) {
@@ -31,15 +39,11 @@ public class FrostDomain {
         }
 
         for (LivingEntity target : targets) {
-            // 魔法伤害
             target.hurt(player.damageSources().magic(), (float) damage);
-
-            // 效果：迟缓 x（120秒）、虚弱 II（100秒）、挖掘疲劳（80秒）
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 9));
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 2));
+            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 3));
 
-            // 冰锥粒子
             if (world instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,
                         target.getX(), target.getY() + 1, target.getZ(),

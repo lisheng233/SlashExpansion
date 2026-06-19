@@ -1,7 +1,9 @@
 package com.lisheng.slashexpansion.specialattack;
 
+import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.monster.Strider;
@@ -20,8 +22,14 @@ public class Inferno {
         Level world = player.level();
         int range = 18;
         AABB aabb = player.getBoundingBox().inflate(range);
-        List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
-                e -> e != player && e.isAlive() && !e.isSpectator());
+        
+        // ★ 使用 TargetSelector
+        List<Entity> entityTargets = TargetSelector.getTargettableEntitiesWithinAABB(world, player, aabb);
+        List<LivingEntity> targets = entityTargets.stream()
+                .filter(e -> e instanceof LivingEntity)
+                .map(e -> (LivingEntity) e)
+                .filter(e -> e != player && e.isAlive() && !e.isSpectator())
+                .toList();
 
         // 地面火焰爆发
         if (world instanceof ServerLevel serverLevel) {
@@ -39,7 +47,6 @@ public class Inferno {
         for (LivingEntity target : targets) {
             float finalDamage = (float) damage;
 
-            // 对下界生物额外 50% 伤害
             boolean isNetherMob = target instanceof Piglin || target instanceof Hoglin ||
                                   target instanceof Zoglin || target instanceof Strider ||
                                   target instanceof MagmaCube;
@@ -48,7 +55,7 @@ public class Inferno {
             }
 
             target.hurt(player.damageSources().mobAttack(player), finalDamage);
-            target.setSecondsOnFire(12); // 燃烧 12 秒
+            target.setSecondsOnFire(12);
 
             if (world instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,

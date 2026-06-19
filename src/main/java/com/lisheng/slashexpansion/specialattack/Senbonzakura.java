@@ -2,6 +2,8 @@ package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.entity.SenbonzakuraSwordEntity;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import mods.flammpfeil.slashblade.util.TargetSelector;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -16,13 +18,19 @@ public class Senbonzakura {
         Level world = player.level();
         int range = 30;
         AABB aabb = player.getBoundingBox().inflate(range);
-        List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
-                e -> e != player && e.isAlive() && !e.isSpectator());
+        
+        // ★ 使用 TargetSelector
+        List<Entity> entityTargets = TargetSelector.getTargettableEntitiesWithinAABB(world, player, aabb);
+        List<LivingEntity> targets = entityTargets.stream()
+                .filter(e -> e instanceof LivingEntity)
+                .map(e -> (LivingEntity) e)
+                .filter(e -> e != player && e.isAlive() && !e.isSpectator())
+                .toList();
 
         if (targets.isEmpty()) return;
 
         for (LivingEntity target : targets) {
-            int count = 4 + world.random.nextInt(3); // 4~6 把剑
+            int count = 4 + world.random.nextInt(3);
             for (int i = 0; i < count; i++) {
                 SenbonzakuraSwordEntity sword = new SenbonzakuraSwordEntity(
                         SlashExpansionEntities.SENBONZAKURA_SWORD.get(), world);
