@@ -35,7 +35,7 @@ public class FrostDomain {
 
         for (LivingEntity target : targets) {
             target.hurt(player.damageSources().magic(), (float) damage);
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 9));
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
             target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 3));
 
