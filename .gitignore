@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+bin/
+run/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Minecraft
+*.log
+*.lock
+*.mca
+*.dat
+*.json
