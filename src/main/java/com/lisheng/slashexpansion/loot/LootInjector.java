@@ -18,36 +18,59 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = SlashExpansion.MOD_ID)
 public class LootInjector {
 
-    private static final Map<ResourceLocation, Float> STRUCTURE_CHANCES = Map.of(
-        new ResourceLocation("minecraft:chests/ancient_city"),         0.30f,
-        new ResourceLocation("minecraft:chests/end_city_treasure"),    0.25f,
-        new ResourceLocation("minecraft:chests/bastion_treasure"),     0.15f,
-        new ResourceLocation("minecraft:chests/bastion_bridge"),       0.09f,
-        new ResourceLocation("minecraft:chests/bastion_other"),        0.06f,
-        new ResourceLocation("minecraft:chests/bastion_hoglin_stable"),0.06f,
-        new ResourceLocation("minecraft:chests/nether_bridge"),        0.08f
+    // ★ 使用 ResourceLocation.parse 替代 new ResourceLocation
+    private static final Map<ResourceLocation, Map<String, Float>> LOOT_MAP = Map.of(
+        ResourceLocation.parse("minecraft:chests/ancient_city"),
+            Map.of(
+                "slashexpansion:wan_jian_gui_zong", 0.10f,
+                "slashexpansion:senbonzakura", 0.20f,
+                "slashexpansion:frost_domain", 0.15f,
+                "slashexpansion:zhan_tian_ba_jian_shu", 0.10f,
+                "slashexpansion:jian_dang_ba_huang", 0.10f,
+                "slashexpansion:geng_jin_jian_jue", 0.08f,
+                "slashexpansion:qi_sha_jian_jie", 0.05f
+            ),
+        ResourceLocation.parse("minecraft:chests/end_city_treasure"),
+            Map.of(
+                "slashexpansion:rift_slash", 0.25f,
+                "slashexpansion:zhan_tian_ba_jian_shu", 0.12f,
+                "slashexpansion:jian_dang_ba_huang", 0.12f
+            ),
+        ResourceLocation.parse("minecraft:chests/bastion_treasure"),
+            Map.of(
+                "slashexpansion:inferno", 0.15f,
+                "slashexpansion:geng_jin_jian_jue", 0.10f
+            ),
+        ResourceLocation.parse("minecraft:chests/nether_bridge"),
+            Map.of(
+                "slashexpansion:wan_jian_gui_zong", 0.08f,
+                "slashexpansion:qi_sha_jian_jie", 0.06f
+            )
     );
 
     @SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event) {
         ResourceLocation tableId = event.getName();
-        if (!STRUCTURE_CHANCES.containsKey(tableId)) return;
+        if (!LOOT_MAP.containsKey(tableId)) return;
 
-        float chance = STRUCTURE_CHANCES.get(tableId);
+        Map<String, Float> saMap = LOOT_MAP.get(tableId);
+        for (Map.Entry<String, Float> entry : saMap.entrySet()) {
+            String saId = entry.getKey();
+            float chance = entry.getValue();
 
-        // ★ 使用 NBTExplorer 确认的键名
-        CompoundTag nbt = new CompoundTag();
-        nbt.putString("SpecialAttackType", "slashexpansion:wan_jian_gui_zong");
+            CompoundTag nbt = new CompoundTag();
+            nbt.putString("SpecialAttackType", saId);
 
-        LootPool pool = LootPool.lootPool()
-            .add(LootItem.lootTableItem(SBItems.proudsoul_sphere)
-                .apply(SetNbtFunction.setTag(nbt))
-                .when(LootItemRandomChanceCondition.randomChance(chance))
-                .setWeight(1)
-            )
-            .setRolls(ConstantValue.exactly(1))
-            .build();
+            LootPool pool = LootPool.lootPool()
+                    .add(LootItem.lootTableItem(SBItems.proudsoul_sphere)
+                            .apply(SetNbtFunction.setTag(nbt))
+                            .when(LootItemRandomChanceCondition.randomChance(chance))
+                            .setWeight(1)
+                    )
+                    .setRolls(ConstantValue.exactly(1))
+                    .build();
 
-        event.getTable().addPool(pool);
+            event.getTable().addPool(pool);
+        }
     }
 }

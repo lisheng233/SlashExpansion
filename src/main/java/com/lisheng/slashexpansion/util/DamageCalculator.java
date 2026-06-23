@@ -5,7 +5,6 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class DamageCalculator {
@@ -26,7 +25,7 @@ public class DamageCalculator {
             System.err.println("Error getting refine level: " + e.getMessage());
         }
         float refineBonus = refine * 0.5f;
-        int power = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, blade);
+        int power = blade.getEnchantmentLevel(Enchantments.POWER_ARROWS);
         float powerBonus = power * 1.0f;
         float playerAttack = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         
