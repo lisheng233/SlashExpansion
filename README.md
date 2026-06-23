@@ -77,34 +77,48 @@ geng_jin_jian_jue — 庚金剑诀
 qi_sha_jian_jie — 七杀剑界
 
 ## 📦 依赖
-依赖	版本
-Minecraft	1.20.1
-拔刀剑：重锋	1.5.0+
+
+| 依赖 | 版本 |
+| :--- | :--- |
+| Minecraft | 1.20.1 |
+| 拔刀剑：重锋 | 1.5.0+ |
 
 ## ⚙️ 开发者信息
-构建
-bash
+
+### 构建
+使用 Gradle 构建项目：
+```bash
 gradlew build
-构建产物位于 build/libs/slashexpansion-1.2.jar。
+```
+构建产物位于 `build/libs/slashexpansion-1.2.jar`。
 
-导入 IDE
-IntelliJ IDEA：gradlew idea
+### 导入 IDE
+- **IntelliJ IDEA**：运行命令生成项目文件
+  ```bash
+  gradlew idea
+  ```
+- **Eclipse**：运行命令生成项目文件
+  ```bash
+  gradlew eclipse
+  ```
 
-Eclipse：gradlew eclipse
-
-项目结构
-text
+### 项目结构
+```text
 src/main/
 ├── java/com/lisheng/slashexpansion/
 │   ├── SlashExpansion.java                # 主类
-│   ├── util/ DamageCalculator.java        # 动态伤害计算
+│   ├── util/
+│   │   └── DamageCalculator.java          # 动态伤害计算
 │   ├── entity/                            # 自定义实体
 │   ├── specialattack/                     # 9 个 SA 核心逻辑
 │   ├── registry/                          # 注册类
-│   ├── loot/ LootInjector.java            # 战利品注入
-│   └── client/ ClientEvents.java          # 客户端渲染
+│   ├── loot/
+│   │   └── LootInjector.java              # 战利品注入
+│   └── client/
+│       └── ClientEvents.java              # 客户端渲染
 └── resources/
     ├── pack.mcmeta
     ├── META-INF/mods.toml
     └── assets/slashexpansion/
         └── lang/                          # 语言文件
+```
