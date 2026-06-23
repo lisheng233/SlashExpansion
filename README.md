@@ -1,4 +1,10 @@
-# SlashExpansion
+<div align="center">
+  <a href="README_EN.md">English</a> | <b>中文</b>
+</div>
+
+---
+
+# SlashExpansion(中文版)
 
 **SlashExpansion** 是一个 [拔刀剑：重锋 (SlashBlade: Resharped)](https://www.curseforge.com/minecraft/mc-mods/slashblade-resharped) 的附属模组，为 Minecraft 1.20.1 添加了 **9 种全新的 SA（特殊攻击）**。
 
