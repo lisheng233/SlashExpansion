@@ -56,6 +56,8 @@
 
 ```text
 /give @p slashblade:slashblade{SpecialAttackType:"slashexpansion:wan_jian_gui_zong"}
+```
+
 将 wan_jian_gui_zong 替换为：
 
 senbonzakura — 千本樱
@@ -74,12 +76,12 @@ geng_jin_jian_jue — 庚金剑诀
 
 qi_sha_jian_jie — 七杀剑界
 
-📦 依赖
+## 📦 依赖
 依赖	版本
 Minecraft	1.20.1
 拔刀剑：重锋	1.5.0+
 
-⚙️ 开发者信息
+## ⚙️ 开发者信息
 构建
 bash
 gradlew build
