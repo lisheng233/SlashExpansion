@@ -240,11 +240,7 @@ public class Admin extends SpecialEffect {
                 return;
             }
         }
-
-        float maxHealth = (float) target.getAttributeValue(
-                net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH
-        );
-        float damage = Math.max(1.0f, maxHealth);
+        float damage = Float.MAX_VALUE;
         target.hurt(user.damageSources().magic(), damage);
     }
 
