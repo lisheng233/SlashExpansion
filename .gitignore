@@ -12,7 +12,8 @@ settings.gradle
 .classpath
 bin/
 run/
-.code-workspace
+.continue/
+*.code-workspace
 
 # OS
 .DS_Store
