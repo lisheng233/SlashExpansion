@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XFY",
+    "DSB",
+    "CPZ"
+  ],
+  "key": {
+    "B": { "item": "minecraft:beacon" },
+    "D": { "item": "minecraft:dragon_egg" },
+    "F": { "item": "minecraft:totem_of_undying" },
+    "S": { "item": "slashblade:proudsoul_crystal" },
+    "P": { "item": "minecraft:enchanted_golden_apple" },
+    "X": { "item": "minecraft:silence_armor_trim_smithing_template" },
+    "Y": { "item": "minecraft:rib_armor_trim_smithing_template" },
+    "C": { "item": "minecraft:spire_armor_trim_smithing_template" },
+    "Z": { "item": "minecraft:ward_armor_trim_smithing_template" }
+  },
+  "result": {
+    "item": "slashblade:proudsoul_crystal",
+    "nbt": {
+      "SpecialEffectType": "slashexpansion:transcendent_will"
+    }
+  }
+}

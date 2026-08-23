@@ -1,0 +1,75 @@
+{
+    "entity.slashexpansion.qi_sha_jian_jie_domain": "Seven-Kill Sword Realm Domain Core",
+    "entity.slashexpansion.giant_slash": "Summoned Sword",
+    "entity.slashexpansion.senbonzakura_sword": "Senbonzakura · Illusion Sword",
+    "entity.slashexpansion.wan_jian_sword": "Illusion Sword",
+
+    "slash_art.slashexpansion.wan_jian_gui_zong": "§6Thousands Swords Return",
+    "slashblade.slash_art.slashexpansion.wan_jian_gui_zong": "§6Thousands Swords Return",
+    "slashexpansion.slash_art.wan_jian_gui_zong": "§6Thousands Swords Return",
+    "slashexpansion.slash_arts.wan_jian_gui_zong": "§6Thousands Swords Return",
+    "slash_art.slashexpansion.wan_jian_gui_zong.desc": "§7Summons dozens of phantom swords from above to pierce enemies within range. Count scales with player's experience level (10~256 swords), range 64 blocks.",
+
+    "slash_art.slashexpansion.senbonzakura": "§dSenbonzakura",
+    "slashblade.slash_art.slashexpansion.senbonzakura": "§dSenbonzakura",
+    "slashexpansion.slash_art.senbonzakura": "§dSenbonzakura",
+    "slashexpansion.slash_arts.senbonzakura": "§dSenbonzakura",
+    "slash_art.slashexpansion.senbonzakura.desc": "§7Conjures pink cherry-blossom illusion swords around each target, falling from above to impale them. 4~7 swords per target, range 30 blocks, can pierce.",
+
+    "slash_art.slashexpansion.rift_slash": "§aRift Slash",
+    "slashblade.slash_art.slashexpansion.rift_slash": "§aRift Slash",
+    "slashexpansion.slash_art.rift_slash": "§aRift Slash",
+    "slashexpansion.slash_arts.rift_slash": "§aRift Slash",
+    "slash_art.slashexpansion.rift_slash.desc": "§7Dash forward at high speed, releasing 8 ring-shaped drive projectiles around you that knock back enemies. Comes with ender particles, combines mobility and attack.",
+
+    "slash_art.slashexpansion.frost_domain": "§3Frost Domain",
+    "slashblade.slash_art.slashexpansion.frost_domain": "§3Frost Domain",
+    "slashexpansion.slash_art.frost_domain": "§3Frost Domain",
+    "slashexpansion.slash_arts.frost_domain": "§3Frost Domain",
+    "slash_art.slashexpansion.frost_domain.desc": "§7Unleashes a frost domain (radius 20) centered on yourself, dealing magic damage to all enemies and applying Slowness X, Weakness III, and Mining Fatigue IV for several seconds.",
+
+    "slash_art.slashexpansion.inferno": "§cInferno",
+    "slashblade.slash_art.slashexpansion.inferno": "§cInferno",
+    "slashexpansion.slash_art.inferno": "§cInferno",
+    "slashexpansion.slash_arts.inferno": "§cInferno",
+    "slash_art.slashexpansion.inferno.desc": "§7Summons hellfire to burn all enemies within 18 blocks, setting them on fire for 12 seconds. Deals 50% bonus damage to Nether mobs (Piglins, Hoglins, etc.).",
+
+    "slash_art.slashexpansion.zhan_tian_ba_jian_shu": "§5Heaven-Slaying Blade Art",
+    "slashblade.slash_art.slashexpansion.zhan_tian_ba_jian_shu": "§5Heaven-Slaying Blade Art",
+    "slashexpansion.slash_art.zhan_tian_ba_jian_shu": "§5Heaven-Slaying Blade Art",
+    "slashexpansion.slash_arts.zhan_tian_ba_jian_shu": "§5Heaven-Slaying Blade Art",
+    "slash_art.slashexpansion.zhan_tian_ba_jian_shu.desc": "§7Slashes forward with a massive vertical blade, dealing 150% damage and launching enemies upward.",
+
+    "slash_art.slashexpansion.jian_dang_ba_huang": "§9Eight Desolations Sword Sweep",
+    "slashblade.slash_art.slashexpansion.jian_dang_ba_huang": "§9Eight Desolations Sword Sweep",
+    "slashexpansion.slash_art.jian_dang_ba_huang": "§9Eight Desolations Sword Sweep",
+    "slashexpansion.slash_arts.jian_dang_ba_huang": "§9Eight Desolations Sword Sweep",
+    "slash_art.slashexpansion.jian_dang_ba_huang.desc": "§7Sweeps a massive horizontal blade, dealing 150% damage and knocking enemies back.",
+
+    "slash_art.slashexpansion.geng_jin_jian_jue": "§eGengjin Sword Art",
+    "slashblade.slash_art.slashexpansion.geng_jin_jian_jue": "§eGengjin Sword Art",
+    "slashexpansion.slash_art.geng_jin_jian_jue": "§eGengjin Sword Art",
+    "slashexpansion.slash_arts.geng_jin_jian_jue": "§eGengjin Sword Art",
+    "slash_art.slashexpansion.geng_jin_jian_jue.desc": "§7Summons golden flying swords to attack enemies. Sword count depends on the blade's refine level (1 per 10 refine, max 100), range changes with kill count (20 if <1000 kills, else 36), each sword deals 160% damage.",
+
+    "slash_art.slashexpansion.qi_sha_jian_jie": "§4Seven-Kill Sword Realm",
+    "slashblade.slash_art.slashexpansion.qi_sha_jian_jie": "§4Seven-Kill Sword Realm",
+    "slashexpansion.slash_art.qi_sha_jian_jie": "§4Seven-Kill Sword Realm",
+    "slashexpansion.slash_arts.qi_sha_jian_jie": "§4Seven-Kill Sword Realm",
+    "slash_art.slashexpansion.qi_sha_jian_jie.desc": "§7Creates a Seven-Kill Sword Realm domain, continuously damaging enemies within. Radius scales dynamically with the blade's kill count (3~64 blocks), larger with more kills.",
+    
+
+    "se.slashexpansion.wind_god_power": "§ePower of the Wind God",
+    "se.slashexpansion.frost_glow": "§bFrost Glow",
+    "se.slashexpansion.transcendent_will": "§6Transcendent Will",
+    "se.slashexpansion.abyss_whisper": "§cAbyss Whisper",
+    "se.slashexpansion.admin": "§4§lPower Of the Administrator§r",
+    "se.slashexpansion.void_power": "§cPower of the void",
+
+    "se.slashexpansion.wind_god_power.desc": "§7Blessing of the Wind God\n§fGrants §eJump Boost III§f, Fall Immunity, Movement Speed §a+100%§f, Flight Speed §a+150%",
+    "se.slashexpansion.frost_glow.desc": "§7Eternal Frost\n§fImmune to Freeze damage,§b attacks deal bonus Frost damage",
+    "se.slashexpansion.transcendent_will.desc": "§7Infinite Will, Infinite Power!\n§fEnchantments §e+5§f, Damage §c×1.5§f, Crit Chance §e+25%",
+    "se.slashexpansion.abyss_whisper.desc": "§7When you gaze into the abyss, the abyss gazes back\n§fChannel abyssal power to curse enemies\n§cCost: §fCurses self at low levels, minor self-curse at high levels",
+    "se.slashexpansion.admin.desc": "§c§lThe power of ultimate authority",
+    "se.slashexpansion.void_power.desc": "§c§lThe power of the void, which can destroy all the things.\n§7When holding the blade, you are immuned to void damage, debuffs"
+}

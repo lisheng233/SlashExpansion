@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CWC",
+    "SAD",
+    "CEC"
+  ],
+  "key": {
+    "C": { "item": "slashblade:proudsoul_crystal" },
+    "E": { "item": "minecraft:light" },
+    "S": { "item": "minecraft:barrier" },
+    "D": { "item": "minecraft:bedrock" },
+    "W": { "item": "minecraft:structure_block" },
+    "A": { "item": "minecraft:command_block"}
+  },
+  "result": {
+    "item": "slashblade:proudsoul_crystal",
+    "nbt": {
+      "SpecialEffectType": "slashexpansion:admin"
+    }
+  }
+}

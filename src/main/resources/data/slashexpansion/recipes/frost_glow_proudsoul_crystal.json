@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CIC",
+    "BWP",
+    "CAC"
+  ],
+  "key": {
+    "C": { "item": "slashblade:proudsoul_crystal" },
+    "I": { "item": "minecraft:blue_ice" },
+    "B": { "item": "minecraft:packed_ice" },
+    "A": { "item": "minecraft:ice" },
+    "W": { "item": "minecraft:conduit" },
+    "P": { "item": "minecraft:powder_snow_bucket" }
+  },
+  "result": {
+    "item": "slashblade:proudsoul_crystal",
+    "nbt": {
+      "SpecialEffectType": "slashexpansion:frost_glow"
+    }
+  }
+}

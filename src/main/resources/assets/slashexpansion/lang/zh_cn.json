@@ -1,0 +1,75 @@
+{
+    "entity.slashexpansion.qi_sha_jian_jie_domain": "七杀剑界领域核心",
+    "entity.slashexpansion.giant_slash": "剑气",
+    "entity.slashexpansion.senbonzakura_sword": "千本樱 · 幻影剑",
+    "entity.slashexpansion.wan_jian_sword": "幻影剑",
+
+    "slash_art.slashexpansion.wan_jian_gui_zong": "§6万剑归宗",
+    "slashblade.slash_art.slashexpansion.wan_jian_gui_zong": "§6万剑归宗",
+    "slashexpansion.slash_art.wan_jian_gui_zong": "§6万剑归宗",
+    "slashexpansion.slash_arts.wan_jian_gui_zong": "§6万剑归宗",
+    "slash_art.slashexpansion.wan_jian_gui_zong.desc": "§7从高空召唤幻影剑，刺穿范围内的敌人。数量随玩家经验等级提升（10~256把），范围64格。",
+
+    "slash_art.slashexpansion.senbonzakura": "§d千本樱",
+    "slashblade.slash_art.slashexpansion.senbonzakura": "§d千本樱",
+    "slashexpansion.slash_art.senbonzakura": "§d千本樱",
+    "slashexpansion.slash_arts.senbonzakura": "§d千本樱",
+    "slash_art.slashexpansion.senbonzakura.desc": "§7在目标周围召唤粉色的樱色幻影剑，从空中落下穿刺敌人。每目标4~7把，范围30格，可穿透。",
+
+    "slash_art.slashexpansion.rift_slash": "§a裂空斩",
+    "slashblade.slash_art.slashexpansion.rift_slash": "§a裂空斩",
+    "slashexpansion.slash_art.rift_slash": "§a裂空斩",
+    "slashexpansion.slash_arts.rift_slash": "§a裂空斩",
+    "slash_art.slashexpansion.rift_slash.desc": "§7向前极速冲刺，并在周身释放8道环形剑气，击退敌人。冲刺时带有末影粒子效果，兼具位移与攻击。",
+
+    "slash_art.slashexpansion.frost_domain": "§3冰霜领域",
+    "slashblade.slash_art.slashexpansion.frost_domain": "§3冰霜领域",
+    "slashexpansion.slash_art.frost_domain": "§3冰霜领域",
+    "slashexpansion.slash_arts.frost_domain": "§3冰霜领域",
+    "slash_art.slashexpansion.frost_domain.desc": "§7以自身为中心展开冰霜领域（半径20格），对所有敌人造成魔法伤害，并施加缓慢X、虚弱III、挖掘疲劳IV，持续数秒。",
+
+    "slash_art.slashexpansion.inferno": "§c业火焚城",
+    "slashblade.slash_art.slashexpansion.inferno": "§c业火焚城",
+    "slashexpansion.slash_art.inferno": "§c业火焚城",
+    "slashexpansion.slash_arts.inferno": "§c业火焚城",
+    "slash_art.slashexpansion.inferno.desc": "§7召唤地狱业火，灼烧半径18格内的所有敌人，使其燃烧12秒。对下界生物（猪灵、疣猪兽等）造成额外50%伤害。",
+
+    "slash_art.slashexpansion.zhan_tian_ba_jian_shu": "§5斩天拔剑术",
+    "slashblade.slash_art.slashexpansion.zhan_tian_ba_jian_shu": "§5斩天拔剑术",
+    "slashexpansion.slash_art.zhan_tian_ba_jian_shu": "§5斩天拔剑术",
+    "slashexpansion.slash_arts.zhan_tian_ba_jian_shu": "§5斩天拔剑术",
+    "slash_art.slashexpansion.zhan_tian_ba_jian_shu.desc": "§7向前方斩出一道竖直的巨大剑气，造成150%伤害并强烈击飞敌人。",
+
+    "slash_art.slashexpansion.jian_dang_ba_huang": "§9剑荡八荒",
+    "slashblade.slash_art.slashexpansion.jian_dang_ba_huang": "§9剑荡八荒",
+    "slashexpansion.slash_art.jian_dang_ba_huang": "§9剑荡八荒",
+    "slashexpansion.slash_arts.jian_dang_ba_huang": "§9剑荡八荒",
+    "slash_art.slashexpansion.jian_dang_ba_huang.desc": "§7横扫出一道横向的巨大剑气，造成150%伤害并击退敌人。",
+
+    "slash_art.slashexpansion.geng_jin_jian_jue": "§6庚金剑诀",
+    "slashblade.slash_art.slashexpansion.geng_jin_jian_jue": "§6庚金剑诀",
+    "slashexpansion.slash_art.geng_jin_jian_jue": "§6庚金剑诀",
+    "slashexpansion.slash_arts.geng_jin_jian_jue": "§6庚金剑诀",
+    "slash_art.slashexpansion.geng_jin_jian_jue.desc": "§7召唤金色飞剑攻击敌人。剑数量取决于拔刀剑的锻造数（每10锻造1把，最多100把），范围随杀敌数变化（<1000为20格，否则36格），每剑造成160%伤害。",
+
+    "slash_art.slashexpansion.qi_sha_jian_jie": "§4七杀剑界",
+    "slashblade.slash_art.slashexpansion.qi_sha_jian_jie": "§4七杀剑界",
+    "slashexpansion.slash_art.qi_sha_jian_jie": "§4七杀剑界",
+    "slashexpansion.slash_arts.qi_sha_jian_jie": "§4七杀剑界",
+    "slash_art.slashexpansion.qi_sha_jian_jie.desc": "§7生成七杀剑界领域，持续对范围内敌人造成伤害。领域半径根据拔刀剑杀敌数动态变化（3~64格），杀敌越多范围越大。",
+
+    "se.slashexpansion.wind_god_power": "§e风神的伟力",
+    "se.slashexpansion.frost_glow": "§b寒霜的辉光",
+    "se.slashexpansion.transcendent_will": "§6超越的意志",
+    "se.slashexpansion.abyss_whisper": "§c深渊的低语",
+    "se.slashexpansion.admin": "§4§l管理员之力§r",
+    "se.slashexpansion.void_power": "§c虚空之力",
+
+    "se.slashexpansion.wind_god_power.desc": "§7风神的赐福\n§f给予 §e跳跃提升 III§f，免疫摔落，移速 §a+100%§f，飞行速度 §a+150%",
+    "se.slashexpansion.frost_glow.desc": "§7霜雪千年\n§f免疫霜冻，攻击附加 §b霜冻伤害",
+    "se.slashexpansion.transcendent_will.desc": "§7意志无限，力量无限！\n§f附魔 §e+5§f，伤害 §c×1.5§f，暴击 §e+25%",
+    "se.slashexpansion.abyss_whisper.desc": "§7当你凝视深渊的时候，深渊也在凝视着你\n§f引导深渊邪能诅咒敌人\n§c代价：§f低等级时严重诅咒自身，高等级时轻微诅咒自身",
+    "se.slashexpansion.admin.desc": "§c§l来自于最高权限的力量",
+    "se.slashexpansion.void_power.desc": "§c§l虚空之力，毁灭一切！\n§7持有拔刀剑时，免疫虚空的侵蚀和负面效果"
+
+}
