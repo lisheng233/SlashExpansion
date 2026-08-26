@@ -39,7 +39,6 @@ public class VoidPower extends SpecialEffect{
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
-        if (!event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD)) return;
         LivingEntity entity = event.getEntity();
 
         var blade = entity.getMainHandItem();
@@ -50,7 +49,9 @@ public class VoidPower extends SpecialEffect{
                 .orElse(false);
 
         if (hasSE && entity instanceof Player) {
-            event.setCanceled(true);
+            if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD)) {
+                event.setCanceled(true);
+            }
             Admin.removeNegativeEffects((Player) entity);
         }
     }

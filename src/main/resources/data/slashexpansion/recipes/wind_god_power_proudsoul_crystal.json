@@ -10,7 +10,7 @@
     "M": { "item": "minecraft:phantom_membrane" },
     "E": { "item": "minecraft:elytra" },
     "S": { "item": "minecraft:nether_star" },
-    "P": { "tag": "minecraft:beacon" },
+    "P": { "item": "minecraft:beacon" },
     "C": { "item": "slashblade:proudsoul_crystal" }
   },
   "result": {
