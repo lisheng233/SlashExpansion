@@ -13,7 +13,7 @@ public class ZhanTianBaJianShu {
 
         Level world = player.level();
         Vec3 lookVec = player.getLookAngle();
-
+        
         GiantSlashEntity slash = new GiantSlashEntity(
             world,
             player,

@@ -8,6 +8,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -33,11 +34,14 @@ public class FrostGlow extends SpecialEffect {
         float bladeDamage = event.getSlashBladeState().getBaseAttackModifier();
         float extraDamage = bladeDamage + baseDamage;
 
+        target.invulnerableTime=0;
         target.hurt(user.damageSources().freeze(), Math.max(extraDamage*0.75f,4.0f));
+        target.invulnerableTime=0;
         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 4,false, false,false));
+        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 2,false, false,false));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FREEZE)) return;
         LivingEntity entity = event.getEntity();

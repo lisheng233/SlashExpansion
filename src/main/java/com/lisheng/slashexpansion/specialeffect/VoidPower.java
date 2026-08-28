@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -32,12 +33,14 @@ public class VoidPower extends SpecialEffect{
         float bladeDamage = event.getSlashBladeState().getBaseAttackModifier();
         float extraDamage = bladeDamage + baseDamage;
 
+        target.invulnerableTime=0;
         target.hurt(user.damageSources().fellOutOfWorld(), Math.max(extraDamage,9.0f));
+        target.invulnerableTime=0;
         target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0, false, false,false));
         target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 800, 0, false, false,false));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingHurt(LivingHurtEvent event) {
         LivingEntity entity = event.getEntity();
 

@@ -12,8 +12,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Random;
-
 @Mod.EventBusSubscriber
 public class AbyssWhisper extends SpecialEffect {
 
@@ -27,7 +25,7 @@ public class AbyssWhisper extends SpecialEffect {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
         if (player.level().isClientSide()) return;
-        if (new Random().nextInt(100) >= 2) return; // 2% 概率触发
+        if (player.tickCount%40 != 0) return;
 
         var blade = player.getMainHandItem();
         if (!(blade.getItem() instanceof ItemSlashBlade)) return;

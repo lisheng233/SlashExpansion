@@ -53,7 +53,7 @@ public class RiftSlash {
             Vec3 dir = VectorHelper.getVectorForRotation(0, player.getYRot() + angle);
             drive.setPos(player.getX(), player.getY() + 0.5, player.getZ());
             drive.setOwner(player);
-            drive.setDamage(damage);
+            drive.setDamage(damage * 1.8);
             drive.setIsCritical(critical);
             drive.setKnockBack(KnockBacks.toss);
 

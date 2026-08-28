@@ -47,7 +47,7 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 | **Transcendent Will**     | Enchantments +5, Damage ×1.5, Crit Chance +25%                                                                                                                                                             |
 | **Abyss Whisper**         | Low level (≤99): Self Nausea I + Hunger I + Bad Luck V + Wither II; Applies Wither X, Blindness I, Weakness V, Slowness V, Mining Fatigue III to enemies. High level (≥100): Self Bad Luck III + Wither I |
 | Power Of The Void               | Immune to void damage and debuffs, attacks deal bonus void damage and debuffs                                                                                                                               |
-| Power Of The Administrator      | (required OP) Immune to damage and debuffs, attacks deal bonus magic damage, etc.                                                                                                                          |
+| Power Of The Administrator      | (required OP) Immune to damage and debuffs, attacks will kill the target, etc.                                                                                                                          |
 
 ---
 

@@ -62,7 +62,7 @@ public class GengJinJianJue {
                     target.getY() + height,
                     target.getZ() + offsetZ
                 );
-                sword.setDamage(damage * 1.6); // 160%
+                sword.setDamage(damage * 1.6d); // 160%
                 sword.setIsCritical(true);
                 sword.setSpeed(speed);
                 sword.setOwner(player);

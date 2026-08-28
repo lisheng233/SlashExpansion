@@ -51,7 +51,7 @@ public class WanJianGuiZong {
                         target.getY() + height,
                         target.getZ() + offsetZ
                 );
-                sword.setDamage(damage);
+                sword.setDamage(damage * 0.8);
                 sword.setIsCritical(critical);
                 sword.setSpeed(speed);
                 sword.setOwner(player);

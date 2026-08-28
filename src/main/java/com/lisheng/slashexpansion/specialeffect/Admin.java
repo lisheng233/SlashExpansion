@@ -1,7 +1,6 @@
 package com.lisheng.slashexpansion.specialeffect;
 
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
-import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.ChatFormatting;
@@ -15,7 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -82,7 +83,7 @@ public class Admin extends SpecialEffect {
     /**
      * 检查玩家是否处于管理员模式
      */
-    private static boolean isAdminModeEnabled(Player player) {
+    public static boolean isAdminModeEnabled(Player player) {
         CompoundTag persistentData = player.getPersistentData();
         if (persistentData.contains(ADMIN_TAG)) {
             CompoundTag adminData = persistentData.getCompound(ADMIN_TAG);
@@ -211,8 +212,9 @@ public class Admin extends SpecialEffect {
             player.onUpdateAbilities();
         }
 
-        if (player.getAbilities().mayfly) {
+        if (player.getAbilities().mayfly && !player.isCreative() && !player.isSpectator()) {
             player.getAbilities().mayfly = false;
+            player.getAbilities().flying = false;
             player.onUpdateAbilities();
         }
         
@@ -221,30 +223,30 @@ public class Admin extends SpecialEffect {
         messageCooldown.remove(player.getUUID());
     }
 
-    @SubscribeEvent
-    public static void onHitEntity(SlashBladeEvent.HitEvent event) {
-        LivingEntity target = event.getTarget();
-        LivingEntity user = event.getUser();
-
-        boolean hasAdminSE = event.getSlashBladeState()
-                .hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.ADMIN.getId());
-
-        if (!hasAdminSE) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerDie(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
 
-        if (user instanceof Player player) {
-            if (!player.hasPermissions(4) || !isAdminModeEnabled(player)) {
-                event.setCanceled(true);
-                sendPermissionDeniedMessage(player);
-                return;
-            }
+        if (isAdminModeEnabled(player)) {
+            event.cancel();
+            player.deathTime = 0;
         }
-        float damage = Float.MAX_VALUE;
-        target.hurt(user.damageSources().magic(), damage);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void killEntity(LivingHurtEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!(event.getSource().getEntity() instanceof Player player)) return;
+        if (isAdminModeEnabled(player)){
+            entity.invulnerableTime=0;
+            entity.setHealth(0);
+            entity.die(event.getSource());
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingHurt(LivingHurtEvent event) {
         LivingEntity entity = event.getEntity();
 

@@ -3,6 +3,7 @@ package com.lisheng.slashexpansion.specialeffect;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -10,13 +11,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.Random;
 
 @Mod.EventBusSubscriber
 public class WindGodPower extends SpecialEffect {
@@ -29,6 +31,7 @@ public class WindGodPower extends SpecialEffect {
     );
     // 用于记录玩家原本的飞行速度，以便恢复
     private static final String ORIGINAL_FLY_SPEED_KEY = "wind_god_original_fly_speed";
+    private static final String HAS_ACTIVE_EFFECT_KEY = "wind_god_power_active";
 
     public WindGodPower() {
         super(0, true, false);
@@ -40,21 +43,31 @@ public class WindGodPower extends SpecialEffect {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
         if (player.level().isClientSide()) return;
-        if (new Random().nextInt(100) >20) return; // ★ 每5 tick检查一次，减少性能消耗
+        if (player.tickCount%5 !=0) return; // ★ 每5 tick检查一次，减少性能消耗
+        CompoundTag persistentData = player.getPersistentData();
+        if (!persistentData.contains(HAS_ACTIVE_EFFECT_KEY)) {
+            persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,false);
+        }
 
         // ★★★ 检查主手是否持有带有 SE 的刀 ★★★
         ItemStack blade = player.getMainHandItem();
         if (!(blade.getItem() instanceof ItemSlashBlade)) {
-            removeAllEffects(player);
+            if (persistentData.getBoolean(HAS_ACTIVE_EFFECT_KEY)) {
+                removeAllEffects(player);
+                persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY, false);
+            }
             return;
         }
 
         boolean hasSE = blade.getCapability(ItemSlashBlade.BLADESTATE)
                 .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.WIND_GOD_POWER.getId()))
                 .orElse(false);
-
+        boolean wasActive = persistentData.getBoolean(HAS_ACTIVE_EFFECT_KEY);
         if (!hasSE) {
-            removeAllEffects(player);
+            if (wasActive) {
+                removeAllEffects(player);
+                persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,false);
+            }
             return;
         }
 
@@ -75,8 +88,8 @@ public class WindGodPower extends SpecialEffect {
         // ★ 3. 创造模式飞行速度 +150%（使用 setFlyingSpeed）
         if (player.getAbilities().mayfly) {
             // 获取当前飞行速度，如果没有保存过原始值则保存
-            if (!player.getPersistentData().contains(ORIGINAL_FLY_SPEED_KEY)) {
-                player.getPersistentData().putFloat(ORIGINAL_FLY_SPEED_KEY, player.getAbilities().getFlyingSpeed());
+            if (!persistentData.contains(ORIGINAL_FLY_SPEED_KEY)) {
+                persistentData.putFloat(ORIGINAL_FLY_SPEED_KEY, player.getAbilities().getFlyingSpeed());
             }
             // 设置飞行速度 = 原始值 × 2.5（+150%）
             float original = player.getPersistentData().getFloat(ORIGINAL_FLY_SPEED_KEY);
@@ -85,10 +98,11 @@ public class WindGodPower extends SpecialEffect {
             // 更新能力（重要！否则不生效）
             player.onUpdateAbilities();
         }
+        persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,true);
     }
 
     // ★ 免疫摔落伤害（不改变下落速度）
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.level().isClientSide()) return;
@@ -117,6 +131,7 @@ public class WindGodPower extends SpecialEffect {
         if (player.getAbilities().mayfly && !player.isCreative() && !player.isSpectator()) {
             // 如果玩家没有其他原因需要飞行能力，则移除飞行能力
             player.getAbilities().mayfly = false;
+            player.getAbilities().flying = false;
             player.onUpdateAbilities();
         }
 
@@ -127,8 +142,16 @@ public class WindGodPower extends SpecialEffect {
             player.getPersistentData().remove(ORIGINAL_FLY_SPEED_KEY);
             player.onUpdateAbilities();
         }
+    }
 
-        // 移除跳跃提升效果（但不要强制移除，让自然消失）
-        // 如果玩家不再持有刀，跳跃提升会在5秒后自然消失
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (player.level().isClientSide()) return;
+        CompoundTag persistentData = player.getPersistentData();
+        if (persistentData.getBoolean(HAS_ACTIVE_EFFECT_KEY)) {
+            removeAllEffects(player);
+            persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY, false);
+        }
     }
 }

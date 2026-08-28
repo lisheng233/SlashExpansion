@@ -96,6 +96,17 @@ public class TranscendentWill extends SpecialEffect {
         }
     }
 
+    @SubscribeEvent
+    public static void doSlash(SlashBladeEvent.DoSlashEvent event) {
+        boolean hasSE = event.getSlashBladeState()
+                .hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.TRANSCENDENT_WILL.getId());
+
+        if (!hasSE) return;
+        if (RANDOM.nextFloat() < 0.25f) {
+            event.setCritical(true);
+        }
+    }
+
     // ===== 3. 暴击率 +25% =====
     @SubscribeEvent
     public static void onHitEntity(SlashBladeEvent.HitEvent event) {

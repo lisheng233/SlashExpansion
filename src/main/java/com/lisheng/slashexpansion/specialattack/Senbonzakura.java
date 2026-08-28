@@ -38,7 +38,7 @@ public class Senbonzakura {
                 double y = target.getY() + 10 + world.random.nextDouble() * 8;
 
                 sword.setPos(x, y, z);
-                sword.setDamage(damage);
+                sword.setDamage(damage * 1.2);
                 sword.setIsCritical(critical);
                 sword.setOwner(player);
 
