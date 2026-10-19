@@ -71,5 +71,45 @@
     "se.slashexpansion.transcendent_will.desc": "§7Infinite Will, Infinite Power!\n§fEnchantments §e+5§f, Damage §c×1.5§f, Crit Chance §e+25%",
     "se.slashexpansion.abyss_whisper.desc": "§7When you gaze into the abyss, the abyss gazes back\n§fChannel abyssal power to curse enemies\n§cCost: §fCurses self at low levels, minor self-curse at high levels",
     "se.slashexpansion.admin.desc": "§c§lThe power of ultimate authority",
-    "se.slashexpansion.void_power.desc": "§c§lThe power of the void, which can destroy all the things.\n§7When holding the blade, you are immuned to void damage, debuffs"
+    "se.slashexpansion.void_power.desc": "§c§lThe power of the void, which can destroy all the things.\n§7When holding the blade, you are immuned to void damage, debuffs",
+
+    "slash_art.slashexpansion.blood_moon_slash": "§4Blood Moon Slash",
+    "slashblade.slash_art.slashexpansion.blood_moon_slash": "§4Blood Moon Slash",
+    "slashexpansion.slash_art.blood_moon_slash": "§4Blood Moon Slash",
+    "slashexpansion.slash_arts.blood_moon_slash": "§4Blood Moon Slash",
+    "slash_art.slashexpansion.blood_moon_slash.desc": "§7Sacrifices your own life force to strike enemies within 8 blocks in front for twice the consumed health (ignores armor).",
+
+    "slash_art.slashexpansion.thors_wrath": "§eThor's Wrath",
+    "slashblade.slash_art.slashexpansion.thors_wrath": "§eThor's Wrath",
+    "slashexpansion.slash_art.thors_wrath": "§eThor's Wrath",
+    "slashexpansion.slash_arts.thors_wrath": "§eThor's Wrath",
+    "slash_art.slashexpansion.thors_wrath.desc": "§7Calls down 7 lightning bolts on random enemies within 20 blocks, each dealing 120% damage and paralyzing them for 3 seconds.",
+
+    "slash_art.slashexpansion.immovable_king": "§7Immovable King",
+    "slashblade.slash_art.slashexpansion.immovable_king": "§7Immovable King",
+    "slashexpansion.slash_art.immovable_king": "§7Immovable King",
+    "slashexpansion.slash_arts.immovable_king": "§7Immovable King",
+    "slash_art.slashexpansion.immovable_king.desc": "§7Enters the Immovable King state: immune to all damage for 3 seconds but unable to move, then deals 200% damage in a 10-block radius with knockback.",
+
+    "se.slashexpansion.flame_heart": "§6Flame Heart",
+    "se.slashexpansion.flame_heart.desc": "§7Flame Heart\n§fAttacks ignite enemies for §c5§f seconds; immune to fire damage; §a+20%§f movement speed in the Nether",
+
+    "se.slashexpansion.void_walker": "§5Void Walker",
+    "se.slashexpansion.void_walker.desc": "§7Void Walker\n§fHovers when stepping off blocks; §a+30%§f speed in the End; §c×2§f damage to Endermen",
+
+    "se.slashexpansion.tempered_soul": "§7Tempered Soul",
+    "se.slashexpansion.tempered_soul.desc": "§7Tempered Soul\n§fDurability cost halved; §a+1§f durability per kill; §e+10§f effective refine",
+
+    "se.slashexpansion.grim_reapers_pact": "§4Grim Reaper's Pact",
+    "se.slashexpansion.grim_reapers_pact.desc": "§7Grim Reaper's Pact\n§fBelow §c30%§f health: §c+50%§f attack, but lose §c1§f HP per second (never lethal)",
+
+    "se.slashexpansion.elven_blessing": "§aElven Blessing",
+    "se.slashexpansion.elven_blessing.desc": "§7Elven Blessing\n§fDay: §a+20%§f speed; Night: §c+30%§f attack; immune to poison; §c+50%§f arrow damage",
+
+    "se.slashexpansion.dragon_soul_resonance": "§dDragon Soul Resonance",
+    "se.slashexpansion.dragon_soul_resonance.desc": "§5Dragon Soul Resonance\n§fPermanent §c+10%§f attack after slaying the Ender Dragon; §e5%§f chance to unleash dragon breath",
+
+    "death.attack.slashexpansion.blood_moon_slash": "%1$s was devoured by the blood moon",
+    "death.attack.slashexpansion.blood_moon_slash.player": "%1$s was devoured by %2$s's Blood Moon Slash"
+
 }

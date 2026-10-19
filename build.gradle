@@ -4,16 +4,16 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-// 修改这里
+// ??????
 group = 'com.lisheng.slashexpansion'
-version = '1.6'
+version = '1.7'
 
 base {
 
     archivesName = 'slashexpansion'
 }
 
-// ... 下面的代码保持不变 ...
+// ... ??????????????...
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -43,7 +43,7 @@ repositories {
         url = 'https://maven.minecraftforge.net/'
     }
 
-    // 使用 CurseMaven 下载 0.10.0 版本
+    // ??? CurseMaven ??? 0.10.0 ???
     maven {
         url "https://www.cursemaven.com"
         content {
@@ -56,7 +56,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // ==========================================================
-    // 1.1.18 版本 + 剔除 Log4j 冲突修复
+    // 1.1.18 ??? + ??? Log4j ??????
     // ==========================================================
     implementation(fg.deobf("curse.maven:slashblade-resharped-1022428:6164820")) {
         exclude group: 'org.apache.logging.log4j'

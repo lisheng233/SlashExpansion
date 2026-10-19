@@ -58,4 +58,23 @@ public class SlashExpansionSlashArtsRegistry {
     public static final RegistryObject<SlashArts> QI_SHA_JIAN_JIE =
             SLASH_ARTS.register("qi_sha_jian_jie",
                     () -> new SlashArts((e) -> SlashExpansionComboStateRegistry.QI_SHA_JIAN_JIE.getId()));
+
+    // ================================================================
+    // ★★★ 1.6 新增 3 个 SA ★★★
+    // ================================================================
+
+    // ===== 血月斩 =====
+    public static final RegistryObject<SlashArts> BLOOD_MOON_SLASH =
+            SLASH_ARTS.register("blood_moon_slash",
+                    () -> new SlashArts((e) -> SlashExpansionComboStateRegistry.BLOOD_MOON_SLASH.getId()));
+
+    // ===== 雷神之怒 =====
+    public static final RegistryObject<SlashArts> THORS_WRATH =
+            SLASH_ARTS.register("thors_wrath",
+                    () -> new SlashArts((e) -> SlashExpansionComboStateRegistry.THORS_WRATH.getId()));
+
+    // ===== 不动明王 =====
+    public static final RegistryObject<SlashArts> IMMOVABLE_KING =
+            SLASH_ARTS.register("immovable_king",
+                    () -> new SlashArts((e) -> SlashExpansionComboStateRegistry.IMMOVABLE_KING.getId()));
 }

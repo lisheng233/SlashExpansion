@@ -1,0 +1,7 @@
+{
+  "message_id": "slashexpansion.blood_moon_slash",
+  "exhaustion": 0.0,
+  "scaling": "never",
+  "effects": "hurt",
+  "death_message_type": "default"
+}

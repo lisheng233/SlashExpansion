@@ -316,4 +316,107 @@ public class SlashExpansionComboStateRegistry {
                     .releaseAction(ComboState::releaseActionQuickCharge)
                     .build()
     );
+
+    // ================================================================
+    // ★★★ 1.6 新增 3 个 SA ★★★
+    // ================================================================
+
+    // ===== 血月斩 =====
+    public static final RegistryObject<ComboState> BLOOD_MOON_SLASH = COMBO_STATES.register(
+            "blood_moon_slash",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(400, 459)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(ComboState.TimeoutNext.buildFromFrame(15, entity -> SlashBlade.prefix("none")))
+                    .nextOfTimeout(entity -> SlashExpansion.prefix("blood_moon_slash_end"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
+                            .put(3, (entity) -> {
+                                float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
+                                BloodMoonSlash.doSlash(entity, false, damage);
+                            })
+                            .build())
+                    .build()
+    );
+    public static final RegistryObject<ComboState> BLOOD_MOON_SLASH_END = COMBO_STATES.register(
+            "blood_moon_slash_end",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(459, 488)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(entity -> SlashBlade.prefix("none"))
+                    .nextOfTimeout(entity -> SlashBlade.prefix("none"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(0, AttackManager::playQuickSheathSoundAction)
+                            .build())
+                    .releaseAction(ComboState::releaseActionQuickCharge)
+                    .build()
+    );
+
+    // ===== 雷神之怒 =====
+    public static final RegistryObject<ComboState> THORS_WRATH = COMBO_STATES.register(
+            "thors_wrath",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(400, 459)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(ComboState.TimeoutNext.buildFromFrame(15, entity -> SlashBlade.prefix("none")))
+                    .nextOfTimeout(entity -> SlashExpansion.prefix("thors_wrath_end"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
+                            .put(3, (entity) -> {
+                                float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
+                                ThorsWrath.doSlash(entity, false, damage);
+                            })
+                            .build())
+                    .build()
+    );
+    public static final RegistryObject<ComboState> THORS_WRATH_END = COMBO_STATES.register(
+            "thors_wrath_end",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(459, 488)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(entity -> SlashBlade.prefix("none"))
+                    .nextOfTimeout(entity -> SlashBlade.prefix("none"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(0, AttackManager::playQuickSheathSoundAction)
+                            .build())
+                    .releaseAction(ComboState::releaseActionQuickCharge)
+                    .build()
+    );
+
+    // ===== 不动明王 =====
+    public static final RegistryObject<ComboState> IMMOVABLE_KING = COMBO_STATES.register(
+            "immovable_king",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(400, 459)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(ComboState.TimeoutNext.buildFromFrame(15, entity -> SlashBlade.prefix("none")))
+                    .nextOfTimeout(entity -> SlashExpansion.prefix("immovable_king_end"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
+                            .put(3, (entity) -> {
+                                float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
+                                ImmovableKing.doSlash(entity, false, damage);
+                            })
+                            .build())
+                    .build()
+    );
+    public static final RegistryObject<ComboState> IMMOVABLE_KING_END = COMBO_STATES.register(
+            "immovable_king_end",
+            () -> ComboState.Builder.newInstance()
+                    .startAndEnd(459, 488)
+                    .priority(50)
+                    .motionLoc(DefaultResources.ExMotionLocation)
+                    .next(entity -> SlashBlade.prefix("none"))
+                    .nextOfTimeout(entity -> SlashBlade.prefix("none"))
+                    .addTickAction(ComboState.TimeLineTickAction.getBuilder()
+                            .put(0, AttackManager::playQuickSheathSoundAction)
+                            .build())
+                    .releaseAction(ComboState::releaseActionQuickCharge)
+                    .build()
+    );
 }

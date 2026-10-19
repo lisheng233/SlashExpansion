@@ -327,6 +327,85 @@ public final class SlashExpansionConfig {
                 return ownerLeashDistance.get();
             }
         }
+
+        public static final class BloodMoonSlash {
+            private static ForgeConfigSpec.DoubleValue healthCostPercent;
+            private static ForgeConfigSpec.DoubleValue damagePerHealth;
+            private static ForgeConfigSpec.IntValue range;
+            private static ForgeConfigSpec.DoubleValue minHealthAfterCost;
+
+            public static float healthCostPercent() {
+                return (float) (double) healthCostPercent.get();
+            }
+
+            public static float damagePerHealth() {
+                return (float) (double) damagePerHealth.get();
+            }
+
+            public static int range() {
+                return range.get();
+            }
+
+            public static float minHealthAfterCost() {
+                return (float) (double) minHealthAfterCost.get();
+            }
+        }
+
+        public static final class ThorsWrath {
+            private static ForgeConfigSpec.DoubleValue damageMultiplier;
+            private static ForgeConfigSpec.IntValue searchRange;
+            private static ForgeConfigSpec.IntValue boltCount;
+            private static ForgeConfigSpec.IntValue paralysisDuration;
+            private static ForgeConfigSpec.IntValue paralysisAmplifier;
+            private static ForgeConfigSpec.BooleanValue disableAttacks;
+
+            public static float damageMultiplier() {
+                return (float) (double) damageMultiplier.get();
+            }
+
+            public static int searchRange() {
+                return searchRange.get();
+            }
+
+            public static int boltCount() {
+                return boltCount.get();
+            }
+
+            public static int paralysisDuration() {
+                return paralysisDuration.get();
+            }
+
+            public static int paralysisAmplifier() {
+                return paralysisAmplifier.get();
+            }
+
+            public static boolean disableAttacks() {
+                return disableAttacks.get();
+            }
+        }
+
+        public static final class ImmovableKing {
+            private static ForgeConfigSpec.DoubleValue damageMultiplier;
+            private static ForgeConfigSpec.IntValue radius;
+            private static ForgeConfigSpec.IntValue durationTicks;
+            private static ForgeConfigSpec.IntValue immobilizeAmplifier;
+
+            public static float damageMultiplier() {
+                return (float) (double) damageMultiplier.get();
+            }
+
+            public static int radius() {
+                return radius.get();
+            }
+
+            public static int durationTicks() {
+                return durationTicks.get();
+            }
+
+            public static int immobilizeAmplifier() {
+                return immobilizeAmplifier.get();
+            }
+        }
     }
 
     private static void defineSa() {
@@ -457,6 +536,47 @@ public final class SlashExpansionConfig {
                 .defineInRange("hitInterval", 7, 1, 100000);
         Sa.QiShaJianJie.ownerLeashDistance = B.comment("玩家离领域超过该距离时领域消失（格）")
                 .defineInRange("ownerLeashDistance", 64, 1, 2048);
+        B.pop();
+
+        // ---------- 血月斩 ----------
+        B.comment("血月斩：消耗自身当前生命值，对前方敌人造成基于消耗生命的伤害（无视护甲）")
+                .push("blood_moon_slash");
+        Sa.BloodMoonSlash.healthCostPercent = B.comment("消耗当前生命值的比例（0.3 = 30%）")
+                .defineInRange("healthCostPercent", 0.3D, 0.0D, 1.0D);
+        Sa.BloodMoonSlash.damagePerHealth = B.comment("每点消耗生命值转化的伤害")
+                .defineInRange("damagePerHealth", 2.0D, 0.0D, 1000.0D);
+        Sa.BloodMoonSlash.range = B.comment("生效距离（格，仅命中玩家前方扇形区域内的敌人）")
+                .defineInRange("range", 8, 1, 128);
+        Sa.BloodMoonSlash.minHealthAfterCost = B.comment("扣除后至少保留的生命值（防止自杀）")
+                .defineInRange("minHealthAfterCost", 1.0D, 0.0D, 1000.0D);
+        B.pop();
+
+        // ---------- 雷神之怒 ----------
+        B.comment("雷神之怒：召唤闪电依次劈向范围内的随机敌人").push("thors_wrath");
+        Sa.ThorsWrath.damageMultiplier = B.comment("每道闪电的伤害系数")
+                .defineInRange("damageMultiplier", 1.2D, 0.0D, 1000.0D);
+        Sa.ThorsWrath.searchRange = B.comment("索敌半径（格）")
+                .defineInRange("searchRange", 20, 1, 512);
+        Sa.ThorsWrath.boltCount = B.comment("闪电数量（敌人不足时会重复命中）")
+                .defineInRange("boltCount", 7, 1, 200);
+        Sa.ThorsWrath.paralysisDuration = B.comment("麻痹持续时间（tick，60 = 3 秒）")
+                .defineInRange("paralysisDuration", 60, 0, 100000);
+        Sa.ThorsWrath.paralysisAmplifier = B.comment("迟缓等级（9 = X）")
+                .defineInRange("paralysisAmplifier", 9, 0, 255);
+        Sa.ThorsWrath.disableAttacks = B.comment("麻痹期间是否禁止目标攻击")
+                .define("disableAttacks", true);
+        B.pop();
+
+        // ---------- 不动明王 ----------
+        B.comment("不动明王：短时间内免疫伤害且无法移动，结束时对周围造成范围伤害").push("immovable_king");
+        Sa.ImmovableKing.damageMultiplier = B.comment("结束时范围伤害的系数")
+                .defineInRange("damageMultiplier", 2.0D, 0.0D, 1000.0D);
+        Sa.ImmovableKing.radius = B.comment("结束时范围伤害的半径（格）")
+                .defineInRange("radius", 10, 1, 512);
+        Sa.ImmovableKing.durationTicks = B.comment("免疫与定身持续时间（tick，60 = 3 秒）")
+                .defineInRange("durationTicks", 60, 1, 100000);
+        Sa.ImmovableKing.immobilizeAmplifier = B.comment("定身所用迟缓等级（255 表示几乎无法移动）")
+                .defineInRange("immobilizeAmplifier", 255, 0, 255);
         B.pop();
 
         B.pop();
@@ -771,6 +891,139 @@ public final class SlashExpansionConfig {
                 return autoExperience.get();
             }
         }
+
+        public static final class FlameHeart {
+            private static ForgeConfigSpec.IntValue igniteSeconds;
+            private static ForgeConfigSpec.DoubleValue netherSpeedBonus;
+            private static ForgeConfigSpec.BooleanValue immuneToFire;
+
+            public static int igniteSeconds() {
+                return igniteSeconds.get();
+            }
+
+            public static double netherSpeedBonus() {
+                return netherSpeedBonus.get();
+            }
+
+            public static boolean immuneToFire() {
+                return immuneToFire.get();
+            }
+        }
+
+        public static final class VoidWalker {
+            private static ForgeConfigSpec.BooleanValue hoverEnabled;
+            private static ForgeConfigSpec.IntValue hoverCheckInterval;
+            private static ForgeConfigSpec.DoubleValue hoverSearchDepth;
+            private static ForgeConfigSpec.DoubleValue endSpeedBonus;
+            private static ForgeConfigSpec.DoubleValue endermanDamageMultiplier;
+
+            public static boolean hoverEnabled() {
+                return hoverEnabled.get();
+            }
+
+            public static int hoverCheckInterval() {
+                return hoverCheckInterval.get();
+            }
+
+            public static double hoverSearchDepth() {
+                return hoverSearchDepth.get();
+            }
+
+            public static double endSpeedBonus() {
+                return endSpeedBonus.get();
+            }
+
+            public static float endermanDamageMultiplier() {
+                return (float) (double) endermanDamageMultiplier.get();
+            }
+        }
+
+        public static final class TemperedSoul {
+            private static ForgeConfigSpec.DoubleValue durabilityCostMultiplier;
+            private static ForgeConfigSpec.IntValue durabilityPerKill;
+            private static ForgeConfigSpec.IntValue refineBonus;
+
+            public static double durabilityCostMultiplier() {
+                return durabilityCostMultiplier.get();
+            }
+
+            public static int durabilityPerKill() {
+                return durabilityPerKill.get();
+            }
+
+            public static int refineBonus() {
+                return refineBonus.get();
+            }
+        }
+
+        public static final class GrimReapersPact {
+            private static ForgeConfigSpec.DoubleValue healthThreshold;
+            private static ForgeConfigSpec.DoubleValue attackBonus;
+            private static ForgeConfigSpec.DoubleValue healthDrainPerSecond;
+            private static ForgeConfigSpec.IntValue drainInterval;
+
+            public static double healthThreshold() {
+                return healthThreshold.get();
+            }
+
+            public static double attackBonus() {
+                return attackBonus.get();
+            }
+
+            public static float healthDrainPerSecond() {
+                return (float) (double) healthDrainPerSecond.get();
+            }
+
+            public static int drainInterval() {
+                return drainInterval.get();
+            }
+        }
+
+        public static final class ElvenBlessing {
+            private static ForgeConfigSpec.DoubleValue daySpeedBonus;
+            private static ForgeConfigSpec.DoubleValue nightAttackBonus;
+            private static ForgeConfigSpec.DoubleValue arrowDamageBonus;
+            private static ForgeConfigSpec.BooleanValue immuneToPoison;
+
+            public static double daySpeedBonus() {
+                return daySpeedBonus.get();
+            }
+
+            public static double nightAttackBonus() {
+                return nightAttackBonus.get();
+            }
+
+            public static double arrowDamageBonus() {
+                return arrowDamageBonus.get();
+            }
+
+            public static boolean immuneToPoison() {
+                return immuneToPoison.get();
+            }
+        }
+
+        public static final class DragonSoulResonance {
+            private static ForgeConfigSpec.DoubleValue permanentAttackBonus;
+            private static ForgeConfigSpec.DoubleValue breathChance;
+            private static ForgeConfigSpec.DoubleValue breathRadius;
+            private static ForgeConfigSpec.DoubleValue breathDamageMultiplier;
+
+            public static double permanentAttackBonus() {
+                return permanentAttackBonus.get();
+            }
+
+            public static float breathChance() {
+                return (float) (double) breathChance.get();
+            }
+
+            public static double breathRadius() {
+                return breathRadius.get();
+            }
+
+            public static float breathDamageMultiplier() {
+                return (float) (double) breathDamageMultiplier.get();
+            }
+        }
     }
 
     private static void defineSe() {
@@ -890,6 +1143,76 @@ public final class SlashExpansionConfig {
                 .define("autoExperience", true);
         B.pop();
 
+        // ---------- 烈焰之心 ----------
+        B.comment("烈焰之心：攻击点燃敌人、免疫火焰伤害、下界移速加成").push("flame_heart");
+        Se.FlameHeart.igniteSeconds = B.comment("攻击点燃目标的秒数")
+                .defineInRange("igniteSeconds", 5, 0, 100000);
+        Se.FlameHeart.netherSpeedBonus = B.comment("在下界时的移动速度加成（0.2 = +20%）")
+                .defineInRange("netherSpeedBonus", 0.2D, 0.0D, 100.0D);
+        Se.FlameHeart.immuneToFire = B.comment("是否免疫火焰类伤害")
+                .define("immuneToFire", true);
+        B.pop();
+
+        // ---------- 虚空行者 ----------
+        B.comment("虚空行者：方块边缘悬停、末地移速加成、对末影人伤害加成").push("void_walker");
+        Se.VoidWalker.hoverEnabled = B.comment("是否启用边缘悬停")
+                .define("hoverEnabled", true);
+        Se.VoidWalker.hoverCheckInterval = B.comment("悬停检测间隔（tick）")
+                .defineInRange("hoverCheckInterval", 2, 1, 1000);
+        Se.VoidWalker.hoverSearchDepth = B.comment("检测下方支撑方块的最大深度（格）")
+                .defineInRange("hoverSearchDepth", 2.0D, 0.0D, 64.0D);
+        Se.VoidWalker.endSpeedBonus = B.comment("在末地时的移动速度加成（0.3 = +30%）")
+                .defineInRange("endSpeedBonus", 0.3D, 0.0D, 100.0D);
+        Se.VoidWalker.endermanDamageMultiplier = B.comment("攻击末影人时的伤害倍率")
+                .defineInRange("endermanDamageMultiplier", 2.0D, 0.0D, 1000.0D);
+        B.pop();
+
+        // ---------- 千锤百炼 ----------
+        B.comment("千锤百炼：降低耐久消耗、击杀回复耐久、锻造收益提升").push("tempered_soul");
+        Se.TemperedSoul.durabilityCostMultiplier = B.comment("耐久消耗倍率（0.5 = 消耗减半）")
+                .defineInRange("durabilityCostMultiplier", 0.5D, 0.0D, 1.0D);
+        Se.TemperedSoul.durabilityPerKill = B.comment("每次击杀恢复的耐久点数")
+                .defineInRange("durabilityPerKill", 1, 0, 10000);
+        Se.TemperedSoul.refineBonus = B.comment("等效额外锻造数（本模组 SA 伤害计算中使用，SlashBlade 未提供精炼上限接口）")
+                .defineInRange("refineBonus", 10, 0, 10000);
+        B.pop();
+
+        // ---------- 死神之约 ----------
+        B.comment("死神之约：低血量时攻击提升，但持续流失生命").push("grim_reapers_pact");
+        Se.GrimReapersPact.healthThreshold = B.comment("触发所需生命值比例（0.3 = 30%）")
+                .defineInRange("healthThreshold", 0.3D, 0.0D, 1.0D);
+        Se.GrimReapersPact.attackBonus = B.comment("攻击力加成（0.5 = +50%）")
+                .defineInRange("attackBonus", 0.5D, 0.0D, 100.0D);
+        Se.GrimReapersPact.healthDrainPerSecond = B.comment("每秒流失的生命值（不会致死）")
+                .defineInRange("healthDrainPerSecond", 1.0D, 0.0D, 1000.0D);
+        Se.GrimReapersPact.drainInterval = B.comment("生命流失间隔（tick，20 = 1 秒）")
+                .defineInRange("drainInterval", 20, 1, 10000);
+        B.pop();
+
+        // ---------- 精灵祝福 ----------
+        B.comment("精灵祝福：白天移速、夜晚攻击、免疫中毒、箭矢伤害加成").push("elven_blessing");
+        Se.ElvenBlessing.daySpeedBonus = B.comment("白天移动速度加成（0.2 = +20%）")
+                .defineInRange("daySpeedBonus", 0.2D, 0.0D, 100.0D);
+        Se.ElvenBlessing.nightAttackBonus = B.comment("夜晚攻击力加成（0.3 = +30%）")
+                .defineInRange("nightAttackBonus", 0.3D, 0.0D, 100.0D);
+        Se.ElvenBlessing.arrowDamageBonus = B.comment("箭矢伤害加成（0.5 = +50%）")
+                .defineInRange("arrowDamageBonus", 0.5D, 0.0D, 100.0D);
+        Se.ElvenBlessing.immuneToPoison = B.comment("是否免疫中毒")
+                .define("immuneToPoison", true);
+        B.pop();
+
+        // ---------- 龙魂共鸣 ----------
+        B.comment("龙魂共鸣：击杀末影龙后永久增伤，攻击有概率触发龙息").push("dragon_soul_resonance");
+        Se.DragonSoulResonance.permanentAttackBonus = B.comment("击杀末影龙后的永久攻击力加成（0.1 = +10%）")
+                .defineInRange("permanentAttackBonus", 0.1D, 0.0D, 100.0D);
+        Se.DragonSoulResonance.breathChance = B.comment("攻击触发龙息的概率（0.05 = 5%）")
+                .defineInRange("breathChance", 0.05D, 0.0D, 1.0D);
+        Se.DragonSoulResonance.breathRadius = B.comment("龙息范围半径（格）")
+                .defineInRange("breathRadius", 4.0D, 0.5D, 64.0D);
+        Se.DragonSoulResonance.breathDamageMultiplier = B.comment("龙息伤害倍率（基于基础伤害）")
+                .defineInRange("breathDamageMultiplier", 1.0D, 0.0D, 1000.0D);
+        B.pop();
+
         B.pop();
     }
 
@@ -943,7 +1266,10 @@ public final class SlashExpansionConfig {
                         "minecraft:chests/bastion_treasure|slashexpansion:inferno|0.15",
                         "minecraft:chests/bastion_treasure|slashexpansion:geng_jin_jian_jue|0.10",
                         "minecraft:chests/nether_bridge|slashexpansion:wan_jian_gui_zong|0.08",
-                        "minecraft:chests/nether_bridge|slashexpansion:qi_sha_jian_jie|0.06"
+                        "minecraft:chests/nether_bridge|slashexpansion:qi_sha_jian_jie|0.06",
+                        "minecraft:chests/nether_bridge|slashexpansion:blood_moon_slash|0.10",
+                        "minecraft:chests/bastion_treasure|slashexpansion:thors_wrath|0.12",
+                        "minecraft:chests/bastion_treasure|slashexpansion:immovable_king|0.08"
                 ), o -> o instanceof String);
 
         B.pop();
@@ -958,7 +1284,9 @@ public final class SlashExpansionConfig {
 
         public static final String[] EFFECT_IDS = {
                 "wind_god_power", "frost_glow", "transcendent_will",
-                "abyss_whisper", "void_power", "admin"
+                "abyss_whisper", "void_power", "admin",
+                "flame_heart", "void_walker", "tempered_soul",
+                "grim_reapers_pact", "elven_blessing", "dragon_soul_resonance"
         };
 
         public static boolean overrideJsonRecipes() {
@@ -1036,6 +1364,12 @@ public final class SlashExpansionConfig {
         public static RecipeEntry ABYSS_WHISPER;
         public static RecipeEntry VOID_POWER;
         public static RecipeEntry ADMIN;
+        public static RecipeEntry FLAME_HEART;
+        public static RecipeEntry VOID_WALKER;
+        public static RecipeEntry TEMPERED_SOUL;
+        public static RecipeEntry GRIM_REAPERS_PACT;
+        public static RecipeEntry ELVEN_BLESSING;
+        public static RecipeEntry DRAGON_SOUL_RESONANCE;
 
         public static RecipeEntry byEffectId(String effectId) {
             return switch (effectId) {
@@ -1045,6 +1379,12 @@ public final class SlashExpansionConfig {
                 case "abyss_whisper" -> ABYSS_WHISPER;
                 case "void_power" -> VOID_POWER;
                 case "admin" -> ADMIN;
+                case "flame_heart" -> FLAME_HEART;
+                case "void_walker" -> VOID_WALKER;
+                case "tempered_soul" -> TEMPERED_SOUL;
+                case "grim_reapers_pact" -> GRIM_REAPERS_PACT;
+                case "elven_blessing" -> ELVEN_BLESSING;
+                case "dragon_soul_resonance" -> DRAGON_SOUL_RESONANCE;
                 default -> null;
             };
         }
@@ -1110,6 +1450,43 @@ public final class SlashExpansionConfig {
                 List.of("C=slashblade:proudsoul_crystal", "W=minecraft:structure_block",
                         "S=minecraft:barrier", "A=minecraft:command_block",
                         "D=minecraft:bedrock", "E=minecraft:light"));
+        B.pop();
+
+        B.comment("烈焰之心").push("flame_heart");
+        RecipeEntries.FLAME_HEART = new RecipeEntry("flame_heart", "slashblade:proudsoul_crystal",
+                List.of("BBB", "BCB", "BBB"),
+                List.of("B=minecraft:blaze_rod", "C=slashblade:proudsoul_crystal"));
+        B.pop();
+
+        B.comment("虚空行者").push("void_walker");
+        RecipeEntries.VOID_WALKER = new RecipeEntry("void_walker", "slashblade:proudsoul_crystal",
+                List.of("BBB", "BCB", "BBB"),
+                List.of("B=minecraft:ender_pearl", "C=slashblade:proudsoul_crystal"));
+        B.pop();
+
+        B.comment("千锤百炼").push("tempered_soul");
+        RecipeEntries.TEMPERED_SOUL = new RecipeEntry("tempered_soul", "slashblade:proudsoul_crystal",
+                List.of(" B ", "BCB", " B "),
+                List.of("B=minecraft:netherite_ingot", "C=slashblade:proudsoul_crystal"));
+        B.pop();
+
+        B.comment("死神之约").push("grim_reapers_pact");
+        RecipeEntries.GRIM_REAPERS_PACT = new RecipeEntry("grim_reapers_pact", "slashblade:proudsoul_crystal",
+                List.of("BBB", "BCB", "BBB"),
+                List.of("B=minecraft:wither_skeleton_skull", "C=slashblade:proudsoul_crystal"));
+        B.pop();
+
+        B.comment("精灵祝福").push("elven_blessing");
+        RecipeEntries.ELVEN_BLESSING = new RecipeEntry("elven_blessing", "slashblade:proudsoul_crystal",
+                List.of("BBB", "BCB", "BBB"),
+                List.of("B=minecraft:golden_apple", "C=slashblade:proudsoul_crystal"));
+        B.pop();
+
+        B.comment("龙魂共鸣（3x3 内最多容纳 9 格，因此龙息数量使用 7 个）").push("dragon_soul_resonance");
+        RecipeEntries.DRAGON_SOUL_RESONANCE = new RecipeEntry("dragon_soul_resonance", "slashblade:proudsoul_crystal",
+                List.of("BEB", "BCB", "BBB"),
+                List.of("B=minecraft:dragon_breath", "E=minecraft:dragon_egg",
+                        "C=slashblade:proudsoul_crystal"));
         B.pop();
 
         B.pop();

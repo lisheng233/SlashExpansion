@@ -6,7 +6,7 @@
 
 # SlashExpansion
 
-**SlashExpansion** is an add-on mod for [SlashBlade: Resharped](https://www.curseforge.com/minecraft/mc-mods/slashblade-resharped) on Minecraft 1.20.1, introducing **9 brand-new Special Attacks (SAs)** and 6 **powerful Special Effects (SEs)** to the game.
+**SlashExpansion** is an add-on mod for [SlashBlade: Resharped](https://www.curseforge.com/minecraft/mc-mods/slashblade-resharped) on Minecraft 1.20.1, introducing **12 brand-new Special Attacks (SAs)** and **12 powerful Special Effects (SEs)** to the game.
 
 The mod **adds no new blades** — it focuses purely on enriching the skill system. All SA damage is dynamically calculated based on the blade you're currently holding, scaling with your gear and stats as you progress.
 
@@ -25,6 +25,9 @@ The mod **adds no new blades** — it focuses purely on enriching the skill syst
 | **Jian Dang Ba Huang**    | Massive horizontal energy slash, travels 64 blocks, ignores obstacles                        | 150%              | Ancient City (10%), End City (12%)        |
 | **Geng Jin Jian Jue**     | 1–100 golden phantom blades (count tied to refine count), ignores armor                     | 160%              | Ancient City (8%), Bastion Treasure (10%) |
 | **Qi Sha Jian Jie**       | Domain deals 7 sequential hits, cycling through 7 damage types; range scales with kill count | 100% × 7         | Ancient City (5%), Nether Fortress (6%)   |
+| **Blood Moon Slash**      | Sacrifices 30% of current health to deal 2× the consumed health to enemies within 8 blocks in front, ignoring armor | Consumed HP × 2 | Nether Fortress (10%) |
+| **Thor's Wrath**          | Calls down 7 lightning bolts on random enemies within 20 blocks, each dealing 120% damage and 3s paralysis | 120% × 7 | Bastion Treasure (12%) |
+| **Immovable King**        | Immune to all damage but unable to move for 3s, then deals 200% damage in a 10-block radius with knockback | 200% | Bastion Treasure (8%) |
 
 ### Damage Calculation
 
@@ -50,6 +53,12 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 | **Abyss Whisper**         | Low level (≤99): Self Nausea I + Hunger I + Bad Luck V + Wither II; Applies Wither X, Blindness I, Weakness V, Slowness V, Mining Fatigue III to enemies. High level (≥100): Self Bad Luck III + Wither I |
 | Power Of The Void               | Immune to void damage and debuffs, attacks deal bonus void damage and debuffs                                                                                                                               |
 | Power Of The Administrator      | (required OP) Immune to damage and debuffs, attacks will kill the target, etc.                                                                                                                          |
+| **Flame Heart**                 | Attacks ignite enemies for 5s; immune to fire damage; +20% movement speed in the Nether                                                                                                                     |
+| **Void Walker**                 | Hovers when stepping off blocks; +30% speed in the End; ×2 damage to Endermen                                                                                                                               |
+| **Tempered Soul**               | Blade durability cost halved; +1 durability per kill; +10 effective refine                                                                                                                                  |
+| **Grim Reaper's Pact**          | Below 30% health: +50% attack, but lose 1 HP per second (never lethal)                                                                                                                                      |
+| **Elven Blessing**              | Day: +20% speed; Night: +30% attack; immune to poison; +50% arrow damage                                                                                                                                     |
+| **Dragon Soul Resonance**       | Permanent +10% attack after slaying the Ender Dragon; 5% chance on hit to unleash dragon breath                                                                                                             |
 
 ---
 
@@ -65,14 +74,16 @@ Special **proudsoul_sphere** with embedded SAs can be found in chests from the f
 | :------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
 | Ancient City               | Wan Jian Gui Zong, Senbonzakura, Frost Domain, Zhan Tian Ba Jian Shu, Jian Dang Ba Huang, Geng Jin Jian Jue, Qi Sha Jian Jie | 10% / 20% / 15% / 10% / 10% / 8% / 5% |
 | End Ship / End City        | Rift Slash, Zhan Tian Ba Jian Shu, Jian Dang Ba Huang                                                                        | 25% / 12% / 12%                       |
-| Bastion Remnant (Treasure) | Inferno, Geng Jin Jian Jue                                                                                                   | 15% / 10%                             |
-| Nether Fortress            | Wan Jian Gui Zong, Qi Sha Jian Jie                                                                                           | 8% / 6%                               |
+| Bastion Remnant (Treasure) | Inferno, Geng Jin Jian Jue, Thor's Wrath, Immovable King                                                                     | 15% / 10% / 12% / 8%                  |
+| Nether Fortress            | Wan Jian Gui Zong, Qi Sha Jian Jie, Blood Moon Slash                                                                         | 8% / 6% / 10%                         |
 
 ### SE Acquisition: Crafting
 
 All SEs are obtained through crafting.
-(Check JEI/Recipe book for Proud Soul Crystal recipes.)
+(Check JEI/Recipe book for Proud Soul Crystal recipes. Recipes can be freely edited in the `[recipe]` config section.)
 PS : The recipe of "Power of the Wind God" : Bottom left is strong_swift potion, bottom right is strong_leaping potion; for some reason they are not displaying properly.
+
+> Note: the 3×3 crafting grid holds at most 9 slots, so **Dragon Soul Resonance** costs 1 Dragon Egg + 7 Dragon's Breath + 1 Proud Soul Crystal.
 
 ### How to Apply
 
@@ -119,7 +130,7 @@ entries = [
 [recipe]
 overrideJsonRecipes = true               # whether this config overrides the built-in JSON recipes
 
-[recipe.frost_glow]                      # one block per SE (6 in total)
+[recipe.frost_glow]                      # one block per SE (12 in total)
 enabled = true
 shapeless = false                        # true = shapeless recipe from `ingredients`
 resultItem = "slashblade:proudsoul_crystal"
@@ -152,6 +163,9 @@ Replace `wan_jian_gui_zong` with any of the following:
 - `jian_dang_ba_huang` — Jian Dang Ba Huang
 - `geng_jin_jian_jue` — Geng Jin Jian Jue
 - `qi_sha_jian_jie` — Qi Sha Jian Jie
+- `blood_moon_slash` — Blood Moon Slash
+- `thors_wrath` — Thor's Wrath
+- `immovable_king` — Immovable King
 
 ### SE Testing
 
@@ -166,6 +180,12 @@ Replace `wind_god_power` with any of the following:
 - `abyss_whisper` — Abyss Whisper
 - `void_power` — Power Of The Void
 - `admin` — Power Of The Administrator
+- `flame_heart` — Flame Heart
+- `void_walker` — Void Walker
+- `tempered_soul` — Tempered Soul
+- `grim_reapers_pact` — Grim Reaper's Pact
+- `elven_blessing` — Elven Blessing
+- `dragon_soul_resonance` — Dragon Soul Resonance
 
 ---
 
@@ -186,7 +206,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.6.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.7.jar`.
 
 ### Importing into IDE
 

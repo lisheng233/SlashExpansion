@@ -1,6 +1,7 @@
 package com.lisheng.slashexpansion.util;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +32,10 @@ public class DamageCalculator {
 
         float base = state.getBaseAttackModifier();
         int refine = state.getRefine();
+        // 千锤百炼：锻造收益等效提升
+        if (state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.TEMPERED_SOUL.getId())) {
+            refine += SlashExpansionConfig.Se.TemperedSoul.refineBonus();
+        }
         float refineBonus = refine * SlashExpansionConfig.Damage.refineBonus();
 
         int power = blade.getEnchantmentLevel(Enchantments.POWER_ARROWS);
