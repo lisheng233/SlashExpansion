@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialattack;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -11,17 +12,18 @@ import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
 import java.util.List;
 
 public class Inferno {
 
-    public static void doSlash(LivingEntity player, boolean critical, double damage, float speed) {
+    public static void doSlash(LivingEntity player, boolean critical, double damage) {
         if (player.level().isClientSide()) return;
 
         Level world = player.level();
-        int range = 18;
+        int range = SlashExpansionConfig.Sa.Inferno.radius();
         AABB aabb = player.getBoundingBox().inflate(range);
-        
+
         List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
                 e -> e != player && e.isAlive() && !e.isSpectator()
                         && TargetSelector.test.test(player, e));
@@ -38,18 +40,22 @@ public class Inferno {
             }
         }
 
+        float finalDamage = (float) (damage * SlashExpansionConfig.Sa.Inferno.damageMultiplier());
+        float netherMultiplier = SlashExpansionConfig.Sa.Inferno.netherDamageMultiplier();
+        int fireSeconds = SlashExpansionConfig.Sa.Inferno.fireSeconds();
+
         for (LivingEntity target : targets) {
-            float finalDamage = (float) damage;
+            float targetDamage = finalDamage;
 
             boolean isNetherMob = target instanceof Piglin || target instanceof Hoglin ||
                                   target instanceof Zoglin || target instanceof Strider ||
                                   target instanceof MagmaCube;
             if (isNetherMob) {
-                finalDamage *= 1.5f;
+                targetDamage *= netherMultiplier;
             }
 
-            target.hurt(player.damageSources().mobAttack(player), finalDamage);
-            target.setSecondsOnFire(12);
+            target.hurt(player.damageSources().mobAttack(player), targetDamage);
+            target.setSecondsOnFire(fireSeconds);
 
             if (world instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,

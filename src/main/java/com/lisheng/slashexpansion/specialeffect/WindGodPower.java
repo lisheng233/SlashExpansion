@@ -1,11 +1,13 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -20,15 +22,17 @@ import net.minecraftforge.fml.common.Mod;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+/**
+ * 风神的伟力，数值来自 {@code [se.wind_god_power]}。
+ */
 @Mod.EventBusSubscriber
 public class WindGodPower extends SpecialEffect {
 
     private static final UUID SPEED_MOD_ID = UUID.nameUUIDFromBytes(
             "slashexpansion:wind_god_power_speed".getBytes(StandardCharsets.UTF_8)
     );
-    private static final AttributeModifier SPEED_MOD = new AttributeModifier(
-            SPEED_MOD_ID, "wind_god_speed", 1.0, AttributeModifier.Operation.MULTIPLY_BASE
-    );
+    private static final String SPEED_MOD_NAME = "wind_god_speed";
+
     // 用于记录玩家原本的飞行速度，以便恢复
     private static final String ORIGINAL_FLY_SPEED_KEY = "wind_god_original_fly_speed";
     private static final String HAS_ACTIVE_EFFECT_KEY = "wind_god_power_active";
@@ -43,10 +47,13 @@ public class WindGodPower extends SpecialEffect {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
         if (player.level().isClientSide()) return;
-        if (player.tickCount%5 !=0) return; // ★ 每5 tick检查一次，减少性能消耗
+
+        int interval = Math.max(1, SlashExpansionConfig.Se.WindGodPower.checkInterval());
+        if (player.tickCount % interval != 0) return;
+
         CompoundTag persistentData = player.getPersistentData();
         if (!persistentData.contains(HAS_ACTIVE_EFFECT_KEY)) {
-            persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,false);
+            persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY, false);
         }
 
         // ★★★ 检查主手是否持有带有 SE 的刀 ★★★
@@ -66,39 +73,52 @@ public class WindGodPower extends SpecialEffect {
         if (!hasSE) {
             if (wasActive) {
                 removeAllEffects(player);
-                persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,false);
+                persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY, false);
             }
             return;
         }
 
-        // ★ 1. 跳跃提升 III（只加5秒，刷新持续）
-        player.addEffect(new MobEffectInstance(MobEffects.JUMP, 60, 2, false, false,false));
+        // ★ 1. 跳跃提升（只加短暂持续时间，反复刷新）
+        player.addEffect(new MobEffectInstance(MobEffects.JUMP,
+                SlashExpansionConfig.Se.WindGodPower.jumpDuration(),
+                SlashExpansionConfig.Se.WindGodPower.jumpAmplifier(),
+                false, false, false));
 
-        // ★ 2. 移动速度 +100%
-        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttr != null && !speedAttr.hasModifier(SPEED_MOD)) {
-            speedAttr.addTransientModifier(SPEED_MOD);
-        }
+        // ★ 2. 移动速度加成
+        applySpeedModifier(player);
+
         if (!player.getAbilities().mayfly) {
-            // 如果玩家没有飞行能力，给予飞行能力
             player.getAbilities().mayfly = true;
             player.onUpdateAbilities();
         }
 
-        // ★ 3. 创造模式飞行速度 +150%（使用 setFlyingSpeed）
+        // ★ 3. 飞行速度倍率
         if (player.getAbilities().mayfly) {
-            // 获取当前飞行速度，如果没有保存过原始值则保存
             if (!persistentData.contains(ORIGINAL_FLY_SPEED_KEY)) {
                 persistentData.putFloat(ORIGINAL_FLY_SPEED_KEY, player.getAbilities().getFlyingSpeed());
             }
-            // 设置飞行速度 = 原始值 × 2.5（+150%）
-            float original = player.getPersistentData().getFloat(ORIGINAL_FLY_SPEED_KEY);
+            float original = persistentData.getFloat(ORIGINAL_FLY_SPEED_KEY);
             if (original <= 0) original = 0.05f; // 默认飞行速度
-            player.getAbilities().setFlyingSpeed(original * 2.5f);
-            // 更新能力（重要！否则不生效）
+            player.getAbilities().setFlyingSpeed(original * SlashExpansionConfig.Se.WindGodPower.flySpeedMultiplier());
             player.onUpdateAbilities();
         }
-        persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY,true);
+        persistentData.putBoolean(HAS_ACTIVE_EFFECT_KEY, true);
+    }
+
+    private static void applySpeedModifier(Player player) {
+        AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr == null) return;
+
+        double amount = SlashExpansionConfig.Se.WindGodPower.moveSpeedMultiplier();
+        AttributeModifier existing = speedAttr.getModifier(SPEED_MOD_ID);
+        if (existing == null) {
+            speedAttr.addTransientModifier(new AttributeModifier(
+                    SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
+        } else if (Double.compare(existing.getAmount(), amount) != 0) {
+            speedAttr.removeModifier(SPEED_MOD_ID);
+            speedAttr.addTransientModifier(new AttributeModifier(
+                    SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
+        }
     }
 
     // ★ 免疫摔落伤害（不改变下落速度）
@@ -115,27 +135,23 @@ public class WindGodPower extends SpecialEffect {
                 .orElse(false);
 
         if (hasSE) {
-            // ★ 取消摔落伤害
             event.setCanceled(true);
             event.setDamageMultiplier(0.0F);
         }
     }
 
     private static void removeAllEffects(Player player) {
-        // 移除移动速度加成
-        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttr != null && speedAttr.hasModifier(SPEED_MOD)) {
-            speedAttr.removeModifier(SPEED_MOD);
+        AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr != null && speedAttr.getModifier(SPEED_MOD_ID) != null) {
+            speedAttr.removeModifier(SPEED_MOD_ID);
         }
 
         if (player.getAbilities().mayfly && !player.isCreative() && !player.isSpectator()) {
-            // 如果玩家没有其他原因需要飞行能力，则移除飞行能力
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
             player.onUpdateAbilities();
         }
 
-        // ★ 恢复飞行速度
         if (player.getPersistentData().contains(ORIGINAL_FLY_SPEED_KEY)) {
             float original = player.getPersistentData().getFloat(ORIGINAL_FLY_SPEED_KEY);
             player.getAbilities().setFlyingSpeed(original);

@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
@@ -25,21 +26,25 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 管理员之力，数值来自 {@code [se.admin]}。
+ */
 @Mod.EventBusSubscriber
 public class Admin extends SpecialEffect {
 
     private static final String ADMIN_TAG = "SlashExpansion_AdminMode";
     private static final String ADMIN_ENABLED_TAG = "AdminEnabled";
-    
-    private static final int RESISTANCE_DURATION = 100;
-    private static final int RESISTANCE_AMPLIFIER = 255;
+
     private static final int MAX_FOOD_LEVEL = 20;
-    private static final int MESSAGE_COOLDOWN_TICKS = 200;
 
     private static final ConcurrentHashMap<UUID, Integer> messageCooldown = new ConcurrentHashMap<>();
 
     public Admin() {
         super(0, true, false);
+    }
+
+    private static int requiredPermissionLevel() {
+        return SlashExpansionConfig.Se.Admin.permissionLevel();
     }
 
     @SubscribeEvent
@@ -55,13 +60,13 @@ public class Admin extends SpecialEffect {
         }
 
         ItemStack mainHand = player.getMainHandItem();
-        
+
         // 检查是否应该拥有管理员模式
         boolean shouldHaveAdmin = false;
         if (mainHand.getItem() instanceof ItemSlashBlade) {
             shouldHaveAdmin = mainHand.getCapability(ItemSlashBlade.BLADESTATE)
                     .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.ADMIN.getId()))
-                    .orElse(false) && player.hasPermissions(4);
+                    .orElse(false) && player.hasPermissions(requiredPermissionLevel());
         }
 
         boolean isInAdminMode = isAdminModeEnabled(player);
@@ -110,16 +115,18 @@ public class Admin extends SpecialEffect {
         int currentTick = player.tickCount;
 
         Integer lastMessageTick = messageCooldown.get(playerId);
-        if (lastMessageTick != null && (currentTick - lastMessageTick) < MESSAGE_COOLDOWN_TICKS) {
+        if (lastMessageTick != null
+                && (currentTick - lastMessageTick) < SlashExpansionConfig.Se.Admin.messageCooldownTicks()) {
             return;
         }
 
         messageCooldown.put(playerId, currentTick);
 
+        int level = requiredPermissionLevel();
         Component message = Component.literal("")
                 .append(Component.literal("你没有权限使用管理员之力！").withStyle(ChatFormatting.RED))
                 .append(Component.literal("\n"))
-                .append(Component.literal("  → 需要 OP 权限等级 4").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal("  → 需要 OP 权限等级 " + level).withStyle(ChatFormatting.GRAY))
                 .append(Component.literal("  → 请联系服务器管理员获取权限").withStyle(ChatFormatting.GRAY));
 
         player.sendSystemMessage(message);
@@ -127,7 +134,7 @@ public class Admin extends SpecialEffect {
         Component actionBarMessage = Component.literal("")
                 .append(Component.literal("⚠ ").withStyle(ChatFormatting.RED))
                 .append(Component.literal("权限不足！").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD))
-                .append(Component.literal(" 需要 OP 权限等级 4").withStyle(ChatFormatting.GRAY));
+                .append(Component.literal(" 需要 OP 权限等级 " + level).withStyle(ChatFormatting.GRAY));
 
         player.displayClientMessage(actionBarMessage, true);
     }
@@ -139,8 +146,8 @@ public class Admin extends SpecialEffect {
         // 1. 抗性提升效果
         player.addEffect(new MobEffectInstance(
                 MobEffects.DAMAGE_RESISTANCE,
-                RESISTANCE_DURATION,
-                RESISTANCE_AMPLIFIER,
+                SlashExpansionConfig.Se.Admin.resistanceDuration(),
+                SlashExpansionConfig.Se.Admin.resistanceAmplifier(),
                 false,
                 false,
                 false
@@ -178,12 +185,13 @@ public class Admin extends SpecialEffect {
         removeNegativeEffects(player);
 
         // 8. 自动获得经验
-        int xpNeeded = player.getXpNeededForNextLevel() - player.totalExperience;
-        int xpToGive = Math.max(1, xpNeeded);
-        if ((Integer.MAX_VALUE-player.totalExperience) >= xpToGive) {
-            player.giveExperiencePoints(xpToGive);
+        if (SlashExpansionConfig.Se.Admin.autoExperience()) {
+            int xpNeeded = player.getXpNeededForNextLevel() - player.totalExperience;
+            int xpToGive = Math.max(1, xpNeeded);
+            if ((Integer.MAX_VALUE - player.totalExperience) >= xpToGive) {
+                player.giveExperiencePoints(xpToGive);
+            }
         }
-
     }
 
     /**
@@ -191,13 +199,13 @@ public class Admin extends SpecialEffect {
      */
     public static void removeNegativeEffects(Player player) {
         List<MobEffect> effectsToRemove = new ArrayList<>();
-        
+
         for (MobEffectInstance effect : player.getActiveEffects()) {
             if (!effect.getEffect().isBeneficial()) {
                 effectsToRemove.add(effect.getEffect());
             }
         }
-        
+
         for (MobEffect effect : effectsToRemove) {
             player.removeEffect(effect);
         }
@@ -217,7 +225,7 @@ public class Admin extends SpecialEffect {
             player.getAbilities().flying = false;
             player.onUpdateAbilities();
         }
-        
+
         // 清除管理员模式标记
         setAdminMode(player, false);
         messageCooldown.remove(player.getUUID());
@@ -239,8 +247,8 @@ public class Admin extends SpecialEffect {
     public static void killEntity(LivingHurtEvent event) {
         LivingEntity entity = event.getEntity();
         if (!(event.getSource().getEntity() instanceof Player player)) return;
-        if (isAdminModeEnabled(player)){
-            entity.invulnerableTime=0;
+        if (isAdminModeEnabled(player)) {
+            entity.invulnerableTime = 0;
             entity.setHealth(0);
             entity.die(event.getSource());
         }
@@ -264,7 +272,7 @@ public class Admin extends SpecialEffect {
                 .orElse(false);
 
         if (hasAdminSE) {
-            if (!player.hasPermissions(4) || !isAdminModeEnabled(player)) {
+            if (!player.hasPermissions(requiredPermissionLevel()) || !isAdminModeEnabled(player)) {
                 event.setCanceled(false);
                 sendPermissionDeniedMessage(player);
                 return;

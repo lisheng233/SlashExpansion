@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -17,6 +18,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * 超越的意志，数值来自 {@code [se.transcendent_will]}。
+ */
 @Mod.EventBusSubscriber
 public class TranscendentWill extends SpecialEffect {
 
@@ -33,7 +37,7 @@ public class TranscendentWill extends SpecialEffect {
         super(0, true, false);
     }
 
-    // ===== 1. 附魔等级 +5（永久生效） =====
+    // ===== 1. 附魔等级提升（永久生效） =====
     @SubscribeEvent
     public static void onBladeUpdate(SlashBladeEvent.UpdateEvent event) {
         if (event.getEntity().level().isClientSide()) return;
@@ -45,7 +49,7 @@ public class TranscendentWill extends SpecialEffect {
 
         ItemStack blade = event.getBlade();
 
-        // 检查是否已经应用过 +5 附魔
+        // 检查是否已经应用过附魔提升
         if (!blade.getOrCreateTag().getBoolean("TranscendentApplied")) {
             applyEnchantmentBoost(blade);
             blade.getOrCreateTag().putBoolean("TranscendentApplied", true);
@@ -55,6 +59,7 @@ public class TranscendentWill extends SpecialEffect {
     private static void applyEnchantmentBoost(ItemStack blade) {
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(blade);
         boolean modified = false;
+        int boost = SlashExpansionConfig.Se.TranscendentWill.enchantBoost();
 
         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
             Enchantment ench = entry.getKey();
@@ -70,7 +75,7 @@ public class TranscendentWill extends SpecialEffect {
             }
 
             if (!excluded) {
-                enchantments.put(ench, level + 5);
+                enchantments.put(ench, level + boost);
                 modified = true;
             }
         }
@@ -80,7 +85,7 @@ public class TranscendentWill extends SpecialEffect {
         }
     }
 
-    // ===== 2. 伤害 ×1.5 倍 =====
+    // ===== 2. 伤害倍率 =====
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
@@ -92,7 +97,7 @@ public class TranscendentWill extends SpecialEffect {
                 .orElse(false);
 
         if (hasSE) {
-            event.setAmount(event.getAmount() * 1.5f);
+            event.setAmount(event.getAmount() * SlashExpansionConfig.Se.TranscendentWill.damageMultiplier());
         }
     }
 
@@ -102,12 +107,12 @@ public class TranscendentWill extends SpecialEffect {
                 .hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.TRANSCENDENT_WILL.getId());
 
         if (!hasSE) return;
-        if (RANDOM.nextFloat() < 0.25f) {
+        if (RANDOM.nextFloat() < SlashExpansionConfig.Se.TranscendentWill.critChance()) {
             event.setCritical(true);
         }
     }
 
-    // ===== 3. 暴击率 +25% =====
+    // ===== 3. 暴击附加伤害 =====
     @SubscribeEvent
     public static void onHitEntity(SlashBladeEvent.HitEvent event) {
         boolean hasSE = event.getSlashBladeState()
@@ -115,13 +120,14 @@ public class TranscendentWill extends SpecialEffect {
 
         if (!hasSE) return;
 
-        if (RANDOM.nextFloat() < 0.25f) {
+        if (RANDOM.nextFloat() < SlashExpansionConfig.Se.TranscendentWill.critChance()) {
             LivingEntity target = event.getTarget();
             LivingEntity user = event.getUser();
 
-            float extraDamage = (float) event.getSlashBladeState().getBaseAttackModifier() * 0.5f;
-            if (extraDamage > 0 && user instanceof Player) {
-                target.hurt(user.damageSources().playerAttack((Player) user), extraDamage);
+            float extraDamage = (float) event.getSlashBladeState().getBaseAttackModifier()
+                    * SlashExpansionConfig.Se.TranscendentWill.critBonusDamageMultiplier();
+            if (extraDamage > 0 && user instanceof Player player) {
+                target.hurt(user.damageSources().playerAttack(player), extraDamage);
             }
         }
     }

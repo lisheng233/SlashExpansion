@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.entity;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
@@ -10,6 +11,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -20,6 +22,9 @@ import net.minecraft.core.Holder;
 
 import java.util.List;
 
+/**
+ * 七杀剑界领域实体，数值来自 {@code [sa.qi_sha_jian_jie]}。
+ */
 public class QiShaJianJieDomainEntity extends Entity {
 
     private LivingEntity owner;
@@ -27,8 +32,6 @@ public class QiShaJianJieDomainEntity extends Entity {
     private int radius;
     private int tickCounter = 0;
     private int hitCount = 0;
-    private static final int MAX_HITS = 7;
-    private static final int INTERVAL = 7;
 
     public QiShaJianJieDomainEntity(EntityType<?> type, Level world) {
         super(type, world);
@@ -40,9 +43,10 @@ public class QiShaJianJieDomainEntity extends Entity {
         this.owner = owner;
         this.damage = damage;
         this.radius = radius;
-        setPos(owner.getX() + owner.getLookAngle().x * 5,
+        int spawnDistance = SlashExpansionConfig.Sa.QiShaJianJie.spawnDistance();
+        setPos(owner.getX() + owner.getLookAngle().x * spawnDistance,
                owner.getY() + 1,
-               owner.getZ() + owner.getLookAngle().z * 5);
+               owner.getZ() + owner.getLookAngle().z * spawnDistance);
     }
 
     @Override
@@ -59,9 +63,12 @@ public class QiShaJianJieDomainEntity extends Entity {
             return;
         }
 
+        int maxHits = SlashExpansionConfig.Sa.QiShaJianJie.maxHits();
+        int interval = Math.max(1, SlashExpansionConfig.Sa.QiShaJianJie.hitInterval());
+
         tickCounter++;
-        if (tickCounter % INTERVAL == 0) {
-            if (hitCount >= MAX_HITS) {
+        if (tickCounter % interval == 0) {
+            if (hitCount >= maxHits) {
                 this.remove(RemovalReason.DISCARDED);
                 return;
             }
@@ -79,7 +86,7 @@ public class QiShaJianJieDomainEntity extends Entity {
 
             if (!targets.isEmpty()) {
                 @SuppressWarnings("unchecked")
-                Holder<net.minecraft.world.damagesource.DamageType>[] damageTypeHolders = new Holder[] {
+                Holder<DamageType>[] damageTypeHolders = new Holder[] {
                     this.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                         .getHolderOrThrow(DamageTypes.GENERIC),
                     this.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
@@ -96,7 +103,7 @@ public class QiShaJianJieDomainEntity extends Entity {
                         .getHolderOrThrow(DamageTypes.ARROW)
                 };
 
-                Holder<net.minecraft.world.damagesource.DamageType> type = damageTypeHolders[hitCount % damageTypeHolders.length];
+                Holder<DamageType> type = damageTypeHolders[hitCount % damageTypeHolders.length];
                 DamageSource source = new DamageSource(type, owner);
 
                 for (LivingEntity target : targets) {
@@ -113,7 +120,8 @@ public class QiShaJianJieDomainEntity extends Entity {
             }
         }
 
-        if (owner == null || !owner.isAlive() || owner.distanceTo(this) > 64) {
+        int leash = SlashExpansionConfig.Sa.QiShaJianJie.ownerLeashDistance();
+        if (owner == null || !owner.isAlive() || owner.distanceTo(this) > leash) {
             this.remove(RemovalReason.DISCARDED);
         }
     }

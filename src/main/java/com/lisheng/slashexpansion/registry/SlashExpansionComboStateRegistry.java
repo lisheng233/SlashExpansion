@@ -29,7 +29,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                WanJianGuiZong.doSlash(entity, false, damage * 0.8f, 2f);
+                                WanJianGuiZong.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -62,7 +62,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                Senbonzakura.doSlash(entity, false, damage * 1.2, 1.5f);
+                                Senbonzakura.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -95,7 +95,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                RiftSlash.doSlash(entity, false, damage * 1.8, 2f);
+                                RiftSlash.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -128,7 +128,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                FrostDomain.doSlash(entity, false, damage * 0.8, 0);
+                                FrostDomain.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -161,7 +161,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                Inferno.doSlash(entity, false, damage * 1.0, 0);
+                                Inferno.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -198,7 +198,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                ZhanTianBaJianShu.doSlash(entity, false, damage, 5f);
+                                ZhanTianBaJianShu.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -231,7 +231,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                JianDangBaHuang.doSlash(entity, false, damage, 5f);
+                                JianDangBaHuang.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -264,7 +264,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                GengJinJianJue.doSlash(entity, false, damage, 2f);
+                                GengJinJianJue.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()
@@ -297,7 +297,7 @@ public class SlashExpansionComboStateRegistry {
                             .put(2, (entity) -> AttackManager.doSlash(entity, -30F, Vec3.ZERO, false, false, 0.1F))
                             .put(3, (entity) -> {
                                 float damage = DamageCalculator.calculateDamage(entity, entity.getMainHandItem());
-                                QiShaJianJie.doSlash(entity, false, damage, 0);
+                                QiShaJianJie.doSlash(entity, false, damage);
                             })
                             .build())
                     .build()

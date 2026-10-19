@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialattack;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.entity.WanJianGuiZongSwordEntity;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
 import mods.flammpfeil.slashblade.util.TargetSelector;
@@ -7,18 +8,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
 import java.util.List;
 
 public class WanJianGuiZong {
 
-    public static void doSlash(LivingEntity player, boolean critical, double damage, float speed) {
+    public static void doSlash(LivingEntity player, boolean critical, double damage) {
         if (player.level().isClientSide()) return;
 
         Level world = player.level();
-        int range = 64;
+        int range = SlashExpansionConfig.Sa.WanJianGuiZong.searchRange();
         AABB aabb = player.getBoundingBox().inflate(range);
 
-        // ★ 直接用 TargetSelector.test 过滤
         List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
                 e -> e != player && e.isAlive() && !e.isSpectator()
                         && TargetSelector.test.test(player, e)
@@ -26,10 +27,15 @@ public class WanJianGuiZong {
 
         if (targets.isEmpty()) return;
 
-        int swordCount = 10;
-        if (player instanceof Player) {
-            swordCount = Math.min(256, Math.max(10, ((Player) player).experienceLevel));
+        int minSwords = SlashExpansionConfig.Sa.WanJianGuiZong.minSwords();
+        int maxSwords = SlashExpansionConfig.Sa.WanJianGuiZong.maxSwords();
+        int swordCount = minSwords;
+        if (player instanceof Player p) {
+            swordCount = Math.min(maxSwords, Math.max(minSwords, p.experienceLevel));
         }
+
+        float finalDamage = (float) (damage * SlashExpansionConfig.Sa.WanJianGuiZong.damageMultiplier());
+        float speed = SlashExpansionConfig.Sa.WanJianGuiZong.projectileSpeed();
 
         int perTarget = swordCount / targets.size();
         int extra = swordCount % targets.size();
@@ -51,7 +57,7 @@ public class WanJianGuiZong {
                         target.getY() + height,
                         target.getZ() + offsetZ
                 );
-                sword.setDamage(damage * 0.8);
+                sword.setDamage(finalDamage);
                 sword.setIsCritical(critical);
                 sword.setSpeed(speed);
                 sword.setOwner(player);

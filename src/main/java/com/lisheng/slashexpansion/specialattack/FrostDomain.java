@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialattack;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -8,17 +9,18 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
 import java.util.List;
 
 public class FrostDomain {
 
-    public static void doSlash(LivingEntity player, boolean critical, double damage, float speed) {
+    public static void doSlash(LivingEntity player, boolean critical, double damage) {
         if (player.level().isClientSide()) return;
 
         Level world = player.level();
-        int range = 20;
+        int range = SlashExpansionConfig.Sa.FrostDomain.radius();
         AABB aabb = player.getBoundingBox().inflate(range);
-        
+
         List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, aabb,
                 e -> e != player && e.isAlive() && !e.isSpectator()
                         && TargetSelector.test.test(player, e));
@@ -32,11 +34,19 @@ public class FrostDomain {
             }
         }
 
+        float finalDamage = (float) (damage * SlashExpansionConfig.Sa.FrostDomain.damageMultiplier());
+
         for (LivingEntity target : targets) {
-            target.hurt(player.damageSources().magic(), (float) damage);
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 9));
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
-            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 3));
+            target.hurt(player.damageSources().magic(), finalDamage);
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                    SlashExpansionConfig.Sa.FrostDomain.slowDuration(),
+                    SlashExpansionConfig.Sa.FrostDomain.slowAmplifier()));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+                    SlashExpansionConfig.Sa.FrostDomain.weaknessDuration(),
+                    SlashExpansionConfig.Sa.FrostDomain.weaknessAmplifier()));
+            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
+                    SlashExpansionConfig.Sa.FrostDomain.digSlowDuration(),
+                    SlashExpansionConfig.Sa.FrostDomain.digSlowAmplifier()));
 
             if (world instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,

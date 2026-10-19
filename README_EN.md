@@ -36,6 +36,8 @@ Base Damage = max(10.0, Blade Base Damage + Refine×0.5 + Strength Enchantment L
 
 This base is then multiplied by each SA's **damage multiplier**, ensuring that skills stay relevant alongside your gear progression.
 
+> The damage floor, refine bonus, power bonus and every SA's multiplier can all be tuned in the config file.
+
 ---
 
 ## ✨ New Special Effects
@@ -52,6 +54,8 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 ---
 
 ## 🎯 Survival Mode Acquisition
+
+> Every structure, SA and chance in the table below can be changed in the `[loot]` config section.
 
 ### SA Acquisition: Structure Chests
 
@@ -77,6 +81,56 @@ PS : The recipe of "Power of the Wind God" : Bottom left is strong_swift potion,
 3. Left-click to transfer the SA/SE to the blade.
 4. **SA**: Hold the blade, then right-click and hold to unleash the skill.
    **SE**: Passive effect — active while held.
+
+---
+
+## ⚙️ Configuration
+
+All tunable values, **SA loot acquisition** and **SE crafting recipes** are defined in
+**`config/slashexpansion-common.toml`** (generated on first launch).
+
+Numeric changes take effect after restarting the game; `[loot]` / `[recipe]` changes apply after a server restart or `/reload`.
+
+| Section                  | Contents                                                                        |
+| :----------------------- | :------------------------------------------------------------------------------ |
+| `[damage]`               | Base damage formula: damage floor, refine bonus, Power enchantment bonus        |
+| `[sa.<skill>]`           | Per-SA damage multiplier, search range, sword count, radius, effect duration/level |
+| `[entities.giant_slash]` | Giant slash (Zhan Tian Ba Jian Shu / Jian Dang Ba Huang) flight and hit settings |
+| `[se.<effect>]`          | Per-SE duration, amplifier, multiplier, check interval                          |
+| `[loot]`                 | How SAs are obtained from structure chests                                      |
+| `[recipe]`               | SE crafting recipes                                                             |
+
+### SA Acquisition (`[loot]`)
+
+```toml
+[loot]
+enabled = true
+item = "slashblade:proudsoul_sphere"     # dropped item
+# Each entry: "loot table id|SA id|chance (0~1)"
+entries = [
+  "minecraft:chests/ancient_city|slashexpansion:wan_jian_gui_zong|0.10",
+  "minecraft:chests/end_city_treasure|slashexpansion:rift_slash|0.25"
+]
+```
+
+### SE Crafting (`[recipe]`)
+
+```toml
+[recipe]
+overrideJsonRecipes = true               # whether this config overrides the built-in JSON recipes
+
+[recipe.frost_glow]                      # one block per SE (6 in total)
+enabled = true
+shapeless = false                        # true = shapeless recipe from `ingredients`
+resultItem = "slashblade:proudsoul_crystal"
+pattern = ["CIC", "BWP", "CAC"]          # 1~3 rows, 1~3 chars per row, space = empty
+keys = ["C=slashblade:proudsoul_crystal", "I=minecraft:blue_ice"]
+ingredients = []                         # used only when shapeless = true
+```
+
+- Recipe ids are fixed as `slashexpansion:<se id>_proudsoul_crystal`, so configs replace the built-in recipes directly.
+- `enabled = false` removes that recipe; `overrideJsonRecipes = false` keeps the built-in JSON recipes (datapack-overridable) instead.
+- The result always carries `SpecialEffectType = slashexpansion:<se id>`.
 
 ---
 
@@ -132,7 +186,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.4.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.6.jar`.
 
 ### Importing into IDE
 
@@ -145,18 +199,21 @@ The built JAR will be located at `build/libs/slashexpansion-1.4.jar`.
 src/main/
 ├── java/com/lisheng/slashexpansion/
 │   ├── SlashExpansion.java                # Main class
+│   ├── config/
+│   │   ├── SlashExpansionConfig.java      # Config definition (all tunable values)
+│   │   └── ConfigRecipeInjector.java      # Builds & injects SE recipes from config
 │   ├── util/ DamageCalculator.java        # Dynamic damage calculation
 │   ├── entity/                            # Custom entities
 │   ├── specialattack/                     # 9 SA implementations
 │   ├── specialeffect/                     # 6 SE implementations
 │   ├── registry/                          # Registration classes
-│   ├── loot/ LootInjector.java            # Loot table injection
+│   ├── loot/ LootInjector.java            # Config-driven loot injection
 │   └── client/ ClientEvents.java          # Client-side rendering
 └── resources/
     ├── slashexpansion.png
     ├── pack.mcmeta
     ├── META-INF/mods.toml
-    ├── data/slashexpansion/recipes/       # Recipes for SEs
+    ├── data/slashexpansion/recipes/       # Built-in default recipes (overridable by config)
     └── assets/slashexpansion/
         └── lang/
             ├── zh_cn.json                 # Chinese language file

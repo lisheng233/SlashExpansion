@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.entity;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
 import mods.flammpfeil.slashblade.entity.IShootable;
 import mods.flammpfeil.slashblade.util.KnockBacks;
@@ -23,24 +24,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 巨型剑气实体（斩天拔剑术 / 剑荡八荒），数值来自 {@code [entities.giant_slash]}。
+ */
 public class GiantSlashEntity extends Entity implements IShootable {
 
     private LivingEntity owner;
     private double damage;
     private KnockBacks knockback;
     private boolean isVertical;
-    private int maxDistance = 64;
     private double distanceTraveled = 0;
     private int ticks = 0;
     private Vec3 directionVec;
-    private static final int MAX_TICKS = 36;
-    private static final double SPEED_PER_TICK = 2.0;
-    private static final int DAMAGE_COOLDOWN = 3;
 
     private final Map<Entity, Integer> cooldownMap = new HashMap<>();
-
-    private static final double ATTACK_RANGE_VERTICAL = 6.0;
-    private static final double ATTACK_RANGE_HORIZONTAL = 8.0;
 
     public GiantSlashEntity(EntityType<?> type, Level world) {
         super(type, world);
@@ -70,10 +67,11 @@ public class GiantSlashEntity extends Entity implements IShootable {
 
         ticks++;
 
+        double speedPerTick = SlashExpansionConfig.Entities.GiantSlash.speedPerTick();
         Vec3 currentPos = this.position();
-        Vec3 newPos = currentPos.add(directionVec.scale(SPEED_PER_TICK));
+        Vec3 newPos = currentPos.add(directionVec.scale(speedPerTick));
         this.setPos(newPos.x, newPos.y, newPos.z);
-        distanceTraveled += SPEED_PER_TICK;
+        distanceTraveled += speedPerTick;
 
         dealDamage();
 
@@ -86,12 +84,12 @@ public class GiantSlashEntity extends Entity implements IShootable {
             return false;
         });
 
-        if (distanceTraveled >= maxDistance) {
+        if (distanceTraveled >= SlashExpansionConfig.Entities.GiantSlash.maxDistance()) {
             this.remove(RemovalReason.DISCARDED);
             return;
         }
 
-        if (ticks > MAX_TICKS) {
+        if (ticks > SlashExpansionConfig.Entities.GiantSlash.maxTicks()) {
             this.remove(RemovalReason.DISCARDED);
         }
 
@@ -101,10 +99,12 @@ public class GiantSlashEntity extends Entity implements IShootable {
     private void dealDamage() {
         if (owner == null) return;
 
-        double reach = isVertical ? ATTACK_RANGE_VERTICAL : ATTACK_RANGE_HORIZONTAL;
+        double reach = isVertical
+                ? SlashExpansionConfig.Entities.GiantSlash.verticalHitRange()
+                : SlashExpansionConfig.Entities.GiantSlash.horizontalHitRange();
 
         AABB aabb = this.getBoundingBox().inflate(reach);
-        
+
         List<LivingEntity> targets = this.level().getEntitiesOfClass(
             LivingEntity.class,
             aabb,
@@ -121,6 +121,8 @@ public class GiantSlashEntity extends Entity implements IShootable {
             owner
         );
 
+        int cooldown = SlashExpansionConfig.Entities.GiantSlash.damageCooldown();
+
         for (LivingEntity target : targets) {
             if (cooldownMap.containsKey(target)) {
                 continue;
@@ -130,7 +132,7 @@ public class GiantSlashEntity extends Entity implements IShootable {
             target.hurt(damageSource, (float) this.damage);
             knockback.action.accept(target);
 
-            cooldownMap.put(target, DAMAGE_COOLDOWN);
+            cooldownMap.put(target, cooldown);
         }
     }
 

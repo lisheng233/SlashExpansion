@@ -36,6 +36,8 @@
 
 然后乘以各自的 **伤害系数**，确保技能强度与玩家装备同步成长。
 
+> 公式中的伤害下限、锻造加成、力量加成，以及每个 SA 的伤害系数，都可以在配置文件中调整。
+
 ---
 
 ## ✨ 新增 SE 一览
@@ -52,6 +54,8 @@
 ---
 
 ## 🎯 生存模式获取
+
+> 下表中的结构、SA 与概率都可以在配置文件 `[loot]` 中修改。
 
 ### SA 获取：结构宝箱
 
@@ -75,6 +79,58 @@
 2. 将宝珠/结晶与任意拔刀剑放在刀挂台上。
 3. 左键点击，SA/SE 即转移至刀上。
 4. SA 需右键蓄力释放；SE 为被动效果，持有即生效。
+
+---
+
+## ⚙️ 配置文件
+
+所有可调数值、**SA 的结构宝箱获取**以及 **SE 的合成配方**都集中在
+**`config/slashexpansion-common.toml`**（首次启动时自动生成）。
+
+修改数值类配置后重启游戏生效；修改 `[loot]` / `[recipe]` 后重启服务器或执行 `/reload` 即可生效。
+
+| 分组                     | 内容                                                                 |
+| :----------------------- | :------------------------------------------------------------------- |
+| `[damage]`               | 基础伤害公式：伤害下限、锻造加成、力量附魔加成                       |
+| `[sa.<技能>]`            | 每个 SA 的伤害系数、索敌半径、剑数、生效半径、效果时长与等级等       |
+| `[entities.giant_slash]` | 巨型剑气（斩天拔剑术 / 剑荡八荒）的飞行距离、速度、命中判定等        |
+| `[se.<效果>]`            | 每个 SE 的持续时间、效果等级、倍率、检查间隔等                       |
+| `[loot]`                 | SA 的结构宝箱获取方式                                                |
+| `[recipe]`               | SE 的合成配方                                                        |
+
+### SA 获取（`[loot]`）
+
+```toml
+[loot]
+enabled = true
+item = "slashblade:proudsoul_sphere"     # 掉落的物品
+# 每条格式："战利品表ID|SA ID|概率（0~1）"
+entries = [
+  "minecraft:chests/ancient_city|slashexpansion:wan_jian_gui_zong|0.10",
+  "minecraft:chests/end_city_treasure|slashexpansion:rift_slash|0.25"
+]
+```
+
+可以增删条目、更换结构战利品表、修改技能与概率，也可以把同一个 SA 放到多个结构中。
+
+### SE 合成（`[recipe]`）
+
+```toml
+[recipe]
+overrideJsonRecipes = true               # 是否用本配置覆盖内置 JSON 配方
+
+[recipe.frost_glow]                      # 每个 SE 一段，共 6 段
+enabled = true
+shapeless = false                        # true 时按 ingredients 无序合成
+resultItem = "slashblade:proudsoul_crystal"
+pattern = ["CIC", "BWP", "CAC"]          # 1~3 行、每行 1~3 个字符，空格表示留空
+keys = ["C=slashblade:proudsoul_crystal", "I=minecraft:blue_ice"]
+ingredients = []                         # shapeless = true 时读取此列表
+```
+
+- 配方 ID 固定为 `slashexpansion:<SE ID>_proudsoul_crystal`，因此配置修改后可直接替换内置配方。
+- 把 `enabled` 设为 `false` 会移除该配方；把 `overrideJsonRecipes` 设为 `false` 则完全使用模组内置 JSON 配方（可被数据包覆盖）。
+- 产物会自动附加 `SpecialEffectType = slashexpansion:<SE ID>` 标签。
 
 ---
 
@@ -130,7 +186,7 @@
 gradlew build
 ```
 
-构建产物位于 `build/libs/slashexpansion-1.4.jar`。
+构建产物位于 `build/libs/slashexpansion-1.6.jar`。
 
 ### 导入 IDE
 
@@ -143,18 +199,21 @@ gradlew build
 src/main/
 ├── java/com/lisheng/slashexpansion/
 │   ├── SlashExpansion.java                # 主类
+│   ├── config/
+│   │   ├── SlashExpansionConfig.java      # 配置文件定义（所有可调数值）
+│   │   └── ConfigRecipeInjector.java      # 按配置生成并注入 SE 配方
 │   ├── util/ DamageCalculator.java        # 动态伤害计算
 │   ├── entity/                            # 自定义实体
 │   ├── specialattack/                     # 9 个 SA 核心逻辑
 │   ├── specialeffect/                     # 6 个 SE 核心逻辑
 │   ├── registry/                          # 注册类
-│   ├── loot/ LootInjector.java            # 战利品注入
+│   ├── loot/ LootInjector.java            # 按配置注入战利品
 │   └── client/ ClientEvents.java          # 客户端渲染
 └── resources/
     ├── slashexpansion.png
     ├── pack.mcmeta
     ├── META-INF/mods.toml
-    ├── data/slashexpansion/recipes/       # 配方
+    ├── data/slashexpansion/recipes/       # 内置默认配方（可被配置覆盖）
     └── assets/slashexpansion/
         └── lang/
             ├── zh_cn.json                 # 中文语言文件

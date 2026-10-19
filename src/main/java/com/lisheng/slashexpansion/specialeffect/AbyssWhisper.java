@@ -1,5 +1,6 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -12,6 +13,9 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+/**
+ * 深渊的低语，数值来自 {@code [se.abyss_whisper]}。
+ */
 @Mod.EventBusSubscriber
 public class AbyssWhisper extends SpecialEffect {
 
@@ -19,13 +23,15 @@ public class AbyssWhisper extends SpecialEffect {
         super(0, true, false);
     }
 
-    // ★ 每 tick 检查，持续施加自身效果
+    // ★ 定时检查，持续施加自身效果
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
         if (player.level().isClientSide()) return;
-        if (player.tickCount%40 != 0) return;
+
+        int interval = Math.max(1, SlashExpansionConfig.Se.AbyssWhisper.checkInterval());
+        if (player.tickCount % interval != 0) return;
 
         var blade = player.getMainHandItem();
         if (!(blade.getItem() instanceof ItemSlashBlade)) return;
@@ -38,18 +44,27 @@ public class AbyssWhisper extends SpecialEffect {
 
         int xpLevel = player.experienceLevel;
 
-        if (xpLevel <= 99) {
+        if (xpLevel <= SlashExpansionConfig.Se.AbyssWhisper.highLevelThreshold()) {
             // ★ 低等级：自身获得负面效果（持续）
-            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0, false, false,false)); // 失明 (30s)
-            player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0, false, false,false));
-            player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 100, 0, false, false,false));
-            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 60, 4, false, false,false));
-            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 1, false, false,false));
-            // 攻击时额外施加的负面效果在 onHit 中处理
+            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowBlindnessDuration(), 0, false, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.CONFUSION,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowConfusionDuration(), 0, false, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.HUNGER,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowHungerDuration(), 0, false, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowUnluckDuration(),
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowUnluckAmplifier(), false, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.WITHER,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowWitherDuration(),
+                    SlashExpansionConfig.Se.AbyssWhisper.selfLowWitherAmplifier(), false, false, false));
         } else {
             // ★ 高等级：自身获得较轻负面效果
-            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 100, 2, false, false,false));
-            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 0, false, false,false));
+            player.addEffect(new MobEffectInstance(MobEffects.UNLUCK,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfHighUnluckDuration(),
+                    SlashExpansionConfig.Se.AbyssWhisper.selfHighUnluckAmplifier(), false, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.WITHER,
+                    SlashExpansionConfig.Se.AbyssWhisper.selfHighWitherDuration(), 0, false, false, false));
         }
     }
 
@@ -63,10 +78,19 @@ public class AbyssWhisper extends SpecialEffect {
 
         if (!hasSE) return;
 
-        target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 600, 0, false, false,false)); // 失明 (30s)
-        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 240, 4, false, false,false)); // 缓慢 III (12s)
-        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 200, 2, false, false,false)); // 挖掘疲劳 III (10s)
-        target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 9, true, false)); // 凋零 X (10s)
-        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 360, 4, true, false)); // 虚弱 V (18s)
+        target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+                SlashExpansionConfig.Se.AbyssWhisper.targetBlindnessDuration(), 0, false, false, false));
+        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                SlashExpansionConfig.Se.AbyssWhisper.targetSlowDuration(),
+                SlashExpansionConfig.Se.AbyssWhisper.targetSlowAmplifier(), false, false, false));
+        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
+                SlashExpansionConfig.Se.AbyssWhisper.targetDigSlowDuration(),
+                SlashExpansionConfig.Se.AbyssWhisper.targetDigSlowAmplifier(), false, false, false));
+        target.addEffect(new MobEffectInstance(MobEffects.WITHER,
+                SlashExpansionConfig.Se.AbyssWhisper.targetWitherDuration(),
+                SlashExpansionConfig.Se.AbyssWhisper.targetWitherAmplifier(), true, false));
+        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+                SlashExpansionConfig.Se.AbyssWhisper.targetWeaknessDuration(),
+                SlashExpansionConfig.Se.AbyssWhisper.targetWeaknessAmplifier(), true, false));
     }
 }
