@@ -70,7 +70,7 @@
     "se.slashexpansion.frost_glow.desc": "§7Eternal Frost\n§fImmune to Freeze damage,§b attacks deal bonus Frost damage",
     "se.slashexpansion.transcendent_will.desc": "§7Infinite Will, Infinite Power!\n§fEnchantments §e+5§f, Damage §c×1.5§f, Crit Chance §e+25%",
     "se.slashexpansion.abyss_whisper.desc": "§7When you gaze into the abyss, the abyss gazes back\n§fChannel abyssal power to curse enemies\n§cCost: §fCurses self at low levels, minor self-curse at high levels",
-    "se.slashexpansion.admin.desc": "§c§lThe power of ultimate authority",
+    "se.slashexpansion.admin.desc": "§c§lThe power of ultimate authority\n§7Immune to damage, debuffs and knockback; melee attacks instantly kill enemies",
     "se.slashexpansion.void_power.desc": "§c§lThe power of the void, which can destroy all the things.\n§7When holding the blade, you are immuned to void damage, debuffs",
 
     "slash_art.slashexpansion.blood_moon_slash": "§4Blood Moon Slash",

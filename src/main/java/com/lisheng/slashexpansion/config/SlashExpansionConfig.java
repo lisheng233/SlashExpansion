@@ -358,6 +358,7 @@ public final class SlashExpansionConfig {
             private static ForgeConfigSpec.IntValue paralysisDuration;
             private static ForgeConfigSpec.IntValue paralysisAmplifier;
             private static ForgeConfigSpec.BooleanValue disableAttacks;
+            private static ForgeConfigSpec.BooleanValue visualOnly;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -381,6 +382,10 @@ public final class SlashExpansionConfig {
 
             public static boolean disableAttacks() {
                 return disableAttacks.get();
+            }
+
+            public static boolean visualOnly() {
+                return visualOnly.get();
             }
         }
 
@@ -565,6 +570,8 @@ public final class SlashExpansionConfig {
                 .defineInRange("paralysisAmplifier", 9, 0, 255);
         Sa.ThorsWrath.disableAttacks = B.comment("麻痹期间是否禁止目标攻击")
                 .define("disableAttacks", true);
+        Sa.ThorsWrath.visualOnly = B.comment("闪电是否仅作视觉表现（true = 不产生原版雷击伤害与火焰）")
+                .define("visualOnly", true);
         B.pop();
 
         // ---------- 不动明王 ----------
@@ -870,6 +877,11 @@ public final class SlashExpansionConfig {
             private static ForgeConfigSpec.IntValue resistanceAmplifier;
             private static ForgeConfigSpec.IntValue messageCooldownTicks;
             private static ForgeConfigSpec.BooleanValue autoExperience;
+            private static ForgeConfigSpec.BooleanValue damageImmunity;
+            private static ForgeConfigSpec.BooleanValue preventNegativeEffects;
+            private static ForgeConfigSpec.BooleanValue instaKill;
+            private static ForgeConfigSpec.DoubleValue instaKillRadius;
+            private static ForgeConfigSpec.BooleanValue instaKillPlayers;
 
             public static int permissionLevel() {
                 return permissionLevel.get();
@@ -889,6 +901,26 @@ public final class SlashExpansionConfig {
 
             public static boolean autoExperience() {
                 return autoExperience.get();
+            }
+
+            public static boolean damageImmunity() {
+                return damageImmunity.get();
+            }
+
+            public static boolean preventNegativeEffects() {
+                return preventNegativeEffects.get();
+            }
+
+            public static boolean instaKill() {
+                return instaKill.get();
+            }
+
+            public static double instaKillRadius() {
+                return instaKillRadius.get();
+            }
+
+            public static boolean instaKillPlayers() {
+                return instaKillPlayers.get();
             }
         }
 
@@ -1141,6 +1173,16 @@ public final class SlashExpansionConfig {
                 .defineInRange("messageCooldownTicks", 200, 0, 100000);
         Se.Admin.autoExperience = B.comment("是否在管理员模式下自动获得经验")
                 .define("autoExperience", true);
+        Se.Admin.damageImmunity = B.comment("是否免疫所有伤害（包括可穿透无敌的伤害类型，如 /kill）")
+                .define("damageImmunity", true);
+        Se.Admin.preventNegativeEffects = B.comment("是否禁止获得任何负面效果")
+                .define("preventNegativeEffects", true);
+        Se.Admin.instaKill = B.comment("是否启用秒杀")
+                .define("instaKill", true);
+        Se.Admin.instaKillRadius = B.comment("秒杀溅射半径（格，0 = 只秒杀直接攻击的目标）")
+                .defineInRange("instaKillRadius", 3.0D, 0.0D, 64.0D);
+        Se.Admin.instaKillPlayers = B.comment("是否可秒杀其他玩家（创造/旁观模式仍然免疫）")
+                .define("instaKillPlayers", true);
         B.pop();
 
         // ---------- 烈焰之心 ----------

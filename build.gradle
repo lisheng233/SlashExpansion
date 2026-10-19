@@ -4,16 +4,16 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-// ??????
+// 修改这里
 group = 'com.lisheng.slashexpansion'
-version = '1.7'
+version = '1.8'
 
 base {
 
     archivesName = 'slashexpansion'
 }
 
-// ... ??????????????...
+// ... 下面的代码保持不变 ...
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -27,6 +27,9 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            // SlashBlade 1.9.65 自带的 mixin 使用了生产环境 refmap，
+            // 开发环境下需要禁用 refmap 重映射，否则 MixinBlockBehaviour 注入会失败。
+            jvmArg '-Dmixin.env.disableRefMap=true'
             mods { "${mod_id}" { source sourceSets.main } }
         }
         client { property 'forge.enabledGameTestNamespaces', mod_id }
@@ -43,11 +46,12 @@ repositories {
         url = 'https://maven.minecraftforge.net/'
     }
 
-    // ??? CurseMaven ??? 0.10.0 ???
+    // Modrinth Maven：SlashBlade: Resharped 的发布渠道
     maven {
-        url "https://www.cursemaven.com"
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
         content {
-            includeGroup "curse.maven"
+            includeGroup 'maven.modrinth'
         }
     }
 }
@@ -56,9 +60,11 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // ==========================================================
-    // 1.1.18 ??? + ??? Log4j ??????
+    // SlashBlade: Resharped 1.9.65
+    // 满足 mods.toml 中 slashblade [1.5.0,) 的依赖要求；
+    // 同时剔除 Log4j，避免与 Minecraft 自带版本冲突。
     // ==========================================================
-    implementation(fg.deobf("curse.maven:slashblade-resharped-1022428:6164820")) {
+    implementation(fg.deobf("maven.modrinth:slashblade-resharped:1.9.65")) {
         exclude group: 'org.apache.logging.log4j'
     }
 }

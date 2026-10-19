@@ -29,6 +29,8 @@ The mod **adds no new blades** — it focuses purely on enriching the skill syst
 | **Thor's Wrath**          | Calls down 7 lightning bolts on random enemies within 20 blocks, each dealing 120% damage and 3s paralysis | 120% × 7 | Bastion Treasure (12%) |
 | **Immovable King**        | Immune to all damage but unable to move for 3s, then deals 200% damage in a 10-block radius with knockback | 200% | Bastion Treasure (8%) |
 
+> Note: **Thor's Wrath** lightning bolts are visual-only by default (`[sa.thors_wrath] visualOnly = true`), so they do not deal vanilla lightning damage or set fires.
+
 ### Damage Calculation
 
 All SAs share the same base damage formula:
@@ -52,7 +54,7 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 | **Transcendent Will**     | Enchantments +5, Damage ×1.5, Crit Chance +25%                                                                                                                                                             |
 | **Abyss Whisper**         | Low level (≤99): Self Nausea I + Hunger I + Bad Luck V + Wither II; Applies Wither X, Blindness I, Weakness V, Slowness V, Mining Fatigue III to enemies. High level (≥100): Self Bad Luck III + Wither I |
 | Power Of The Void               | Immune to void damage and debuffs, attacks deal bonus void damage and debuffs                                                                                                                               |
-| Power Of The Administrator      | (required OP) Immune to damage and debuffs, attacks will kill the target, etc.                                                                                                                          |
+| Power Of The Administrator      | (required OP) Immune to all damage, debuffs and knockback; can fly, auto-heals and clears debuffs; melee attacks instantly kill the target (3-block splash by default, configurable) |
 | **Flame Heart**                 | Attacks ignite enemies for 5s; immune to fire damage; +20% movement speed in the Nether                                                                                                                     |
 | **Void Walker**                 | Hovers when stepping off blocks; +30% speed in the End; ×2 damage to Endermen                                                                                                                               |
 | **Tempered Soul**               | Blade durability cost halved; +1 durability per kill; +10 effective refine                                                                                                                                  |
@@ -196,6 +198,8 @@ Replace `wind_god_power` with any of the following:
 | Minecraft             | 1.20.1  |
 | SlashBlade: Resharped | 1.5.0+  |
 
+> The dev compile dependency is SlashBlade: Resharped **1.9.65** (Modrinth Maven); 1.5.0+ is supported at runtime.
+
 ---
 
 ## ⚙️ Developer Information
@@ -206,7 +210,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.7.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.8.jar`.
 
 ### Importing into IDE
 

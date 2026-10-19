@@ -55,6 +55,9 @@ public class ThorsWrath {
             LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(world);
             if (bolt != null) {
                 bolt.moveTo(target.getX(), target.getY(), target.getZ());
+                if (SlashExpansionConfig.Sa.ThorsWrath.visualOnly()) {
+                    bolt.setVisualOnly(true);
+                }
                 if (player instanceof ServerPlayer serverPlayer) {
                     bolt.setCause(serverPlayer);
                 }

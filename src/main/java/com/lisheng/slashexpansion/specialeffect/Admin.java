@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -14,9 +15,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +35,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 管理员之力，数值来自 {@code [se.admin]}。
+ *
+ * <p>防御：免疫所有伤害（含可穿透无敌的伤害类型）、免疫击退、禁止获得负面效果、取消死亡。</p>
+ * <p>秒杀：近战攻击直接秒杀目标（不依赖伤害事件，因此免疫某类伤害的目标也会被秒杀），
+ * 并可按配置的溅射半径一并秒杀周围敌人。</p>
  */
 @Mod.EventBusSubscriber
 public class Admin extends SpecialEffect {
@@ -47,6 +58,14 @@ public class Admin extends SpecialEffect {
         return SlashExpansionConfig.Se.Admin.permissionLevel();
     }
 
+    private static boolean bladeHasSE(Player player) {
+        ItemStack mainHand = player.getMainHandItem();
+        if (!(mainHand.getItem() instanceof ItemSlashBlade)) return false;
+        return mainHand.getCapability(ItemSlashBlade.BLADESTATE)
+                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.ADMIN.getId()))
+                .orElse(false);
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
@@ -59,16 +78,7 @@ public class Admin extends SpecialEffect {
             return;
         }
 
-        ItemStack mainHand = player.getMainHandItem();
-
-        // 检查是否应该拥有管理员模式
-        boolean shouldHaveAdmin = false;
-        if (mainHand.getItem() instanceof ItemSlashBlade) {
-            shouldHaveAdmin = mainHand.getCapability(ItemSlashBlade.BLADESTATE)
-                    .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.ADMIN.getId()))
-                    .orElse(false) && player.hasPermissions(requiredPermissionLevel());
-        }
-
+        boolean shouldHaveAdmin = bladeHasSE(player) && player.hasPermissions(requiredPermissionLevel());
         boolean isInAdminMode = isAdminModeEnabled(player);
 
         if (shouldHaveAdmin && !isInAdminMode) {
@@ -79,11 +89,149 @@ public class Admin extends SpecialEffect {
             // 退出管理员模式
             setAdminMode(player, false);
             revokeAdminAbilities(player);
-        } else if (shouldHaveAdmin && isInAdminMode) {
+        } else if (shouldHaveAdmin) {
             // 持续应用效果
             applyAdminEffects(player);
         }
     }
+
+    // ================================================================
+    // 防御
+    // ================================================================
+
+    /** 在伤害判定的最早阶段直接取消，避免命中效果、击退等副作用。 */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onLivingAttack(LivingAttackEvent event) {
+        if (!SlashExpansionConfig.Se.Admin.damageImmunity()) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (isAdminModeEnabled(player)) {
+            event.setCanceled(true);
+        }
+    }
+
+    /** 免疫击退。 */
+    @SubscribeEvent
+    public static void onLivingKnockBack(LivingKnockBackEvent event) {
+        if (!SlashExpansionConfig.Se.Admin.damageImmunity()) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (isAdminModeEnabled(player)) {
+            event.setCanceled(true);
+        }
+    }
+
+    /** 禁止获得任何负面效果。 */
+    @SubscribeEvent
+    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
+        if (!SlashExpansionConfig.Se.Admin.preventNegativeEffects()) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!isAdminModeEnabled(player)) return;
+        if (!event.getEffectInstance().getEffect().isBeneficial()) {
+            event.setResult(Event.Result.DENY);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onLivingHurt(LivingHurtEvent event) {
+        LivingEntity entity = event.getEntity();
+
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
+        if (!bladeHasSE(player)) {
+            return;
+        }
+
+        if (!player.hasPermissions(requiredPermissionLevel()) || !isAdminModeEnabled(player)) {
+            event.setCanceled(false);
+            sendPermissionDeniedMessage(player);
+            return;
+        }
+
+        if (SlashExpansionConfig.Se.Admin.damageImmunity()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerDie(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        if (isAdminModeEnabled(player)) {
+            event.cancel();
+            player.deathTime = 0;
+        }
+    }
+
+    // ================================================================
+    // 秒杀
+    // ================================================================
+
+    /**
+     * 近战攻击直接秒杀。
+     * 该事件在伤害计算之前触发，因此即使目标免疫某类伤害（例如烈焰人免疫火焰）也能被秒杀。
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onAttackEntity(AttackEntityEvent event) {
+        if (!SlashExpansionConfig.Se.Admin.instaKill()) return;
+
+        Player player = event.getEntity();
+        if (!isAdminModeEnabled(player)) return;
+
+        if (event.getTarget() instanceof LivingEntity target) {
+            adminKill(player, target);
+        }
+    }
+
+    /** 非近战来源（爆炸、荆棘、弹射物等）同样秒杀。 */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void killEntity(LivingHurtEvent event) {
+        if (!SlashExpansionConfig.Se.Admin.instaKill()) return;
+
+        if (!(event.getSource().getEntity() instanceof Player player)) return;
+        if (!isAdminModeEnabled(player)) return;
+
+        LivingEntity target = event.getEntity();
+        if (target != null) {
+            adminKill(player, target);
+        }
+    }
+
+    private static void adminKill(Player player, LivingEntity target) {
+        if (target == player || !target.isAlive()) return;
+        if (target instanceof Player other && (!SlashExpansionConfig.Se.Admin.instaKillPlayers()
+                || other.isCreative() || other.isSpectator())) {
+            return;
+        }
+
+        DamageSource source = player.damageSources().playerAttack(player);
+        instantKill(target, source);
+
+        double radius = SlashExpansionConfig.Se.Admin.instaKillRadius();
+        if (radius <= 0.0D) return;
+
+        AABB box = target.getBoundingBox().inflate(radius);
+        List<LivingEntity> nearbyTargets = target.level().getEntitiesOfClass(LivingEntity.class, box,
+                e -> e != player && e != target && e.isAlive()
+                        && (!(e instanceof Player p) || (SlashExpansionConfig.Se.Admin.instaKillPlayers()
+                                && !p.isCreative() && !p.isSpectator())));
+
+        for (LivingEntity nearby : nearbyTargets) {
+            instantKill(nearby, source);
+        }
+    }
+
+    private static void instantKill(LivingEntity target, DamageSource source) {
+        target.invulnerableTime = 0;
+        target.setHealth(0.0F);
+        target.die(source);
+    }
+
+    // ================================================================
+    // 状态与效果
+    // ================================================================
 
     /**
      * 检查玩家是否处于管理员模式
@@ -170,21 +318,28 @@ public class Admin extends SpecialEffect {
             player.setAirSupply(player.getMaxAirSupply());
         }
 
-        // 5. 启用无敌模式
+        // 5. 灭火并清除摔落累计
+        if (player.isOnFire()) {
+            player.clearFire();
+        }
+        player.fallDistance = 0.0F;
+
+        // 6. 启用无敌模式
         if (!player.getAbilities().invulnerable) {
             player.getAbilities().invulnerable = true;
             player.onUpdateAbilities();
         }
 
-        // 6. 启用飞行模式
+        // 7. 启用飞行模式
         if (!player.getAbilities().mayfly) {
             player.getAbilities().mayfly = true;
             player.onUpdateAbilities();
         }
-        // 7. 移除所有负面效果
+
+        // 8. 移除所有负面效果
         removeNegativeEffects(player);
 
-        // 8. 自动获得经验
+        // 9. 自动获得经验
         if (SlashExpansionConfig.Se.Admin.autoExperience()) {
             int xpNeeded = player.getXpNeededForNextLevel() - player.totalExperience;
             int xpToGive = Math.max(1, xpNeeded);
@@ -229,55 +384,5 @@ public class Admin extends SpecialEffect {
         // 清除管理员模式标记
         setAdminMode(player, false);
         messageCooldown.remove(player.getUUID());
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerDie(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-
-        if (isAdminModeEnabled(player)) {
-            event.cancel();
-            player.deathTime = 0;
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void killEntity(LivingHurtEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (!(event.getSource().getEntity() instanceof Player player)) return;
-        if (isAdminModeEnabled(player)) {
-            entity.invulnerableTime = 0;
-            entity.setHealth(0);
-            entity.die(event.getSource());
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onLivingHurt(LivingHurtEvent event) {
-        LivingEntity entity = event.getEntity();
-
-        if (!(entity instanceof Player player)) {
-            return;
-        }
-
-        ItemStack mainHand = player.getMainHandItem();
-        if (!(mainHand.getItem() instanceof ItemSlashBlade)) {
-            return;
-        }
-
-        boolean hasAdminSE = mainHand.getCapability(ItemSlashBlade.BLADESTATE)
-                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.ADMIN.getId()))
-                .orElse(false);
-
-        if (hasAdminSE) {
-            if (!player.hasPermissions(requiredPermissionLevel()) || !isAdminModeEnabled(player)) {
-                event.setCanceled(false);
-                sendPermissionDeniedMessage(player);
-                return;
-            }
-            event.setCanceled(true);
-        }
     }
 }
