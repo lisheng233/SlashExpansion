@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -227,6 +228,10 @@ public class Admin extends SpecialEffect {
         target.invulnerableTime = 0;
         target.setHealth(0.0F);
         target.die(source);
+        // 兜底：部分实体重写了 die() 而没有真正从世界移除，这里强制移除
+        if (!target.isRemoved()) {
+            target.remove(Entity.RemovalReason.KILLED);
+        }
     }
 
     // ================================================================

@@ -882,6 +882,7 @@ public final class SlashExpansionConfig {
             private static ForgeConfigSpec.BooleanValue instaKill;
             private static ForgeConfigSpec.DoubleValue instaKillRadius;
             private static ForgeConfigSpec.BooleanValue instaKillPlayers;
+            private static ForgeConfigSpec.BooleanValue preventKick;
 
             public static int permissionLevel() {
                 return permissionLevel.get();
@@ -921,6 +922,10 @@ public final class SlashExpansionConfig {
 
             public static boolean instaKillPlayers() {
                 return instaKillPlayers.get();
+            }
+
+            public static boolean preventKick() {
+                return preventKick.get();
             }
         }
 
@@ -1183,6 +1188,8 @@ public final class SlashExpansionConfig {
                 .defineInRange("instaKillRadius", 3.0D, 0.0D, 64.0D);
         Se.Admin.instaKillPlayers = B.comment("是否可秒杀其他玩家（创造/旁观模式仍然免疫）")
                 .define("instaKillPlayers", true);
+        Se.Admin.preventKick = B.comment("是否阻止服务器把管理员踢出（移动过快、违规检测、/kick 等）")
+                .define("preventKick", true);
         B.pop();
 
         // ---------- 烈焰之心 ----------

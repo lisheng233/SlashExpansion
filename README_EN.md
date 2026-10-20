@@ -54,7 +54,7 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 | **Transcendent Will**     | Enchantments +5, Damage ×1.5, Crit Chance +25%                                                                                                                                                             |
 | **Abyss Whisper**         | Low level (≤99): Self Nausea I + Hunger I + Bad Luck V + Wither II; Applies Wither X, Blindness I, Weakness V, Slowness V, Mining Fatigue III to enemies. High level (≥100): Self Bad Luck III + Wither I |
 | Power Of The Void               | Immune to void damage and debuffs, attacks deal bonus void damage and debuffs                                                                                                                               |
-| Power Of The Administrator      | (required OP) Immune to all damage, debuffs and knockback; can fly, auto-heals and clears debuffs; melee attacks instantly kill the target (3-block splash by default, configurable) |
+| Power Of The Administrator      | (required OP) Immune to all damage, debuffs and knockback; can fly, auto-heals and clears debuffs; melee attacks instantly kill the target (3-block splash by default, configurable). Damage/removal/kicks are blocked at Mixin level |
 | **Flame Heart**                 | Attacks ignite enemies for 5s; immune to fire damage; +20% movement speed in the Nether                                                                                                                     |
 | **Void Walker**                 | Hovers when stepping off blocks; +30% speed in the End; ×2 damage to Endermen                                                                                                                               |
 | **Tempered Soul**               | Blade durability cost halved; +1 durability per kill; +10 effective refine                                                                                                                                  |
@@ -210,7 +210,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.8.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.9.jar`.
 
 ### Importing into IDE
 
@@ -230,6 +230,7 @@ src/main/
 │   ├── entity/                            # Custom entities
 │   ├── specialattack/                     # 9 SA implementations
 │   ├── specialeffect/                     # 6 SE implementations
+│   ├── mixin/                             # Mixin guards (health / removal / kick)
 │   ├── registry/                          # Registration classes
 │   ├── loot/ LootInjector.java            # Config-driven loot injection
 │   └── client/ ClientEvents.java          # Client-side rendering
