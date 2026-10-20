@@ -13,7 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 阻止服务器把处于管理员模式的玩家踢出（移动过快检测、违规检测、/kick 等都会走这里）。
  *
- * <p>服务器正在关闭时一律放行，避免挡住关服流程。</p>
+ * <p>以下情况一律放行，避免挡住关服或把服务器卡在异常状态：</p>
+ * <ul>
+ *   <li>服务器正在关闭；</li>
+ *   <li>玩家实体已经被移除（例如被其他指令 setRemoved 造成的幽灵状态）；</li>
+ *   <li>玩家已经死亡/濒死。</li>
+ * </ul>
  */
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
@@ -27,6 +32,9 @@ public abstract class ServerGamePacketListenerImplMixin {
             return;
         }
         if (this.player.server != null && !this.player.server.isRunning()) {
+            return;
+        }
+        if (this.player.isRemoved() || this.player.isDeadOrDying()) {
             return;
         }
         if (AdminProtection.shouldPreventKick(this.player)) {

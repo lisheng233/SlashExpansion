@@ -91,6 +91,11 @@ public class Admin extends SpecialEffect {
             return;
         }
 
+        // 已被其他模组/指令移除的幽灵玩家：不再施加任何效果，交给服务器清理
+        if (player.isRemoved()) {
+            return;
+        }
+
         boolean shouldHaveAdmin = bladeHasSE(player) && player.hasPermissions(requiredPermissionLevel());
         boolean isInAdminMode = isAdminModeEnabled(player);
 
