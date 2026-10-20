@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * 阻止服务器把处于管理员模式的玩家踢出（移动过快检测、违规检测、/kick 等都会走这里）。
+ *
+ * <p>服务器正在关闭时一律放行，避免挡住关服流程。</p>
  */
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
@@ -21,6 +23,12 @@ public abstract class ServerGamePacketListenerImplMixin {
 
     @Inject(method = "disconnect", at = @At("HEAD"), cancellable = true)
     private void slashexpansion$preventAdminKick(Component reason, CallbackInfo ci) {
+        if (this.player == null) {
+            return;
+        }
+        if (this.player.server != null && !this.player.server.isRunning()) {
+            return;
+        }
         if (AdminProtection.shouldPreventKick(this.player)) {
             ci.cancel();
         }

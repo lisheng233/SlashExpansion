@@ -76,7 +76,7 @@
     "slashblade.slash_art.slashexpansion.blood_moon_slash": "§4血月斩",
     "slashexpansion.slash_art.blood_moon_slash": "§4血月斩",
     "slashexpansion.slash_arts.blood_moon_slash": "§4血月斩",
-    "slash_art.slashexpansion.blood_moon_slash.desc": "§7燃烧自身生命，对前方8格内的敌人造成相当于消耗生命两倍的伤害（无视护甲）。",
+    "slash_art.slashexpansion.blood_moon_slash.desc": "§7燃烧自身生命，对前方8格内的敌人造成「基础伤害 + 消耗生命兑换的伤害（随锻造数提升、无视护甲）」。",
 
     "slash_art.slashexpansion.thors_wrath": "§e雷神之怒",
     "slashblade.slash_art.slashexpansion.thors_wrath": "§e雷神之怒",
@@ -97,7 +97,7 @@
     "se.slashexpansion.void_walker.desc": "§7虚空行者\n§f站在方块边缘时自动悬浮；末地移速 §a+30%§f；攻击末影人伤害 §c×2",
 
     "se.slashexpansion.tempered_soul": "§7千锤百炼",
-    "se.slashexpansion.tempered_soul.desc": "§7千锤百炼\n§f刀耐久消耗减半；每次击杀恢复 §a1§f 点耐久；锻造收益等效 §e+10",
+    "se.slashexpansion.tempered_soul.desc": "§7千锤百炼\n§f耐久消耗减半；击杀恢复 §a1§f 点耐久；每 §e10§f 杀敌消耗 §e100§f 耀魂 +1 锻造（最多 100 次）",
 
     "se.slashexpansion.grim_reapers_pact": "§4死神之约",
     "se.slashexpansion.grim_reapers_pact.desc": "§7死神之约\n§f生命低于 §c30%§f 时攻击力 §c+50%§f，但每秒流失 §c1§f 点生命（不会致死）",

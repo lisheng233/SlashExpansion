@@ -51,6 +51,7 @@ public class Admin extends SpecialEffect {
 
     private static final String ADMIN_TAG = "SlashExpansion_AdminMode";
     private static final String ADMIN_ENABLED_TAG = "AdminEnabled";
+    private static final String ABILITY_BACKUP_TAG = "SlashExpansion_AdminAbilityBackup";
 
     private static final int MAX_FOOD_LEVEL = 20;
 
@@ -94,7 +95,8 @@ public class Admin extends SpecialEffect {
         boolean isInAdminMode = isAdminModeEnabled(player);
 
         if (shouldHaveAdmin && !isInAdminMode) {
-            // 进入管理员模式
+            // 进入管理员模式（先记录原有能力，退出时精确还原）
+            backupAbilities(player);
             setAdminMode(player, true);
             applyAdminEffects(player);
         } else if (!shouldHaveAdmin && isInAdminMode) {
@@ -458,19 +460,49 @@ public class Admin extends SpecialEffect {
      * 撤销管理员能力
      */
     private static void revokeAdminAbilities(Player player) {
-        if (player.getAbilities().invulnerable) {
-            player.getAbilities().invulnerable = false;
-            player.onUpdateAbilities();
-        }
-
-        if (player.getAbilities().mayfly && !player.isCreative() && !player.isSpectator()) {
-            player.getAbilities().mayfly = false;
-            player.getAbilities().flying = false;
-            player.onUpdateAbilities();
-        }
+        restoreAbilities(player);
 
         // 清除管理员模式标记
         setAdminMode(player, false);
         messageCooldown.remove(player.getUUID());
+    }
+
+    /** 记录进入管理员模式前的无敌/飞行状态，退出时精确还原（尤其不能误清创造模式能力）。 */
+    private static void backupAbilities(Player player) {
+        CompoundTag data = player.getPersistentData();
+        if (data.contains(ABILITY_BACKUP_TAG)) {
+            return;
+        }
+        CompoundTag backup = new CompoundTag();
+        backup.putBoolean("invulnerable", player.getAbilities().invulnerable);
+        backup.putBoolean("mayfly", player.getAbilities().mayfly);
+        backup.putBoolean("flying", player.getAbilities().flying);
+        data.put(ABILITY_BACKUP_TAG, backup);
+    }
+
+    private static void restoreAbilities(Player player) {
+        boolean creativeLike = player.isCreative() || player.isSpectator();
+        CompoundTag data = player.getPersistentData();
+
+        if (data.contains(ABILITY_BACKUP_TAG)) {
+            CompoundTag backup = data.getCompound(ABILITY_BACKUP_TAG);
+            boolean invulnerable = backup.getBoolean("invulnerable") || creativeLike;
+            boolean mayfly = backup.getBoolean("mayfly") || creativeLike;
+            player.getAbilities().invulnerable = invulnerable;
+            player.getAbilities().mayfly = mayfly;
+            player.getAbilities().flying = backup.getBoolean("flying") && mayfly;
+            data.remove(ABILITY_BACKUP_TAG);
+            player.onUpdateAbilities();
+            return;
+        }
+
+        // 没有备份时：绝不触碰创造/旁观的原版能力
+        if (creativeLike) {
+            return;
+        }
+        player.getAbilities().invulnerable = false;
+        player.getAbilities().mayfly = false;
+        player.getAbilities().flying = false;
+        player.onUpdateAbilities();
     }
 }

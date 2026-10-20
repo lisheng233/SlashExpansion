@@ -25,7 +25,7 @@ The mod **adds no new blades** — it focuses purely on enriching the skill syst
 | **Jian Dang Ba Huang**    | Massive horizontal energy slash, travels 64 blocks, ignores obstacles                        | 150%              | Ancient City (10%), End City (12%)        |
 | **Geng Jin Jian Jue**     | 1–100 golden phantom blades (count tied to refine count), ignores armor                     | 160%              | Ancient City (8%), Bastion Treasure (10%) |
 | **Qi Sha Jian Jie**       | Domain deals 7 sequential hits, cycling through 7 damage types; range scales with kill count | 100% × 7         | Ancient City (5%), Nether Fortress (6%)   |
-| **Blood Moon Slash**      | Sacrifices 30% of current health to deal 2× the consumed health to enemies within 8 blocks in front, ignoring armor | Consumed HP × 2 | Nether Fortress (10%) |
+| **Blood Moon Slash**      | Sacrifices 30% of current health to deal base damage + converted damage from the consumed health (scales with refine, ignores armor) to enemies within 8 blocks in front | Base + converted | Nether Fortress (10%) |
 | **Thor's Wrath**          | Calls down 7 lightning bolts on random enemies within 20 blocks, each dealing 120% damage and 3s paralysis | 120% × 7 | Bastion Treasure (12%) |
 | **Immovable King**        | Immune to all damage but unable to move for 3s, then deals 200% damage in a 10-block radius with knockback | 200% | Bastion Treasure (8%) |
 
@@ -57,7 +57,7 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 | Power Of The Administrator      | (required OP) Immune to all damage, debuffs and knockback; can fly, auto-heals and clears debuffs; melee attacks instantly kill the target (3-block splash by default, configurable). Damage/removal/kicks are blocked at Mixin level |
 | **Flame Heart**                 | Attacks ignite enemies for 5s; immune to fire damage; +20% movement speed in the Nether                                                                                                                     |
 | **Void Walker**                 | Hovers when stepping off blocks; +30% speed in the End; ×2 damage to Endermen                                                                                                                               |
-| **Tempered Soul**               | Blade durability cost halved; +1 durability per kill; +10 effective refine                                                                                                                                  |
+| **Tempered Soul**               | Durability cost halved; +1 durability per kill; every 10 kills consume 100 proud souls for +1 refine (max 100 times) |
 | **Grim Reaper's Pact**          | Below 30% health: +50% attack, but lose 1 HP per second (never lethal)                                                                                                                                      |
 | **Elven Blessing**              | Day: +20% speed; Night: +30% attack; immune to poison; +50% arrow damage                                                                                                                                     |
 | **Dragon Soul Resonance**       | Permanent +10% attack after slaying the Ender Dragon; 5% chance on hit to unleash dragon breath                                                                                                             |
@@ -210,7 +210,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.9.2.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.9.3.jar`.
 
 ### Importing into IDE
 

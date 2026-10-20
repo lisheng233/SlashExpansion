@@ -77,7 +77,7 @@
     "slashblade.slash_art.slashexpansion.blood_moon_slash": "§4Blood Moon Slash",
     "slashexpansion.slash_art.blood_moon_slash": "§4Blood Moon Slash",
     "slashexpansion.slash_arts.blood_moon_slash": "§4Blood Moon Slash",
-    "slash_art.slashexpansion.blood_moon_slash.desc": "§7Sacrifices your own life force to strike enemies within 8 blocks in front for twice the consumed health (ignores armor).",
+    "slash_art.slashexpansion.blood_moon_slash.desc": "§7Sacrifices your own life force to strike enemies within 8 blocks in front for base damage plus converted damage from the consumed health (scales with refine, ignores armor).",
 
     "slash_art.slashexpansion.thors_wrath": "§eThor's Wrath",
     "slashblade.slash_art.slashexpansion.thors_wrath": "§eThor's Wrath",
@@ -98,7 +98,7 @@
     "se.slashexpansion.void_walker.desc": "§7Void Walker\n§fHovers when stepping off blocks; §a+30%§f speed in the End; §c×2§f damage to Endermen",
 
     "se.slashexpansion.tempered_soul": "§7Tempered Soul",
-    "se.slashexpansion.tempered_soul.desc": "§7Tempered Soul\n§fDurability cost halved; §a+1§f durability per kill; §e+10§f effective refine",
+    "se.slashexpansion.tempered_soul.desc": "§7Tempered Soul\n§fDurability cost halved; §a+1§f durability per kill; every §e10§f kills consume §e100§f proud souls for §e+1§f refine (max 100)",
 
     "se.slashexpansion.grim_reapers_pact": "§4Grim Reaper's Pact",
     "se.slashexpansion.grim_reapers_pact.desc": "§7Grim Reaper's Pact\n§fBelow §c30%§f health: §c+50%§f attack, but lose §c1§f HP per second (never lethal)",

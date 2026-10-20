@@ -331,6 +331,7 @@ public final class SlashExpansionConfig {
         public static final class BloodMoonSlash {
             private static ForgeConfigSpec.DoubleValue healthCostPercent;
             private static ForgeConfigSpec.DoubleValue damagePerHealth;
+            private static ForgeConfigSpec.DoubleValue refineScalingPerLevel;
             private static ForgeConfigSpec.IntValue range;
             private static ForgeConfigSpec.DoubleValue minHealthAfterCost;
 
@@ -340,6 +341,10 @@ public final class SlashExpansionConfig {
 
             public static float damagePerHealth() {
                 return (float) (double) damagePerHealth.get();
+            }
+
+            public static float refineScalingPerLevel() {
+                return (float) (double) refineScalingPerLevel.get();
             }
 
             public static int range() {
@@ -548,8 +553,10 @@ public final class SlashExpansionConfig {
                 .push("blood_moon_slash");
         Sa.BloodMoonSlash.healthCostPercent = B.comment("消耗当前生命值的比例（0.3 = 30%）")
                 .defineInRange("healthCostPercent", 0.3D, 0.0D, 1.0D);
-        Sa.BloodMoonSlash.damagePerHealth = B.comment("每点消耗生命值转化的伤害")
+        Sa.BloodMoonSlash.damagePerHealth = B.comment("每点消耗生命值转化的基础伤害")
                 .defineInRange("damagePerHealth", 2.0D, 0.0D, 1000.0D);
+        Sa.BloodMoonSlash.refineScalingPerLevel = B.comment("每级锻造数对转化伤害的加成（0.02 = 每级 +2%）")
+                .defineInRange("refineScalingPerLevel", 0.02D, 0.0D, 100.0D);
         Sa.BloodMoonSlash.range = B.comment("生效距离（格，仅命中玩家前方扇形区域内的敌人）")
                 .defineInRange("range", 8, 1, 128);
         Sa.BloodMoonSlash.minHealthAfterCost = B.comment("扣除后至少保留的生命值（防止自杀）")
@@ -978,7 +985,9 @@ public final class SlashExpansionConfig {
         public static final class TemperedSoul {
             private static ForgeConfigSpec.DoubleValue durabilityCostMultiplier;
             private static ForgeConfigSpec.IntValue durabilityPerKill;
-            private static ForgeConfigSpec.IntValue refineBonus;
+            private static ForgeConfigSpec.IntValue killsPerRefine;
+            private static ForgeConfigSpec.IntValue proudSoulCost;
+            private static ForgeConfigSpec.IntValue maxRefines;
 
             public static double durabilityCostMultiplier() {
                 return durabilityCostMultiplier.get();
@@ -988,8 +997,16 @@ public final class SlashExpansionConfig {
                 return durabilityPerKill.get();
             }
 
-            public static int refineBonus() {
-                return refineBonus.get();
+            public static int killsPerRefine() {
+                return killsPerRefine.get();
+            }
+
+            public static int proudSoulCost() {
+                return proudSoulCost.get();
+            }
+
+            public static int maxRefines() {
+                return maxRefines.get();
             }
         }
 
@@ -1217,13 +1234,17 @@ public final class SlashExpansionConfig {
         B.pop();
 
         // ---------- 千锤百炼 ----------
-        B.comment("千锤百炼：降低耐久消耗、击杀回复耐久、锻造收益提升").push("tempered_soul");
+        B.comment("千锤百炼：降低耐久消耗、击杀回复耐久、以杀敌数与耀魂换取额外锻造").push("tempered_soul");
         Se.TemperedSoul.durabilityCostMultiplier = B.comment("耐久消耗倍率（0.5 = 消耗减半）")
                 .defineInRange("durabilityCostMultiplier", 0.5D, 0.0D, 1.0D);
         Se.TemperedSoul.durabilityPerKill = B.comment("每次击杀恢复的耐久点数")
                 .defineInRange("durabilityPerKill", 1, 0, 10000);
-        Se.TemperedSoul.refineBonus = B.comment("等效额外锻造数（本模组 SA 伤害计算中使用，SlashBlade 未提供精炼上限接口）")
-                .defineInRange("refineBonus", 10, 0, 10000);
+        Se.TemperedSoul.killsPerRefine = B.comment("每累计多少杀敌数可提升 1 级锻造")
+                .defineInRange("killsPerRefine", 10, 1, 1000000);
+        Se.TemperedSoul.proudSoulCost = B.comment("每提升 1 级锻造消耗的耀魂数")
+                .defineInRange("proudSoulCost", 100, 0, 10000000);
+        Se.TemperedSoul.maxRefines = B.comment("最多可提升多少次锻造")
+                .defineInRange("maxRefines", 100, 0, 100000);
         B.pop();
 
         // ---------- 死神之约 ----------
