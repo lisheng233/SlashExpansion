@@ -210,7 +210,7 @@ ingredients = []                         # shapeless = true 时读取此列表
 gradlew build
 ```
 
-构建产物位于 `build/libs/slashexpansion-1.9.jar`。
+构建产物位于 `build/libs/slashexpansion-1.9.1.jar`。
 
 ### 导入 IDE
 

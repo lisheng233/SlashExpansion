@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -50,6 +51,12 @@ public class Admin extends SpecialEffect {
     private static final int MAX_FOOD_LEVEL = 20;
 
     private static final ConcurrentHashMap<UUID, Integer> messageCooldown = new ConcurrentHashMap<>();
+
+    /** 延迟 1 tick 的移除兜底任务（先让 die() 的自然流程走完）。 */
+    private record PendingRemoval(Entity entity, int executeAtTick) {
+    }
+
+    private static final List<PendingRemoval> PENDING_REMOVALS = new ArrayList<>();
 
     public Admin() {
         super(0, true, false);
@@ -228,10 +235,64 @@ public class Admin extends SpecialEffect {
         target.invulnerableTime = 0;
         target.setHealth(0.0F);
         target.die(source);
-        // 兜底：部分实体重写了 die() 而没有真正从世界移除，这里强制移除
-        if (!target.isRemoved()) {
-            target.remove(Entity.RemovalReason.KILLED);
+        // 兜底：延迟 1 tick 检查，若仍未从世界移除则从 level 侧强制移除
+        scheduleRemovalCheck(target);
+    }
+
+    private static void scheduleRemovalCheck(Entity entity) {
+        // 玩家的死亡/重生流程交给原版处理，避免破坏死亡界面与重生
+        if (entity instanceof Player) {
+            return;
         }
+        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        PENDING_REMOVALS.add(new PendingRemoval(entity, serverLevel.getServer().getTickCount() + 1));
+    }
+
+    /** 延迟 1 tick 的移除兜底：检查目标是否真的从世界消失。 */
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || PENDING_REMOVALS.isEmpty()) {
+            return;
+        }
+
+        int now = event.getServer().getTickCount();
+        for (int i = PENDING_REMOVALS.size() - 1; i >= 0; i--) {
+            PendingRemoval pending = PENDING_REMOVALS.get(i);
+            if (pending.executeAtTick() > now) {
+                continue;
+            }
+            PENDING_REMOVALS.remove(i);
+
+            Entity entity = pending.entity();
+            if (entity == null || entity.isRemoved()) {
+                continue;
+            }
+            forceLevelRemove(entity);
+        }
+    }
+
+    /**
+     * 从 level 侧强制移除实体。
+     *
+     * <p>刻意不调用 {@link Entity#remove}：多数保护类模组都会拦截它。
+     * 这里改为调用 {@code ServerLevel#getChunkSource().removeEntity(...)}（level 侧、很少被拦截）
+     * 取消客户端追踪，再直接 {@link Entity#setRemoved} 标记服务端移除。</p>
+     */
+    private static void forceLevelRemove(Entity entity) {
+        // 不误伤处于管理员保护中的玩家
+        if (entity instanceof Player player
+                && isAdminModeEnabled(player)
+                && SlashExpansionConfig.Se.Admin.damageImmunity()) {
+            return;
+        }
+
+        if (entity.level() instanceof ServerLevel serverLevel) {
+            serverLevel.getChunkSource().removeEntity(entity);
+        }
+        entity.setRemoved(Entity.RemovalReason.KILLED);
+        entity.invalidateCaps();
     }
 
     // ================================================================
