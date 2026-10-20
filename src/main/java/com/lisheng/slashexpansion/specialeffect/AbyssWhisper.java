@@ -4,6 +4,7 @@ import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,8 +26,7 @@ public class AbyssWhisper extends SpecialEffect {
     // ★ 定时检查，持续施加自身效果
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
 
         int interval = Math.max(1, SlashExpansionConfig.Se.AbyssWhisper.checkInterval());

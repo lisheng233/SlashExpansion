@@ -39,7 +39,7 @@ public class SlashExpansion {
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
 
-        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 已加载：12 SA / 2 SE / 4 实体 / 2 粒子");
+        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 已加载：12 SA / 11 SE / 4 实体 / 2 粒子");
     }
 
     /** 1.21 起 ResourceLocation 构造器已私有化，统一走工厂方法。 */

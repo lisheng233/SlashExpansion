@@ -3,11 +3,13 @@ package com.lisheng.slashexpansion.specialeffect;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -27,10 +29,7 @@ import java.util.UUID;
 @net.neoforged.fml.common.EventBusSubscriber(modid = com.lisheng.slashexpansion.SlashExpansion.MOD_ID)
 public class WindGodPower extends SpecialEffect {
 
-    private static final UUID SPEED_MOD_ID = UUID.nameUUIDFromBytes(
-            "slashexpansion:wind_god_power_speed".getBytes(StandardCharsets.UTF_8)
-    );
-    private static final String SPEED_MOD_NAME = "wind_god_speed";
+    private static final ResourceLocation SPEED_MOD_ID = ResourceLocation.fromNamespaceAndPath("slashexpansion", "wind_god_power_speed");
 
     // 用于记录玩家原本的飞行速度，以便恢复
     private static final String ORIGINAL_FLY_SPEED_KEY = "wind_god_original_fly_speed";
@@ -43,8 +42,7 @@ public class WindGodPower extends SpecialEffect {
     // ★ 在玩家 tick 中检查是否持有 SE（主手），施加所有效果
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
 
         int interval = Math.max(1, SlashExpansionConfig.Se.WindGodPower.checkInterval());
@@ -111,12 +109,10 @@ public class WindGodPower extends SpecialEffect {
         double amount = SlashExpansionConfig.Se.WindGodPower.moveSpeedMultiplier();
         AttributeModifier existing = speedAttr.getModifier(SPEED_MOD_ID);
         if (existing == null) {
-            speedAttr.addTransientModifier(new AttributeModifier(
-                    SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
-        } else if (Double.compare(existing.getAmount(), amount) != 0) {
+            speedAttr.addTransientModifier(new AttributeModifier(SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        } else if (Double.compare(existing.amount(), amount) != 0) {
             speedAttr.removeModifier(SPEED_MOD_ID);
-            speedAttr.addTransientModifier(new AttributeModifier(
-                    SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
+            speedAttr.addTransientModifier(new AttributeModifier(SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         }
     }
 

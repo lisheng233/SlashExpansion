@@ -4,12 +4,16 @@ import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.minecraft.core.registries.Registries;
@@ -49,22 +53,34 @@ public class TranscendentWill extends SpecialEffect {
         ItemStack blade = event.getBlade();
 
         // 检查是否已经应用过附魔提升
-        if (!blade.getOrCreateTag().getBoolean("TranscendentApplied")) {
+        if (!applied(blade)) {
             applyEnchantmentBoost(blade);
-            blade.getOrCreateTag().putBoolean("TranscendentApplied", true);
+            markApplied(blade);
         }
     }
 
+    private static final String APPLIED_KEY = "TranscendentApplied";
+
+    private static boolean applied(ItemStack blade) {
+        return blade.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(APPLIED_KEY);
+    }
+
+    private static void markApplied(ItemStack blade) {
+        net.minecraft.nbt.CompoundTag tag = blade.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        tag.putBoolean(APPLIED_KEY, true);
+        blade.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+    }
+
+    /** 1.21 的附魔是数据驱动注册表：ItemEnchantments 以 Holder<Enchantment> 为键。 */
     private static void applyEnchantmentBoost(ItemStack blade) {
-        Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(blade);
+        ItemEnchantments enchantments = blade.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
         boolean modified = false;
         int boost = SlashExpansionConfig.Se.TranscendentWill.enchantBoost();
 
-        for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            Enchantment ench = entry.getKey();
-            int level = entry.getValue();
-
-            String enchId = ForgeRegistries.ENCHANTMENTS.getKey(ench).toString();
+        for (var entry : enchantments.entrySet()) {
+            Holder<Enchantment> holder = entry.getKey();
+            String enchId = holder.unwrapKey().map(key -> key.location().toString()).orElse("");
             boolean excluded = false;
             for (String excludedId : EXCLUDED_ENCHANTMENTS) {
                 if (enchId.equals(excludedId)) {
@@ -72,15 +88,14 @@ public class TranscendentWill extends SpecialEffect {
                     break;
                 }
             }
-
             if (!excluded) {
-                enchantments.put(ench, level + boost);
+                mutable.set(holder, entry.getIntValue() + boost);
                 modified = true;
             }
         }
 
         if (modified) {
-            EnchantmentHelper.setEnchantments(enchantments, blade);
+            blade.set(DataComponents.ENCHANTMENTS, mutable.toImmutable());
         }
     }
 

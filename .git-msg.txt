@@ -1,0 +1,15 @@
+1.21.1: 阶段二（进行中）——11 个 SE 接入，12 SA / 11 SE 服务端跑通
+
+- 11 个 SE 全部编译并注册（管理员之力单独处理，依赖 Mixin 与移除拦截）
+- 1.21 语义适配：
+  * PlayerEvent.player 私有 -> event.getEntity()
+  * TickEvent 拆成 PlayerTickEvent.Post / ServerTickEvent.Post，Post 已无 phase 判断
+  * AttributeModifier 改为 record(ResourceLocation, double, Operation)，
+    MULTIPLY_BASE -> ADD_MULTIPLIED_BASE，getAmount() -> amount()
+  * 附魔是数据驱动注册表：EnchantmentHelper 改为 ItemEnchantments + Holder<Enchantment>
+  * getOrCreateTag() -> DataComponents.CUSTOM_DATA / CustomData
+  * MobEffectEvent.Applicable.Result.DO_NOT_APPLY（DENY 已不存在）
+  * MobEffectInstance#getEffect 返回 Holder<MobEffect>，需 .value()
+- 新增 util/EffectCleanup 承接负面效果清理
+
+验证：gradlew build 通过；runServer「12 SA / 11 SE / 4 实体 / 2 粒子」+ Done (0.5s)

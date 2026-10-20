@@ -3,6 +3,7 @@ package com.lisheng.slashexpansion.specialeffect;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,8 +37,7 @@ public class GrimReapersPact extends SpecialEffect {
     /** 每秒流失生命值（不会致死）。 */
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
 
         int interval = Math.max(1, SlashExpansionConfig.Se.GrimReapersPact.drainInterval());

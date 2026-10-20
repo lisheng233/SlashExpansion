@@ -5,6 +5,7 @@ import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import com.lisheng.slashexpansion.util.DamageCalculator;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
@@ -52,7 +53,7 @@ public class DragonSoulResonance extends SpecialEffect {
         ItemStack blade = player.getMainHandItem();
         if (!bladeHasSE(blade)) return;
 
-        blade.getOrCreateTag().putBoolean(UNLOCK_KEY, true);
+        markUnlocked(blade);
     }
 
     /** 永久增伤。 */
@@ -62,7 +63,7 @@ public class DragonSoulResonance extends SpecialEffect {
 
         ItemStack blade = player.getMainHandItem();
         if (!bladeHasSE(blade)) return;
-        if (!blade.getOrCreateTag().getBoolean(UNLOCK_KEY)) return;
+        if (!isUnlocked(blade)) return;
 
         double bonus = SlashExpansionConfig.Se.DragonSoulResonance.permanentAttackBonus();
         event.setAmount(event.getAmount() * (float) (1.0 + bonus));
@@ -100,5 +101,18 @@ public class DragonSoulResonance extends SpecialEffect {
                     target.getX(), target.getY() + 0.5, target.getZ(),
                     40, radius * 0.6, 0.8, radius * 0.6, 0.2);
         }
+    }
+
+    private static boolean isUnlocked(ItemStack blade) {
+        return blade.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getBoolean(UNLOCK_KEY);
+    }
+
+    private static void markUnlocked(ItemStack blade) {
+        net.minecraft.nbt.CompoundTag tag = blade.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        tag.putBoolean(UNLOCK_KEY, true);
+        blade.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tag));
     }
 }

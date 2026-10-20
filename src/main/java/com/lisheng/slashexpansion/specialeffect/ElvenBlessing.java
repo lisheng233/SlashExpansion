@@ -3,12 +3,14 @@ package com.lisheng.slashexpansion.specialeffect;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -17,7 +19,6 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -27,9 +28,7 @@ import java.util.UUID;
 @net.neoforged.fml.common.EventBusSubscriber(modid = com.lisheng.slashexpansion.SlashExpansion.MOD_ID)
 public class ElvenBlessing extends SpecialEffect {
 
-    private static final UUID SPEED_MOD_ID = UUID.nameUUIDFromBytes(
-            "slashexpansion:elven_blessing_speed".getBytes(StandardCharsets.UTF_8));
-    private static final String SPEED_MOD_NAME = "elven_blessing_day_speed";
+    private static final ResourceLocation SPEED_MOD_ID = ResourceLocation.fromNamespaceAndPath("slashexpansion", "elven_blessing_speed");
 
     public ElvenBlessing() {
         super(0, true, false);
@@ -45,8 +44,7 @@ public class ElvenBlessing extends SpecialEffect {
     /** 白天移速加成。 */
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
         if (player.tickCount % 20 != 0) return;
 
@@ -58,12 +56,10 @@ public class ElvenBlessing extends SpecialEffect {
             double amount = SlashExpansionConfig.Se.ElvenBlessing.daySpeedBonus();
             AttributeModifier existing = speed.getModifier(SPEED_MOD_ID);
             if (existing == null) {
-                speed.addTransientModifier(new AttributeModifier(
-                        SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
-            } else if (Double.compare(existing.getAmount(), amount) != 0) {
+                speed.addTransientModifier(new AttributeModifier(SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+            } else if (Double.compare(existing.amount(), amount) != 0) {
                 speed.removeModifier(SPEED_MOD_ID);
-                speed.addTransientModifier(new AttributeModifier(
-                        SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
+                speed.addTransientModifier(new AttributeModifier(SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             }
         } else if (speed.getModifier(SPEED_MOD_ID) != null) {
             speed.removeModifier(SPEED_MOD_ID);
@@ -95,6 +91,6 @@ public class ElvenBlessing extends SpecialEffect {
         if (event.getEffectInstance().getEffect() != MobEffects.POISON) return;
         if (!bladeHasSE(player.getMainHandItem())) return;
 
-        event.setResult(Event.Result.DENY);
+        event.setResult(net.neoforged.neoforge.event.entity.living.MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
     }
 }
