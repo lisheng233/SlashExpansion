@@ -1,37 +1,35 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.SlashExpansion;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * 烈焰之心：攻击点燃敌人、免疫火焰伤害、在下界时移速加成。
  * 数值来自 {@code [se.flame_heart]}。
  */
-@Mod.EventBusSubscriber
+@EventBusSubscriber(modid = SlashExpansion.MOD_ID)
 public class FlameHeart extends SpecialEffect {
 
-    private static final UUID SPEED_MOD_ID = UUID.nameUUIDFromBytes(
-            "slashexpansion:flame_heart_speed".getBytes(StandardCharsets.UTF_8));
-    private static final String SPEED_MOD_NAME = "flame_heart_nether_speed";
+    // 1.21 的 AttributeModifier 改用 ResourceLocation 作为 id
+    private static final ResourceLocation SPEED_MOD_ID = SlashExpansion.prefix("flame_heart_speed");
 
     public FlameHeart() {
         super(0, true, false);
@@ -39,8 +37,8 @@ public class FlameHeart extends SpecialEffect {
 
     private static boolean hasSE(ItemStack blade) {
         if (!(blade.getItem() instanceof ItemSlashBlade)) return false;
-        return blade.getCapability(ItemSlashBlade.BLADESTATE)
-                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.FLAME_HEART.getId()))
+        return BladeStateAccess.of(blade)
+                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.FLAME_HEART.getKey().location()))
                 .orElse(false);
     }
 
@@ -48,7 +46,7 @@ public class FlameHeart extends SpecialEffect {
     @SubscribeEvent
     public static void onHitEntity(SlashBladeEvent.HitEvent event) {
         boolean hasSE = event.getSlashBladeState()
-                .hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.FLAME_HEART.getId());
+                .hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.FLAME_HEART.getKey().location());
         if (!hasSE) return;
 
         int seconds = SlashExpansionConfig.Se.FlameHeart.igniteSeconds();
@@ -77,9 +75,8 @@ public class FlameHeart extends SpecialEffect {
 
     /** 下界移速加成。 */
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
         if (player.tickCount % 20 != 0) return;
 
@@ -92,13 +89,10 @@ public class FlameHeart extends SpecialEffect {
         if (active) {
             double amount = SlashExpansionConfig.Se.FlameHeart.netherSpeedBonus();
             AttributeModifier existing = speed.getModifier(SPEED_MOD_ID);
-            if (existing == null) {
-                speed.addTransientModifier(new AttributeModifier(
-                        SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
-            } else if (Double.compare(existing.getAmount(), amount) != 0) {
+            if (existing == null || Double.compare(existing.getAmount(), amount) != 0) {
                 speed.removeModifier(SPEED_MOD_ID);
                 speed.addTransientModifier(new AttributeModifier(
-                        SPEED_MOD_ID, SPEED_MOD_NAME, amount, AttributeModifier.Operation.MULTIPLY_BASE));
+                        SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             }
         } else if (speed.getModifier(SPEED_MOD_ID) != null) {
             speed.removeModifier(SPEED_MOD_ID);

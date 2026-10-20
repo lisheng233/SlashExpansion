@@ -1,46 +1,48 @@
 package com.lisheng.slashexpansion;
 
+import com.mojang.logging.LogUtils;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
-import com.lisheng.slashexpansion.net.SfxNet;
 import com.lisheng.slashexpansion.registry.SlashExpansionComboStateRegistry;
-import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
-import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.lisheng.slashexpansion.registry.SlashExpansionSlashArtsRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
-
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
+import org.slf4j.Logger;
 
+/**
+ * SlashExpansion — NeoForge 1.21.1 版本。
+ *
+ * <p>本分支从 1.20.1 / Forge 47 移植而来，迁移分两阶段：
+ * 阶段一接入构建骨架与 2 个 SA（裂空斩、冰霜领域）+ 2 个 SE（烈焰之心、千锤百炼），
+ * 用于验证 SlashBlade 2.x 的 API（刀状态数据组件、ComboState、SpecialEffect、EntityDrive）；
+ * 阶段二再把剩余 10 个 SA、10 个 SE、特效系统与 Mixin 补齐。</p>
+ */
 @Mod(SlashExpansion.MOD_ID)
 public class SlashExpansion {
+
     public static final String MOD_ID = "slashexpansion";
 
-    @SuppressWarnings("removal")
-    public SlashExpansion() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
-        // 注册配置文件：config/slashexpansion-common.toml
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SlashExpansionConfig.SPEC);
+    public SlashExpansion(IEventBus modBus, ModContainer container) {
+        // config/slashexpansion-common.toml
+        container.registerConfig(ModConfig.Type.COMMON, SlashExpansionConfig.SPEC);
 
-        SlashExpansionEntities.register(modBus);
-        SlashExpansionParticles.register(modBus);
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
 
-        // 网络通道：下发屏幕特效（闪光 / 暗角 / 镜头震动）
-        SfxNet.register();
+        NeoForge.EVENT_BUS.register(this);
 
-        MinecraftForge.EVENT_BUS.register(this);
+        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 阶段一已加载（2 SA / 2 SE）");
     }
 
-    @SuppressWarnings("removal")
+    /** 1.21 起 ResourceLocation 构造器已私有化，统一走工厂方法。 */
     public static ResourceLocation prefix(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

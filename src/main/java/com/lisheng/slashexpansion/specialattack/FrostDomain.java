@@ -1,8 +1,9 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
-import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.util.TargetSelector;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +12,11 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
+/**
+ * 冰霜领域：范围冻结 + 迟缓/虚弱/挖掘疲劳。
+ *
+ * <p>阶段一先用原版粒子做反馈；阶段二接回 {@code vfx} 包的自定义粒子动画。</p>
+ */
 public class FrostDomain {
 
     public static void doSlash(LivingEntity player, boolean critical, double damage) {
@@ -24,8 +30,15 @@ public class FrostDomain {
                 e -> e != player && e.isAlive() && !e.isSpectator()
                         && TargetSelector.test.test(player, e));
 
-        // ---- 动画：冰霜法阵 → 冰棱拔地而起 → 极寒漩涡 ----
-        SaVfx.frostDomain(player, targets, range);
+        if (world instanceof ServerLevel serverLevel) {
+            // TODO(phase2): 换成 SaVfx.frostDomain(...) 的分阶段动画
+            serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,
+                    player.getX(), player.getY() + 1.0, player.getZ(),
+                    60, range * 0.6, 1.5, range * 0.6, 0.02);
+            serverLevel.sendParticles(ParticleTypes.ITEM_SNOWBALL,
+                    player.getX(), player.getY() + 0.5, player.getZ(),
+                    20, range * 0.4, 0.4, range * 0.4, 0.05);
+        }
 
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.FrostDomain.damageMultiplier());
 

@@ -1,10 +1,13 @@
 package com.lisheng.slashexpansion.specialeffect;
 
+import com.lisheng.slashexpansion.SlashExpansion;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
+import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -12,18 +15,21 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.item.component.CustomData;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * 千锤百炼：耐久消耗降低、击杀回复耐久、以「杀敌数 + 耀魂」换取额外锻造。
  *
  * <p>锻造规则（均可在 {@code [se.tempered_soul]} 中调整）：每累计 10 点杀敌数，
  * 消耗 100 耀魂提升 1 级锻造，最多提升 100 次。</p>
+ *
+ * <p>1.21 起物品 NBT 换成数据组件，这里统一用 {@link DataComponents#CUSTOM_DATA} 存临时标记。</p>
  */
-@Mod.EventBusSubscriber
+@EventBusSubscriber(modid = SlashExpansion.MOD_ID)
 public class TemperedSoul extends SpecialEffect {
 
     private static final String LAST_DAMAGE_KEY = "TemperedLastDamage";
@@ -35,17 +41,24 @@ public class TemperedSoul extends SpecialEffect {
         super(0, true, false);
     }
 
+    private static CompoundTag readTag(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    private static void writeTag(ItemStack stack, CompoundTag tag) {
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+    }
+
     private static boolean bladeHasSE(ItemStack blade) {
         if (!(blade.getItem() instanceof ItemSlashBlade)) return false;
-        return blade.getCapability(ItemSlashBlade.BLADESTATE)
-                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.TEMPERED_SOUL.getId()))
+        return BladeStateAccess.of(blade)
+                .map(state -> state.hasSpecialEffect(SlashExpansionSpecialEffectsRegistry.TEMPERED_SOUL.getKey().location()))
                 .orElse(false);
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
 
         ItemStack blade = player.getMainHandItem();
@@ -55,19 +68,17 @@ public class TemperedSoul extends SpecialEffect {
         tryRefine(player, blade);
     }
 
-    /**
-     * 耐久消耗减免：记录上次耐久值，按比例把损耗「退还」回去。
-     * 小数部分累积在 NBT 中，避免每次只掉 1 点时因取整而失效。
-     */
+    /** 耐久消耗减免：记录上次耐久值，按比例把损耗「退还」回去，小数部分累积。 */
     private static void reduceDurabilityCost(Player player, ItemStack blade) {
         double multiplier = SlashExpansionConfig.Se.TemperedSoul.durabilityCostMultiplier();
         if (multiplier >= 1.0) return;
 
         int current = blade.getDamageValue();
-        CompoundTag tag = blade.getOrCreateTag();
+        CompoundTag tag = readTag(blade);
 
         if (!tag.contains(LAST_DAMAGE_KEY)) {
             tag.putInt(LAST_DAMAGE_KEY, current);
+            writeTag(blade, tag);
             return;
         }
 
@@ -84,6 +95,7 @@ public class TemperedSoul extends SpecialEffect {
         }
 
         tag.putInt(LAST_DAMAGE_KEY, blade.getDamageValue());
+        writeTag(blade, tag);
     }
 
     /**
@@ -91,7 +103,7 @@ public class TemperedSoul extends SpecialEffect {
      * 第一次生效时以当前杀敌数为基准，避免旧存档瞬间白嫖大量锻造。
      */
     private static void tryRefine(Player player, ItemStack blade) {
-        ISlashBladeState state = blade.getCapability(ItemSlashBlade.BLADESTATE).orElse(null);
+        ISlashBladeState state = BladeStateAccess.of(blade).orElse(null);
         if (state == null) return;
 
         int killsPerRefine = Math.max(1, SlashExpansionConfig.Se.TemperedSoul.killsPerRefine());
@@ -99,10 +111,11 @@ public class TemperedSoul extends SpecialEffect {
         int maxRefines = Math.max(0, SlashExpansionConfig.Se.TemperedSoul.maxRefines());
         if (maxRefines <= 0) return;
 
-        CompoundTag tag = blade.getOrCreateTag();
+        CompoundTag tag = readTag(blade);
         if (!tag.contains(REFINE_BASELINE_KEY)) {
             tag.putInt(REFINE_BASELINE_KEY, state.getKillCount());
             tag.putInt(REFINE_UPGRADES_KEY, 0);
+            writeTag(blade, tag);
             return;
         }
 
@@ -126,6 +139,7 @@ public class TemperedSoul extends SpecialEffect {
 
         tag.putInt(REFINE_BASELINE_KEY, baseline);
         tag.putInt(REFINE_UPGRADES_KEY, upgrades);
+        writeTag(blade, tag);
 
         if (upgraded) {
             player.getInventory().setChanged();

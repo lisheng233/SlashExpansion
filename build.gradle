@@ -1,55 +1,37 @@
 plugins {
-    id 'eclipse'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.144'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-// 修改这里
-group = 'com.lisheng.slashexpansion'
-version = '1.10.1'
+version = mod_version
+group = mod_group_id
 
 base {
-
-    archivesName = 'slashexpansion'
+    archivesName = mod_id
 }
 
-// ... 下面的代码保持不变 ...
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
-}
-
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
-}
-
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
-    copyIdeResources = true
-    runs {
-        configureEach {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
-        client { property 'forge.enabledGameTestNamespaces', mod_id }
-        server { property 'forge.enabledGameTestNamespaces', mod_id; args '--nogui' }
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+// ==================================================================
+// 依赖仓库
+// ==================================================================
+// 注意：官方 maven.neoforged.net 在部分网络环境下会被 DNS 污染（解析到无关 IP，
+// 443 直接不通），NeoForm 与 NeoForge 构件都取不到，构建会卡死或失败。
+// 因此这里默认把 net.neoforged 的依赖重写到 BMCLAPI 镜像；
+// 网络正常的环境用 -PneoforgeMirror= 关掉重写即可。
+def mirrorUrl = (findProperty('neoforgeMirror') ?: 'https://bmclapi2.bangbang93.com/maven').toString()
+boolean useMirror = !mirrorUrl.isBlank()
 
 repositories {
-    mavenCentral()
-    maven {
-        name = 'MinecraftForge'
-        url = 'https://maven.minecraftforge.net/'
+    if (useMirror) {
+        maven {
+            name = 'NeoForgeMirror'
+            url = mirrorUrl
+        }
     }
-
-    // Modrinth Maven：SlashBlade: Resharped 的发布渠道
+    mavenCentral()
     maven {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
@@ -57,45 +39,59 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+}
 
-    // Mixin 注解处理器
-    maven {
-        name = 'Sponge'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
+if (useMirror) {
+    // moddev 插件会自己往 project 上挂官方仓库，这里统一改写到镜像
+    repositories.all { repo ->
+        if (repo instanceof MavenArtifactRepository
+                && repo.url.toString().contains('maven.neoforged.net')) {
+            repo.url = uri(mirrorUrl)
+        }
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    // ==========================================================
-    // SlashBlade: Resharped 1.9.65
-    // 满足 mods.toml 中 slashblade [1.5.0,) 的依赖要求；
-    // 同时剔除 Log4j，避免与 Minecraft 自带版本冲突。
-    // ==========================================================
-    implementation(fg.deobf("maven.modrinth:slashblade-resharped:1.9.65")) {
-        exclude group: 'org.apache.logging.log4j'
-    }
-
-    // Mixin 注解处理器：生成 refmap，保证生产环境能正确重映射注入目标
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // 拔刀剑：重锋（1.21.1 / NeoForge）
+    implementation "maven.modrinth:slashblade-resharped:${slashblade_version}"
 }
 
-tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
-            forge_version       : forge_version, forge_version_range: forge_version_range,
-            loader_version_range: loader_version_range,
-            mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors         : mod_authors, mod_description: mod_description,
-    ]
-    inputs.properties replaceProperties
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
     }
 }
 
-tasks.named('jar', Jar).configure {
+// runData 输出挂进资源源集，随 jar 打包（勿手动改 generated 文件）。
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// 只在 neoforge.mods.toml 上做占位符展开，其它资源文件原样复制。
+// 注意：expand 底层是 Groovy 模板引擎，会把它看到的任何「美元号+花括号」片段
+// 当作表达式求值——资源文件里出现非占位符的该类写法会让构建以模板解析失败报错。
+processResources {
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand project.properties
+    }
+}
+
+jar {
     manifest {
         attributes([
                 "Specification-Title"     : mod_id,
@@ -107,9 +103,4 @@ tasks.named('jar', Jar).configure {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-    finalizedBy 'reobfJar'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }

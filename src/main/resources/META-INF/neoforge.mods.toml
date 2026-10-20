@@ -1,0 +1,39 @@
+# NeoForge 1.21.1 元数据（文件名必须是 neoforge.mods.toml）。
+# 1.21.1 的 FML 4.0.x 还没把 javafml 设为默认，必须显式写 modLoader / loaderVersion，否则客户端报 Missing ModLoader。
+# 花括号占位符由 build.gradle 的 processResources 在构建时展开（值来自 gradle.properties）。
+modLoader="javafml"
+loaderVersion="[1,)"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+logoFile="slashexpansion.png"
+credits="lisheng233, deepseek"
+authors="${mod_authors}"
+description='''${mod_description}'''
+
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+versionRange="${neo_version_range}"
+mandatory=true
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+versionRange="${minecraft_version_range}"
+mandatory=true
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="slashblade"
+versionRange="${slashblade_version_range}"
+mandatory=true
+ordering="AFTER"
+side="BOTH"

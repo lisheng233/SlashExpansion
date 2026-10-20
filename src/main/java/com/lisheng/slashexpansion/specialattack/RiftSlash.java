@@ -1,15 +1,22 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
-import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityDrive;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.VectorHelper;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * 裂空斩：冲刺突进 + 环形剑气。
+ *
+ * <p>阶段一用原版粒子做反馈；阶段二接回 {@code vfx} 包的分阶段动画。</p>
+ */
 public class RiftSlash {
 
     public static void doSlash(LivingEntity player, boolean critical, double damage) {
@@ -24,22 +31,22 @@ public class RiftSlash {
         player.setDeltaMovement(dashVec);
         player.hurtMarked = true;
 
-        // ---- 动画：残影 + 空间裂缝 + 冲击环 ----
-        SaVfx.riftSlash(player);
+        if (player.level() instanceof ServerLevel serverLevel) {
+            // TODO(phase2): 换成 SaVfx.riftSlash(...) 的残影 + 空间裂缝动画
+            serverLevel.sendParticles(ParticleTypes.END_ROD,
+                    player.getX(), player.getY() + 0.9, player.getZ(), 40, 0.6, 0.6, 0.6, 0.08);
+            serverLevel.sendParticles(ParticleTypes.SQUID_INK,
+                    player.getX(), player.getY() + 0.9, player.getZ(), 12, 0.4, 0.4, 0.4, 0.02);
+        }
+        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 0.8F, 1.2F);
 
         int count = SlashExpansionConfig.Sa.RiftSlash.bladeCount();
         float angleStep = 360F / count;
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.RiftSlash.damageMultiplier());
         float speed = SlashExpansionConfig.Sa.RiftSlash.projectileSpeed();
 
-        // ── 关于这里的除以攻击力 ────────────────────────────────────────────
-        // SlashBlade 的 EntityDrive#onHitEntity 会把 setDamage() 的值再乘一次
-        // 「持有者攻击力」（getAttributeValue(ATTACK_DAMAGE)）与刀伤倍率；
-        // 而 DamageCalculator 算出的基础伤害里已经包含玩家攻击力了。
-        // 如果直接把 finalDamage 塞进去，攻击力就会被计算两次，
-        // 实战中一刀能打出十几倍的溢出伤害（足够秒掉监守者）。
-        // 先除回去，让每把剑气的最终伤害正好等于 finalDamage，
-        // 这也与万剑归宗 / 千本樱 / 庚金剑诀使用的幻影剑（不乘攻击力）保持一致。
+        // SlashBlade 的 EntityDrive#onHitEntity 命中时会再乘一次「持有者攻击力」，
+        // 而 DamageCalculator 的结果里已经含攻击力了，这里先除回去避免双重计算。
         double attack = Math.max(1.0D, player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         float driveCoefficient = (float) (finalDamage / attack);
 

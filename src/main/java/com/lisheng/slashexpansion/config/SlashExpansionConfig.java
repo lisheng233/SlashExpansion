@@ -1,6 +1,6 @@
 package com.lisheng.slashexpansion.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import java.util.List;
  */
 public final class SlashExpansionConfig {
 
-    private static final ForgeConfigSpec.Builder B = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder B = new ModConfigSpec.Builder();
 
-    public static final ForgeConfigSpec SPEC;
+    public static final ModConfigSpec SPEC;
 
     static {
         defineDamage();
@@ -38,9 +38,9 @@ public final class SlashExpansionConfig {
     // ==================================================================
 
     public static final class Damage {
-        private static ForgeConfigSpec.DoubleValue minDamage;
-        private static ForgeConfigSpec.DoubleValue refineBonus;
-        private static ForgeConfigSpec.DoubleValue powerEnchantBonus;
+        private static ModConfigSpec.DoubleValue minDamage;
+        private static ModConfigSpec.DoubleValue refineBonus;
+        private static ModConfigSpec.DoubleValue powerEnchantBonus;
 
         public static float minDamage() {
             return (float) (double) minDamage.get();
@@ -78,11 +78,11 @@ public final class SlashExpansionConfig {
     public static final class Sa {
 
         public static final class WanJianGuiZong {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue searchRange;
-            private static ForgeConfigSpec.IntValue minSwords;
-            private static ForgeConfigSpec.IntValue maxSwords;
-            private static ForgeConfigSpec.DoubleValue projectileSpeed;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue searchRange;
+            private static ModConfigSpec.IntValue minSwords;
+            private static ModConfigSpec.IntValue maxSwords;
+            private static ModConfigSpec.DoubleValue projectileSpeed;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -106,11 +106,11 @@ public final class SlashExpansionConfig {
         }
 
         public static final class Senbonzakura {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue searchRange;
-            private static ForgeConfigSpec.IntValue minSwordsPerTarget;
-            private static ForgeConfigSpec.IntValue maxSwordsPerTarget;
-            private static ForgeConfigSpec.DoubleValue projectileSpeed;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue searchRange;
+            private static ModConfigSpec.IntValue minSwordsPerTarget;
+            private static ModConfigSpec.IntValue maxSwordsPerTarget;
+            private static ModConfigSpec.DoubleValue projectileSpeed;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -134,11 +134,11 @@ public final class SlashExpansionConfig {
         }
 
         public static final class RiftSlash {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.DoubleValue dashHorizontalSpeed;
-            private static ForgeConfigSpec.DoubleValue dashVerticalSpeed;
-            private static ForgeConfigSpec.IntValue bladeCount;
-            private static ForgeConfigSpec.DoubleValue projectileSpeed;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.DoubleValue dashHorizontalSpeed;
+            private static ModConfigSpec.DoubleValue dashVerticalSpeed;
+            private static ModConfigSpec.IntValue bladeCount;
+            private static ModConfigSpec.DoubleValue projectileSpeed;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -162,14 +162,14 @@ public final class SlashExpansionConfig {
         }
 
         public static final class FrostDomain {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue radius;
-            private static ForgeConfigSpec.IntValue slowDuration;
-            private static ForgeConfigSpec.IntValue slowAmplifier;
-            private static ForgeConfigSpec.IntValue weaknessDuration;
-            private static ForgeConfigSpec.IntValue weaknessAmplifier;
-            private static ForgeConfigSpec.IntValue digSlowDuration;
-            private static ForgeConfigSpec.IntValue digSlowAmplifier;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue radius;
+            private static ModConfigSpec.IntValue slowDuration;
+            private static ModConfigSpec.IntValue slowAmplifier;
+            private static ModConfigSpec.IntValue weaknessDuration;
+            private static ModConfigSpec.IntValue weaknessAmplifier;
+            private static ModConfigSpec.IntValue digSlowDuration;
+            private static ModConfigSpec.IntValue digSlowAmplifier;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -205,10 +205,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class Inferno {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue radius;
-            private static ForgeConfigSpec.DoubleValue netherDamageMultiplier;
-            private static ForgeConfigSpec.IntValue fireSeconds;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue radius;
+            private static ModConfigSpec.DoubleValue netherDamageMultiplier;
+            private static ModConfigSpec.IntValue fireSeconds;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -228,7 +228,7 @@ public final class SlashExpansionConfig {
         }
 
         public static final class ZhanTianBaJianShu {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -236,7 +236,7 @@ public final class SlashExpansionConfig {
         }
 
         public static final class JianDangBaHuang {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -244,14 +244,14 @@ public final class SlashExpansionConfig {
         }
 
         public static final class GengJinJianJue {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue minSwords;
-            private static ForgeConfigSpec.IntValue maxSwords;
-            private static ForgeConfigSpec.IntValue refinePerSword;
-            private static ForgeConfigSpec.IntValue nearRange;
-            private static ForgeConfigSpec.IntValue farRange;
-            private static ForgeConfigSpec.IntValue farKillThreshold;
-            private static ForgeConfigSpec.DoubleValue projectileSpeed;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue minSwords;
+            private static ModConfigSpec.IntValue maxSwords;
+            private static ModConfigSpec.IntValue refinePerSword;
+            private static ModConfigSpec.IntValue nearRange;
+            private static ModConfigSpec.IntValue farRange;
+            private static ModConfigSpec.IntValue farKillThreshold;
+            private static ModConfigSpec.DoubleValue projectileSpeed;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -287,14 +287,14 @@ public final class SlashExpansionConfig {
         }
 
         public static final class QiShaJianJie {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue baseRadius;
-            private static ForgeConfigSpec.IntValue maxRadius;
-            private static ForgeConfigSpec.IntValue killsPerRadius;
-            private static ForgeConfigSpec.IntValue spawnDistance;
-            private static ForgeConfigSpec.IntValue maxHits;
-            private static ForgeConfigSpec.IntValue hitInterval;
-            private static ForgeConfigSpec.IntValue ownerLeashDistance;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue baseRadius;
+            private static ModConfigSpec.IntValue maxRadius;
+            private static ModConfigSpec.IntValue killsPerRadius;
+            private static ModConfigSpec.IntValue spawnDistance;
+            private static ModConfigSpec.IntValue maxHits;
+            private static ModConfigSpec.IntValue hitInterval;
+            private static ModConfigSpec.IntValue ownerLeashDistance;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -330,11 +330,11 @@ public final class SlashExpansionConfig {
         }
 
         public static final class BloodMoonSlash {
-            private static ForgeConfigSpec.DoubleValue healthCostPercent;
-            private static ForgeConfigSpec.DoubleValue damagePerHealth;
-            private static ForgeConfigSpec.DoubleValue refineScalingPerLevel;
-            private static ForgeConfigSpec.IntValue range;
-            private static ForgeConfigSpec.DoubleValue minHealthAfterCost;
+            private static ModConfigSpec.DoubleValue healthCostPercent;
+            private static ModConfigSpec.DoubleValue damagePerHealth;
+            private static ModConfigSpec.DoubleValue refineScalingPerLevel;
+            private static ModConfigSpec.IntValue range;
+            private static ModConfigSpec.DoubleValue minHealthAfterCost;
 
             public static float healthCostPercent() {
                 return (float) (double) healthCostPercent.get();
@@ -358,13 +358,13 @@ public final class SlashExpansionConfig {
         }
 
         public static final class ThorsWrath {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue searchRange;
-            private static ForgeConfigSpec.IntValue boltCount;
-            private static ForgeConfigSpec.IntValue paralysisDuration;
-            private static ForgeConfigSpec.IntValue paralysisAmplifier;
-            private static ForgeConfigSpec.BooleanValue disableAttacks;
-            private static ForgeConfigSpec.BooleanValue visualOnly;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue searchRange;
+            private static ModConfigSpec.IntValue boltCount;
+            private static ModConfigSpec.IntValue paralysisDuration;
+            private static ModConfigSpec.IntValue paralysisAmplifier;
+            private static ModConfigSpec.BooleanValue disableAttacks;
+            private static ModConfigSpec.BooleanValue visualOnly;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -396,10 +396,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class ImmovableKing {
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.IntValue radius;
-            private static ForgeConfigSpec.IntValue durationTicks;
-            private static ForgeConfigSpec.IntValue immobilizeAmplifier;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.IntValue radius;
+            private static ModConfigSpec.IntValue durationTicks;
+            private static ModConfigSpec.IntValue immobilizeAmplifier;
 
             public static float damageMultiplier() {
                 return (float) (double) damageMultiplier.get();
@@ -604,12 +604,12 @@ public final class SlashExpansionConfig {
     public static final class Entities {
 
         public static final class GiantSlash {
-            private static ForgeConfigSpec.IntValue maxDistance;
-            private static ForgeConfigSpec.DoubleValue speedPerTick;
-            private static ForgeConfigSpec.IntValue maxTicks;
-            private static ForgeConfigSpec.IntValue damageCooldown;
-            private static ForgeConfigSpec.DoubleValue verticalHitRange;
-            private static ForgeConfigSpec.DoubleValue horizontalHitRange;
+            private static ModConfigSpec.IntValue maxDistance;
+            private static ModConfigSpec.DoubleValue speedPerTick;
+            private static ModConfigSpec.IntValue maxTicks;
+            private static ModConfigSpec.IntValue damageCooldown;
+            private static ModConfigSpec.DoubleValue verticalHitRange;
+            private static ModConfigSpec.DoubleValue horizontalHitRange;
 
             public static int maxDistance() {
                 return maxDistance.get();
@@ -665,11 +665,11 @@ public final class SlashExpansionConfig {
     public static final class Se {
 
         public static final class WindGodPower {
-            private static ForgeConfigSpec.IntValue checkInterval;
-            private static ForgeConfigSpec.IntValue jumpDuration;
-            private static ForgeConfigSpec.IntValue jumpAmplifier;
-            private static ForgeConfigSpec.DoubleValue moveSpeedMultiplier;
-            private static ForgeConfigSpec.DoubleValue flySpeedMultiplier;
+            private static ModConfigSpec.IntValue checkInterval;
+            private static ModConfigSpec.IntValue jumpDuration;
+            private static ModConfigSpec.IntValue jumpAmplifier;
+            private static ModConfigSpec.DoubleValue moveSpeedMultiplier;
+            private static ModConfigSpec.DoubleValue flySpeedMultiplier;
 
             public static int checkInterval() {
                 return checkInterval.get();
@@ -693,12 +693,12 @@ public final class SlashExpansionConfig {
         }
 
         public static final class FrostGlow {
-            private static ForgeConfigSpec.DoubleValue bonusDamageMultiplier;
-            private static ForgeConfigSpec.DoubleValue minBonusDamage;
-            private static ForgeConfigSpec.IntValue slowDuration;
-            private static ForgeConfigSpec.IntValue slowAmplifier;
-            private static ForgeConfigSpec.IntValue digSlowDuration;
-            private static ForgeConfigSpec.IntValue digSlowAmplifier;
+            private static ModConfigSpec.DoubleValue bonusDamageMultiplier;
+            private static ModConfigSpec.DoubleValue minBonusDamage;
+            private static ModConfigSpec.IntValue slowDuration;
+            private static ModConfigSpec.IntValue slowAmplifier;
+            private static ModConfigSpec.IntValue digSlowDuration;
+            private static ModConfigSpec.IntValue digSlowAmplifier;
 
             public static float bonusDamageMultiplier() {
                 return (float) (double) bonusDamageMultiplier.get();
@@ -726,10 +726,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class TranscendentWill {
-            private static ForgeConfigSpec.IntValue enchantBoost;
-            private static ForgeConfigSpec.DoubleValue damageMultiplier;
-            private static ForgeConfigSpec.DoubleValue critChance;
-            private static ForgeConfigSpec.DoubleValue critBonusDamageMultiplier;
+            private static ModConfigSpec.IntValue enchantBoost;
+            private static ModConfigSpec.DoubleValue damageMultiplier;
+            private static ModConfigSpec.DoubleValue critChance;
+            private static ModConfigSpec.DoubleValue critBonusDamageMultiplier;
 
             public static int enchantBoost() {
                 return enchantBoost.get();
@@ -749,27 +749,27 @@ public final class SlashExpansionConfig {
         }
 
         public static final class AbyssWhisper {
-            private static ForgeConfigSpec.IntValue checkInterval;
-            private static ForgeConfigSpec.IntValue highLevelThreshold;
-            private static ForgeConfigSpec.IntValue selfLowBlindnessDuration;
-            private static ForgeConfigSpec.IntValue selfLowConfusionDuration;
-            private static ForgeConfigSpec.IntValue selfLowHungerDuration;
-            private static ForgeConfigSpec.IntValue selfLowUnluckDuration;
-            private static ForgeConfigSpec.IntValue selfLowUnluckAmplifier;
-            private static ForgeConfigSpec.IntValue selfLowWitherDuration;
-            private static ForgeConfigSpec.IntValue selfLowWitherAmplifier;
-            private static ForgeConfigSpec.IntValue selfHighUnluckDuration;
-            private static ForgeConfigSpec.IntValue selfHighUnluckAmplifier;
-            private static ForgeConfigSpec.IntValue selfHighWitherDuration;
-            private static ForgeConfigSpec.IntValue targetBlindnessDuration;
-            private static ForgeConfigSpec.IntValue targetSlowDuration;
-            private static ForgeConfigSpec.IntValue targetSlowAmplifier;
-            private static ForgeConfigSpec.IntValue targetDigSlowDuration;
-            private static ForgeConfigSpec.IntValue targetDigSlowAmplifier;
-            private static ForgeConfigSpec.IntValue targetWitherDuration;
-            private static ForgeConfigSpec.IntValue targetWitherAmplifier;
-            private static ForgeConfigSpec.IntValue targetWeaknessDuration;
-            private static ForgeConfigSpec.IntValue targetWeaknessAmplifier;
+            private static ModConfigSpec.IntValue checkInterval;
+            private static ModConfigSpec.IntValue highLevelThreshold;
+            private static ModConfigSpec.IntValue selfLowBlindnessDuration;
+            private static ModConfigSpec.IntValue selfLowConfusionDuration;
+            private static ModConfigSpec.IntValue selfLowHungerDuration;
+            private static ModConfigSpec.IntValue selfLowUnluckDuration;
+            private static ModConfigSpec.IntValue selfLowUnluckAmplifier;
+            private static ModConfigSpec.IntValue selfLowWitherDuration;
+            private static ModConfigSpec.IntValue selfLowWitherAmplifier;
+            private static ModConfigSpec.IntValue selfHighUnluckDuration;
+            private static ModConfigSpec.IntValue selfHighUnluckAmplifier;
+            private static ModConfigSpec.IntValue selfHighWitherDuration;
+            private static ModConfigSpec.IntValue targetBlindnessDuration;
+            private static ModConfigSpec.IntValue targetSlowDuration;
+            private static ModConfigSpec.IntValue targetSlowAmplifier;
+            private static ModConfigSpec.IntValue targetDigSlowDuration;
+            private static ModConfigSpec.IntValue targetDigSlowAmplifier;
+            private static ModConfigSpec.IntValue targetWitherDuration;
+            private static ModConfigSpec.IntValue targetWitherAmplifier;
+            private static ModConfigSpec.IntValue targetWeaknessDuration;
+            private static ModConfigSpec.IntValue targetWeaknessAmplifier;
 
             public static int checkInterval() {
                 return checkInterval.get();
@@ -857,10 +857,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class VoidPower {
-            private static ForgeConfigSpec.DoubleValue bonusDamageMultiplier;
-            private static ForgeConfigSpec.DoubleValue minBonusDamage;
-            private static ForgeConfigSpec.IntValue blindnessDuration;
-            private static ForgeConfigSpec.IntValue confusionDuration;
+            private static ModConfigSpec.DoubleValue bonusDamageMultiplier;
+            private static ModConfigSpec.DoubleValue minBonusDamage;
+            private static ModConfigSpec.IntValue blindnessDuration;
+            private static ModConfigSpec.IntValue confusionDuration;
 
             public static float bonusDamageMultiplier() {
                 return (float) (double) bonusDamageMultiplier.get();
@@ -880,17 +880,17 @@ public final class SlashExpansionConfig {
         }
 
         public static final class Admin {
-            private static ForgeConfigSpec.IntValue permissionLevel;
-            private static ForgeConfigSpec.IntValue resistanceDuration;
-            private static ForgeConfigSpec.IntValue resistanceAmplifier;
-            private static ForgeConfigSpec.IntValue messageCooldownTicks;
-            private static ForgeConfigSpec.BooleanValue autoExperience;
-            private static ForgeConfigSpec.BooleanValue damageImmunity;
-            private static ForgeConfigSpec.BooleanValue preventNegativeEffects;
-            private static ForgeConfigSpec.BooleanValue instaKill;
-            private static ForgeConfigSpec.DoubleValue instaKillRadius;
-            private static ForgeConfigSpec.BooleanValue instaKillPlayers;
-            private static ForgeConfigSpec.BooleanValue preventKick;
+            private static ModConfigSpec.IntValue permissionLevel;
+            private static ModConfigSpec.IntValue resistanceDuration;
+            private static ModConfigSpec.IntValue resistanceAmplifier;
+            private static ModConfigSpec.IntValue messageCooldownTicks;
+            private static ModConfigSpec.BooleanValue autoExperience;
+            private static ModConfigSpec.BooleanValue damageImmunity;
+            private static ModConfigSpec.BooleanValue preventNegativeEffects;
+            private static ModConfigSpec.BooleanValue instaKill;
+            private static ModConfigSpec.DoubleValue instaKillRadius;
+            private static ModConfigSpec.BooleanValue instaKillPlayers;
+            private static ModConfigSpec.BooleanValue preventKick;
 
             public static int permissionLevel() {
                 return permissionLevel.get();
@@ -938,9 +938,9 @@ public final class SlashExpansionConfig {
         }
 
         public static final class FlameHeart {
-            private static ForgeConfigSpec.IntValue igniteSeconds;
-            private static ForgeConfigSpec.DoubleValue netherSpeedBonus;
-            private static ForgeConfigSpec.BooleanValue immuneToFire;
+            private static ModConfigSpec.IntValue igniteSeconds;
+            private static ModConfigSpec.DoubleValue netherSpeedBonus;
+            private static ModConfigSpec.BooleanValue immuneToFire;
 
             public static int igniteSeconds() {
                 return igniteSeconds.get();
@@ -956,11 +956,11 @@ public final class SlashExpansionConfig {
         }
 
         public static final class VoidWalker {
-            private static ForgeConfigSpec.BooleanValue hoverEnabled;
-            private static ForgeConfigSpec.IntValue hoverCheckInterval;
-            private static ForgeConfigSpec.DoubleValue hoverSearchDepth;
-            private static ForgeConfigSpec.DoubleValue endSpeedBonus;
-            private static ForgeConfigSpec.DoubleValue endermanDamageMultiplier;
+            private static ModConfigSpec.BooleanValue hoverEnabled;
+            private static ModConfigSpec.IntValue hoverCheckInterval;
+            private static ModConfigSpec.DoubleValue hoverSearchDepth;
+            private static ModConfigSpec.DoubleValue endSpeedBonus;
+            private static ModConfigSpec.DoubleValue endermanDamageMultiplier;
 
             public static boolean hoverEnabled() {
                 return hoverEnabled.get();
@@ -984,11 +984,11 @@ public final class SlashExpansionConfig {
         }
 
         public static final class TemperedSoul {
-            private static ForgeConfigSpec.DoubleValue durabilityCostMultiplier;
-            private static ForgeConfigSpec.IntValue durabilityPerKill;
-            private static ForgeConfigSpec.IntValue killsPerRefine;
-            private static ForgeConfigSpec.IntValue proudSoulCost;
-            private static ForgeConfigSpec.IntValue maxRefines;
+            private static ModConfigSpec.DoubleValue durabilityCostMultiplier;
+            private static ModConfigSpec.IntValue durabilityPerKill;
+            private static ModConfigSpec.IntValue killsPerRefine;
+            private static ModConfigSpec.IntValue proudSoulCost;
+            private static ModConfigSpec.IntValue maxRefines;
 
             public static double durabilityCostMultiplier() {
                 return durabilityCostMultiplier.get();
@@ -1012,10 +1012,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class GrimReapersPact {
-            private static ForgeConfigSpec.DoubleValue healthThreshold;
-            private static ForgeConfigSpec.DoubleValue attackBonus;
-            private static ForgeConfigSpec.DoubleValue healthDrainPerSecond;
-            private static ForgeConfigSpec.IntValue drainInterval;
+            private static ModConfigSpec.DoubleValue healthThreshold;
+            private static ModConfigSpec.DoubleValue attackBonus;
+            private static ModConfigSpec.DoubleValue healthDrainPerSecond;
+            private static ModConfigSpec.IntValue drainInterval;
 
             public static double healthThreshold() {
                 return healthThreshold.get();
@@ -1035,10 +1035,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class ElvenBlessing {
-            private static ForgeConfigSpec.DoubleValue daySpeedBonus;
-            private static ForgeConfigSpec.DoubleValue nightAttackBonus;
-            private static ForgeConfigSpec.DoubleValue arrowDamageBonus;
-            private static ForgeConfigSpec.BooleanValue immuneToPoison;
+            private static ModConfigSpec.DoubleValue daySpeedBonus;
+            private static ModConfigSpec.DoubleValue nightAttackBonus;
+            private static ModConfigSpec.DoubleValue arrowDamageBonus;
+            private static ModConfigSpec.BooleanValue immuneToPoison;
 
             public static double daySpeedBonus() {
                 return daySpeedBonus.get();
@@ -1058,10 +1058,10 @@ public final class SlashExpansionConfig {
         }
 
         public static final class DragonSoulResonance {
-            private static ForgeConfigSpec.DoubleValue permanentAttackBonus;
-            private static ForgeConfigSpec.DoubleValue breathChance;
-            private static ForgeConfigSpec.DoubleValue breathRadius;
-            private static ForgeConfigSpec.DoubleValue breathDamageMultiplier;
+            private static ModConfigSpec.DoubleValue permanentAttackBonus;
+            private static ModConfigSpec.DoubleValue breathChance;
+            private static ModConfigSpec.DoubleValue breathRadius;
+            private static ModConfigSpec.DoubleValue breathDamageMultiplier;
 
             public static double permanentAttackBonus() {
                 return permanentAttackBonus.get();
@@ -1292,9 +1292,9 @@ public final class SlashExpansionConfig {
     // ==================================================================
 
     public static final class Loot {
-        private static ForgeConfigSpec.BooleanValue enabled;
-        private static ForgeConfigSpec.ConfigValue<String> item;
-        private static ForgeConfigSpec.ConfigValue<List<? extends String>> entries;
+        private static ModConfigSpec.BooleanValue enabled;
+        private static ModConfigSpec.ConfigValue<String> item;
+        private static ModConfigSpec.ConfigValue<List<? extends String>> entries;
 
         public static boolean enabled() {
             return enabled.get();
@@ -1351,7 +1351,7 @@ public final class SlashExpansionConfig {
     // ==================================================================
 
     public static final class Recipes {
-        private static ForgeConfigSpec.BooleanValue overrideJsonRecipes;
+        private static ModConfigSpec.BooleanValue overrideJsonRecipes;
 
         public static final String[] EFFECT_IDS = {
                 "wind_god_power", "frost_glow", "transcendent_will",
@@ -1372,12 +1372,12 @@ public final class SlashExpansionConfig {
 
     public static final class RecipeEntry {
         private final String effectId;
-        private final ForgeConfigSpec.BooleanValue enabled;
-        private final ForgeConfigSpec.BooleanValue shapeless;
-        private final ForgeConfigSpec.ConfigValue<String> resultItem;
-        private final ForgeConfigSpec.ConfigValue<List<? extends String>> pattern;
-        private final ForgeConfigSpec.ConfigValue<List<? extends String>> keys;
-        private final ForgeConfigSpec.ConfigValue<List<? extends String>> ingredients;
+        private final ModConfigSpec.BooleanValue enabled;
+        private final ModConfigSpec.BooleanValue shapeless;
+        private final ModConfigSpec.ConfigValue<String> resultItem;
+        private final ModConfigSpec.ConfigValue<List<? extends String>> pattern;
+        private final ModConfigSpec.ConfigValue<List<? extends String>> keys;
+        private final ModConfigSpec.ConfigValue<List<? extends String>> ingredients;
 
         private RecipeEntry(String effectId, String defaultResult,
                             List<String> defaultPattern, List<String> defaultKeys) {
@@ -1568,13 +1568,13 @@ public final class SlashExpansionConfig {
     // ==================================================================
 
     public static final class Vfx {
-        private static ForgeConfigSpec.BooleanValue enabled;
-        private static ForgeConfigSpec.DoubleValue particleScale;
-        private static ForgeConfigSpec.IntValue maxConcurrentEffects;
-        private static ForgeConfigSpec.IntValue particleBudget;
-        private static ForgeConfigSpec.BooleanValue screenEffects;
-        private static ForgeConfigSpec.BooleanValue screenShake;
-        private static ForgeConfigSpec.DoubleValue screenEffectScale;
+        private static ModConfigSpec.BooleanValue enabled;
+        private static ModConfigSpec.DoubleValue particleScale;
+        private static ModConfigSpec.IntValue maxConcurrentEffects;
+        private static ModConfigSpec.IntValue particleBudget;
+        private static ModConfigSpec.BooleanValue screenEffects;
+        private static ModConfigSpec.BooleanValue screenShake;
+        private static ModConfigSpec.DoubleValue screenEffectScale;
 
         public static boolean enabled() {
             return enabled.get();

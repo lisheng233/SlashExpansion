@@ -1,6 +1,7 @@
 {
   "pack": {
-    "pack_format": 15,
-    "description": "§aSlashExpansion\n拔刀剑附属模组资源包"
+    "description": "§aSlashExpansion\n拔刀剑附属模组资源包",
+    "pack_format": 34,
+    "supported_formats": [34, 48]
   }
 }
