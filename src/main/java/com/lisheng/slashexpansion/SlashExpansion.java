@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionComboStateRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.net.SfxNet;
 import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.lisheng.slashexpansion.registry.SlashExpansionSlashArtsRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
@@ -33,13 +34,14 @@ public class SlashExpansion {
         // config/slashexpansion-common.toml
         container.registerConfig(ModConfig.Type.COMMON, SlashExpansionConfig.SPEC);
 
+        modBus.addListener(SfxNet::register);
         SlashExpansionEntities.register(modBus);
         SlashExpansionParticles.register(modBus);
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
 
-        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 已加载：12 SA / 11 SE / 4 实体 / 2 粒子");
+        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 已加载：12 SA / 12 SE / 4 实体 / 2 粒子 + 保护 Mixin");
     }
 
     /** 1.21 起 ResourceLocation 构造器已私有化，统一走工厂方法。 */

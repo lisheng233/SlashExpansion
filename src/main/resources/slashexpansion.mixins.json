@@ -3,8 +3,11 @@
   "minVersion": "0.8",
   "package": "com.lisheng.slashexpansion.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
-  "client": [],
+  "mixins": [
+    "EntityMixin",
+    "LivingEntityMixin",
+    "EntityLevelCallbackAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

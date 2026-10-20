@@ -2,6 +2,7 @@ package com.lisheng.slashexpansion.registry;
 
 import com.lisheng.slashexpansion.SlashExpansion;
 import com.lisheng.slashexpansion.specialeffect.AbyssWhisper;
+import com.lisheng.slashexpansion.specialeffect.Admin;
 import com.lisheng.slashexpansion.specialeffect.DragonSoulResonance;
 import com.lisheng.slashexpansion.specialeffect.ElvenBlessing;
 import com.lisheng.slashexpansion.specialeffect.FlameHeart;
@@ -26,6 +27,8 @@ public class SlashExpansionSpecialEffectsRegistry {
     public static final DeferredRegister<SpecialEffect> SPECIAL_EFFECTS =
             DeferredRegister.create(SpecialEffect.REGISTRY_KEY, SlashExpansion.MOD_ID);
 
+    public static final DeferredHolder<SpecialEffect, SpecialEffect> ADMIN =
+            SPECIAL_EFFECTS.register("admin", Admin::new);
     public static final DeferredHolder<SpecialEffect, SpecialEffect> WIND_GOD_POWER =
             SPECIAL_EFFECTS.register("wind_god_power", WindGodPower::new);
     public static final DeferredHolder<SpecialEffect, SpecialEffect> FROST_GLOW =
