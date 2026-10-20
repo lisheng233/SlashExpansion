@@ -453,13 +453,13 @@ public final class SlashExpansionConfig {
 
         // ---------- 裂空斩 ----------
         B.comment("裂空斩：冲刺突进 + 环形剑气").push("rift_slash");
-        Sa.RiftSlash.damageMultiplier = B.comment("伤害系数")
+        Sa.RiftSlash.damageMultiplier = B.comment("每把剑气的伤害系数（总伤害 ≈ 该值 × 基础伤害 × 剑气数量）")
                 .defineInRange("damageMultiplier", 1.8D, 0.0D, 1000.0D);
         Sa.RiftSlash.dashHorizontalSpeed = B.comment("冲刺水平速度")
                 .defineInRange("dashHorizontalSpeed", 6.0D, 0.0D, 100.0D);
         Sa.RiftSlash.dashVerticalSpeed = B.comment("冲刺垂直速度")
                 .defineInRange("dashVerticalSpeed", 0.5D, -100.0D, 100.0D);
-        Sa.RiftSlash.bladeCount = B.comment("环形剑气数量")
+        Sa.RiftSlash.bladeCount = B.comment("环形剑气数量（每把独立命中一次，数量直接乘算总伤害）")
                 .defineInRange("bladeCount", 8, 1, 360);
         Sa.RiftSlash.projectileSpeed = B.comment("剑气飞行速度")
                 .defineInRange("projectileSpeed", 2.0D, 0.0D, 100.0D);

@@ -43,6 +43,8 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 
 > The damage floor, refine bonus, power bonus and every SA's multiplier can all be tuned in the config file.
 
+> Note: each blade wave of **Rift Slash** deals its own 180%, so all 8 waves hitting one target totals `8 × 180% × base damage`; the waves use SlashBlade's magic damage type, which ignores armor. Lower `damageMultiplier` or `bladeCount` under `[sa.rift_slash]` if that is too strong.
+
 ### Visual Effects
 
 Every SA now plays a **multi-stage timeline animation** (charge → slash → impact → afterglow) instead of a single particle burst:
@@ -266,7 +268,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.10.0.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.10.1.jar`.
 
 ### Importing into IDE
 
