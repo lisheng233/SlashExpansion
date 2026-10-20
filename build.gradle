@@ -34,6 +34,11 @@ def mirrorUrl = (mirrorProp != null && !mirrorProp.isEmpty())
         : 'https://bmclapi2.bangbang93.com/maven'
 
 repositories {
+    // 本地补丁仓库：只放官方仓库缺失的构件（见 gradle/local-maven/README.md）
+    maven {
+        name = 'LocalFixes'
+        url = uri("${rootDir}/gradle/local-maven")
+    }
     if (useMirror) {
         maven {
             name = 'NeoForgeMirror'
@@ -74,12 +79,10 @@ dependencies {
 }
 
 // NeoForm 1.21.1 的 pom 声明了 net.neoforged:minecraft-dependencies:1.21.1，
-// 但这个构件在官方仓库（以及所有镜像）里都是 404，会让 :createMinecraftArtifacts /
-// :compileJava 在解析依赖时直接失败。它只是把 MC 依赖清单塞进 NeoForm 的类路径，
-// 反编译与编译本身都不需要，所以对所有配置排除掉。
-configurations.configureEach { cfg ->
-    cfg.exclude group: 'net.neoforged', module: 'minecraft-dependencies'
-}
+// 但该构件在官方仓库与所有镜像里都是 404（连 1.20.1/1.21/1.21.4 都没有）。
+// 它承载的是「Minecraft 原版依赖清单」，编译与运行类路径都要用，
+// 所以不能简单排除——gradle/local-maven/ 下按 MC 1.21.1 的 version.json
+// 生成了等价 POM 作为本地替身，由上面的 LocalFixes 仓库提供。
 
 neoForge {
     version = project.neo_version

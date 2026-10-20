@@ -10,7 +10,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 /**
@@ -35,8 +34,6 @@ public class SlashExpansion {
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
-
-        NeoForge.EVENT_BUS.register(this);
 
         LOGGER.info("[SlashExpansion] NeoForge 1.21.1 阶段一已加载（2 SA / 2 SE）");
     }
