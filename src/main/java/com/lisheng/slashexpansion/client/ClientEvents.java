@@ -3,7 +3,10 @@ package com.lisheng.slashexpansion.client;
 import com.lisheng.slashexpansion.SlashExpansion;
 import com.lisheng.slashexpansion.entity.GiantSlashEntity;
 import com.lisheng.slashexpansion.entity.QiShaJianJieDomainEntity;
+import com.lisheng.slashexpansion.particle.GlowParticle;
+import com.lisheng.slashexpansion.particle.RuneParticle;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mods.flammpfeil.slashblade.client.renderer.entity.SummonedSwordRenderer;
@@ -11,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -52,5 +56,12 @@ public class ClientEvents {
                 }
             }
         );
+    }
+
+    /** 注册自定义粒子的客户端渲染器。 */
+    @SubscribeEvent
+    public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(SlashExpansionParticles.GLOW.get(), GlowParticle.Provider::new);
+        event.registerSpriteSet(SlashExpansionParticles.RUNE.get(), RuneParticle.Provider::new);
     }
 }

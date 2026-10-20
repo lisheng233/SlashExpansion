@@ -1,10 +1,9 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.TargetSelector;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,6 +41,9 @@ public class ImmovableKing {
         long endTick = player.level().getGameTime() + SlashExpansionConfig.Sa.ImmovableKing.durationTicks();
         float burstDamage = (float) (damage * SlashExpansionConfig.Sa.ImmovableKing.damageMultiplier());
         PENDING.put(player.getUUID(), new Pending(endTick, burstDamage));
+
+        // ---- 动画：金色曼陀罗展开 + 八方法柱 + 护体金光 ----
+        SaVfx.immovableKingCast(player, SlashExpansionConfig.Sa.ImmovableKing.durationTicks());
 
         applyImmobilize(player);
     }
@@ -105,18 +107,8 @@ public class ImmovableKing {
             KnockBacks.smash.action.accept(target);
         }
 
-        if (world instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
-                    player.getX(), player.getY() + 0.5, player.getZ(), 1, 0, 0, 0, 0);
-            for (int i = 0; i < 120; i++) {
-                double angle = world.random.nextDouble() * Math.PI * 2;
-                double distance = world.random.nextDouble() * radius;
-                double x = player.getX() + Math.cos(angle) * distance;
-                double z = player.getZ() + Math.sin(angle) * distance;
-                serverLevel.sendParticles(ParticleTypes.CRIT,
-                        x, player.getY() + 0.5, z, 1, 0.1, 0.2, 0.1, 0.1);
-            }
-        }
+        // ---- 动画：金身炸裂 ----
+        SaVfx.immovableKingRelease(player, radius);
     }
 
     @SubscribeEvent

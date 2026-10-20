@@ -1,6 +1,7 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -41,6 +42,9 @@ public class ThorsWrath {
                         && TargetSelector.test.test(player, e));
 
         if (targets.isEmpty()) return;
+
+        // ---- 动画：雷云压顶 → 落雷 → 电弧连锁 ----
+        SaVfx.thorsWrath(player, targets);
 
         int boltCount = SlashExpansionConfig.Sa.ThorsWrath.boltCount();
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.ThorsWrath.damageMultiplier());

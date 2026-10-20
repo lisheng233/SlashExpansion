@@ -2,6 +2,7 @@ package com.lisheng.slashexpansion.entity;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.vfx.Vfx;
 import mods.flammpfeil.slashblade.entity.IShootable;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.TargetSelector;
@@ -139,32 +140,34 @@ public class GiantSlashEntity extends Entity implements IShootable {
     private void spawnServerParticles() {
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
 
+        Vec3 pos = this.position();
+
         if (isVertical) {
-            for (double dy = -6; dy <= 6; dy += 0.5) {
-                serverLevel.sendParticles(ParticleTypes.END_ROD,
-                    this.getX(), this.getY() + dy, this.getZ(),
-                    1, 0.05, 0.05, 0.05, 0.0);
+            // 竖直刃光：一条细白芯 + 一圈外发光
+            Vfx.line(serverLevel, pos.add(0.0, -6.0, 0.0), pos.add(0.0, 6.0, 0.0),
+                    Vfx.GOLD, 1.1F, 4, 1.3D);
+            Vfx.line(serverLevel, pos.add(0.0, -6.0, 0.0), pos.add(0.0, 6.0, 0.0),
+                    Vfx.WHITE, 0.35F, 5, 0.75D);
+            if (ticks % 2 == 0) {
+                serverLevel.sendParticles(ParticleTypes.DRAGON_BREATH,
+                        pos.x, pos.y, pos.z, 5, 0.5, 0.5, 0.5, 0.1);
             }
             if (ticks % 3 == 0) {
-                serverLevel.sendParticles(ParticleTypes.DRAGON_BREATH,
-                    this.getX(), this.getY(), this.getZ(),
-                    5, 0.5, 0.5, 0.5, 0.1);
+                Vfx.play(serverLevel, Vfx.halo(pos, directionVec, 0.3D, 2.4D, Vfx.GOLD, 9, 4, 0.3F, 6));
             }
         } else {
+            // 水平刃光
             Vec3 right = new Vec3(0, 1, 0).cross(directionVec).normalize();
             if (right.lengthSqr() < 0.001) {
                 right = new Vec3(1, 0, 0);
             }
-            for (double dw = -8; dw <= 8; dw += 0.5) {
-                Vec3 spreadPos = this.position().add(right.scale(dw));
-                serverLevel.sendParticles(ParticleTypes.END_ROD,
-                    spreadPos.x, spreadPos.y + 0.5, spreadPos.z,
-                    1, 0.05, 0.05, 0.05, 0.0);
-            }
-            if (ticks % 3 == 0) {
+            Vfx.line(serverLevel, pos.subtract(right.scale(8.0D)), pos.add(right.scale(8.0D)),
+                    Vfx.GOLD, 1.1F, 4, 1.3D);
+            Vfx.line(serverLevel, pos.subtract(right.scale(8.0D)), pos.add(right.scale(8.0D)),
+                    Vfx.WHITE, 0.35F, 5, 0.75D);
+            if (ticks % 2 == 0) {
                 serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
-                    this.getX(), this.getY() + 0.5, this.getZ(),
-                    5, 1.5, 0.5, 1.5, 0.1);
+                        pos.x, pos.y + 0.5, pos.z, 3, 1.2, 0.4, 1.2, 0.05);
             }
         }
     }

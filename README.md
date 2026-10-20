@@ -43,6 +43,33 @@
 
 > 公式中的伤害下限、锻造加成、力量加成，以及每个 SA 的伤害系数，都可以在配置文件中调整。
 
+### 动画特效
+
+每个 SA 都有一套**分阶段的时间轴动画**（蓄势 → 斩击 → 冲击 → 余韵），而不是施放瞬间一次性炸开粒子：
+
+| SA             | 动画表现                                                                                          |
+| :------------- | :------------------------------------------------------------------------------------------------ |
+| **万剑归宗**   | 脚下金色召唤法阵展开 → 头顶剑气汇聚 → 飞剑逐把落下，每把带落点光柱与落地冲击环                      |
+| **千本樱**     | 粉色樱花法阵 → 花瓣龙卷上升 → 每个目标上方花瓣汇聚后爆散，漫天樱瓣飘落                              |
+| **裂空斩**     | 冲刺残影 → 面前撕开暗紫色空间裂缝（白色光芯）→ 冲击环扩散 + 青色闪光与镜头震动                      |
+| **冰霜领域**   | 冰蓝色法阵铺开 → 一圈 12 根冰棱拔地而起 → 极寒涡流与飘雪，命中目标身上爆开冰晶                      |
+| **业火焚城**   | 火焰圆环自脚下扩散 → 火舌沿螺旋上升 → 业火光柱冲天 + 熔岩火星，目标处火焰爆燃                       |
+| **斩天拔剑术** | 高空垂下蓄势光柱 → 天空被撕开一道横贯的金色裂口 → 竖劈刀光扫过 + 地面冲击环（最强闪屏与震屏）        |
+| **剑荡八荒**   | 双层宽幅金色刀光横扫 → 面向冲击环 → 地面震荡环                                                      |
+| **庚金剑诀**   | 双层反向旋转的庚金法阵 → 金光向中心汇聚 → 数十道金色剑光自天而降                                    |
+| **七杀剑界**   | 紫色七杀法阵 + 边界旋转光幕 → 七个方位的杀剑光柱 → 每次结算冲击环与魂光爆发                          |
+| **血月斩**     | 头顶血月升起并碎裂 → 血月刀光横扫前方扇形 → 血雾爆散 + 深红闪光与暗角                               |
+| **雷神之怒**   | 雷云压顶 → 预兆电弧 → 每道落雷都是锯齿闪电 + 地面冲击环，末尾在目标之间跳跃连锁电弧                  |
+| **不动明王**   | 金色曼陀罗展开 → 八方法柱 → 持续护体金光与周期法阵脉冲 → 结束时金身炸裂 + 冲击波                     |
+
+实现上分三层：
+
+- **自定义粒子**：本模组自带两张程序化绘制的贴图（`glow.png` 柔软光晕、`rune.png` 曼陀罗法阵），配合**加法混合、不写深度**的粒子渲染类型，重叠的光点会自然叠亮成光晕。
+- **服务端时间轴**：`vfx/VfxDirector` 每刻推进一次特效任务，`vfx/Vfx` 提供圆环、球壳、光柱、螺旋、汇聚、刀光扫过、折线闪电、残影等绘制原语，`vfx/SaVfx` 负责把原语编排成每个 SA 的演出。
+- **客户端屏幕表现**：命中闪光、四周暗角、镜头震动，通过 `slashexpansion:main` 通道下发，半径内所有玩家都能看到。
+
+> 特效强度可以在 `[vfx]` 分组里整体调节，性能吃紧时把 `particleScale` 调小即可；关闭特效不影响任何伤害结算。
+
 ---
 
 ## ✨ 新增 SE 一览
@@ -110,6 +137,7 @@
 | `[se.<效果>]`            | 每个 SE 的持续时间、效果等级、倍率、检查间隔等                       |
 | `[loot]`                 | SA 的结构宝箱获取方式                                                |
 | `[recipe]`               | SE 的合成配方                                                        |
+| `[vfx]`                  | 动画特效：总开关、粒子数量倍率、特效数量上限、屏幕闪光/暗角、镜头震动 |
 
 ### SA 获取（`[loot]`）
 
@@ -145,6 +173,21 @@ ingredients = []                         # shapeless = true 时读取此列表
 - 把 `enabled` 设为 `false` 会移除该配方；把 `overrideJsonRecipes` 设为 `false` 则完全使用模组内置 JSON 配方（可被数据包覆盖）。
 - 产物会自动附加 `SpecialEffectType = slashexpansion:<SE ID>` 标签。
 
+### 特效（`[vfx]`）
+
+```toml
+[vfx]
+enabled = true               # 特效总开关（关掉后仍正常结算伤害）
+particleScale = 1.0          # 粒子数量倍率，0.0 ~ 3.0，性能吃紧就调小
+maxConcurrentEffects = 96    # 同时播放的特效数量上限
+particleBudgetPerTick = 320 # 每 tick 粒子发射上限（兜底防卡顿）
+screenEffects = true         # 命中闪光 / 四周暗角
+screenShake = true           # 镜头震动
+screenEffectScale = 1.0      # 屏幕效果强度倍率，0.0 ~ 2.0
+```
+
+这一组是**热读取**的：改完回到游戏里立刻生效，不需要重启。
+
 ---
 
 ## 🛠️ 测试指令（创造模式）
@@ -168,6 +211,19 @@ ingredients = []                         # shapeless = true 时读取此列表
 - `blood_moon_slash` — 血月斩
 - `thors_wrath` — 雷神之怒
 - `immovable_king` — 不动明王
+
+### 特效预览
+
+不想打架只想看动画时，可以直接播放任意 SA 的演出（需要权限等级 2）：
+
+```
+/slashexpansion vfx blood_moon_slash
+/slashexpansion vfx list
+```
+
+可用名字：`wan_jian_gui_zong`、`senbonzakura`、`rift_slash`、`frost_domain`、`inferno`、
+`zhan_tian_ba_jian_shu`、`jian_dang_ba_huang`、`geng_jin_jian_jue`、`qi_sha_jian_jie`、
+`blood_moon_slash`、`thors_wrath`、`immovable_king_cast`、`immovable_king_release`。
 
 ### SE 测试
 
@@ -210,7 +266,7 @@ ingredients = []                         # shapeless = true 时读取此列表
 gradlew build
 ```
 
-构建产物位于 `build/libs/slashexpansion-1.9.4.jar`。
+构建产物位于 `build/libs/slashexpansion-1.10.0.jar`。
 
 ### 导入 IDE
 
@@ -228,18 +284,27 @@ src/main/
 │   │   └── ConfigRecipeInjector.java      # 按配置生成并注入 SE 配方
 │   ├── util/ DamageCalculator.java        # 动态伤害计算
 │   ├── entity/                            # 自定义实体
-│   ├── specialattack/                     # 9 个 SA 核心逻辑
-│   ├── specialeffect/                     # 6 个 SE 核心逻辑
+│   ├── specialattack/                     # 12 个 SA 的伤害/判定逻辑
+│   ├── specialeffect/                     # 12 个 SE 核心逻辑
+│   ├── vfx/
+│   │   ├── Vfx.java                       # 特效绘制原语（环/柱/螺旋/刀光/闪电…）
+│   │   ├── VfxDirector.java               # 服务端特效时间轴调度
+│   │   └── SaVfx.java                     # 每个 SA 的动画编排
+│   ├── particle/                          # 自定义粒子（光晕 / 地面法阵）
+│   ├── net/                               # 网络通道（下发屏幕特效）
+│   ├── command/ VfxCommand.java           # /slashexpansion vfx 预览命令
 │   ├── mixin/                             # Mixin 拦截（生命值/移除/踢出保护）
 │   ├── registry/                          # 注册类
 │   ├── loot/ LootInjector.java            # 按配置注入战利品
-│   └── client/ ClientEvents.java          # 客户端渲染
+│   └── client/                            # 客户端渲染与屏幕特效
 └── resources/
     ├── slashexpansion.png
     ├── pack.mcmeta
     ├── META-INF/mods.toml
     ├── data/slashexpansion/recipes/       # 内置默认配方（可被配置覆盖）
     └── assets/slashexpansion/
+        ├── particles/                     # 粒子描述（glow / rune）
+        ├── textures/particle/             # 粒子贴图（程序化绘制）
         └── lang/
             ├── zh_cn.json                 # 中文语言文件
             └── en_us.json                 # 英文语言文件

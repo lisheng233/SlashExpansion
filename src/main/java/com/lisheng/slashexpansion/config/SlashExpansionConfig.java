@@ -26,6 +26,7 @@ public final class SlashExpansionConfig {
         defineSe();
         defineLoot();
         defineRecipes();
+        defineVfx();
         SPEC = B.build();
     }
 
@@ -1558,6 +1559,72 @@ public final class SlashExpansionConfig {
                 List.of("B=minecraft:dragon_breath", "E=minecraft:dragon_egg",
                         "C=slashblade:proudsoul_crystal"));
         B.pop();
+
+        B.pop();
+    }
+
+    // ==================================================================
+    // 7. 特效（视觉表现）
+    // ==================================================================
+
+    public static final class Vfx {
+        private static ForgeConfigSpec.BooleanValue enabled;
+        private static ForgeConfigSpec.DoubleValue particleScale;
+        private static ForgeConfigSpec.IntValue maxConcurrentEffects;
+        private static ForgeConfigSpec.IntValue particleBudget;
+        private static ForgeConfigSpec.BooleanValue screenEffects;
+        private static ForgeConfigSpec.BooleanValue screenShake;
+        private static ForgeConfigSpec.DoubleValue screenEffectScale;
+
+        public static boolean enabled() {
+            return enabled.get();
+        }
+
+        public static float particleScale() {
+            return (float) (double) particleScale.get();
+        }
+
+        public static int maxConcurrentEffects() {
+            return maxConcurrentEffects.get();
+        }
+
+        public static int particleBudget() {
+            return particleBudget.get();
+        }
+
+        public static boolean screenEffects() {
+            return screenEffects.get();
+        }
+
+        public static boolean screenShake() {
+            return screenShake.get();
+        }
+
+        public static float screenEffectScale() {
+            return (float) (double) screenEffectScale.get();
+        }
+    }
+
+    private static void defineVfx() {
+        B.comment("SA 的动画特效设置。",
+                        "注意：特效只是视觉表现，关闭后 SA 依然会正常造成伤害。",
+                        "这些数值都是运行期直接读取的，修改后重新进入世界即可生效（无需重启）。")
+                .push("vfx");
+
+        Vfx.enabled = B.comment("特效总开关")
+                .define("enabled", true);
+        Vfx.particleScale = B.comment("粒子数量倍率。性能吃紧时调到 0.5 甚至更小")
+                .defineInRange("particleScale", 1.0D, 0.0D, 3.0D);
+        Vfx.maxConcurrentEffects = B.comment("同时播放的特效数量上限，超出后新特效会被丢弃（防止连续释放把客户端拖垮）")
+                .defineInRange("maxConcurrentEffects", 96, 8, 512);
+        Vfx.particleBudget = B.comment("每 tick 允许发射的粒子数量上限，用来兜底防止多人同时释放时卡顿")
+                .defineInRange("particleBudgetPerTick", 320, 0, 5000);
+        Vfx.screenEffects = B.comment("是否播放屏幕效果（闪屏、暗角）")
+                .define("screenEffects", true);
+        Vfx.screenShake = B.comment("是否开启镜头震动")
+                .define("screenShake", true);
+        Vfx.screenEffectScale = B.comment("屏幕效果强度倍率")
+                .defineInRange("screenEffectScale", 1.0D, 0.0D, 2.0D);
 
         B.pop();
     }

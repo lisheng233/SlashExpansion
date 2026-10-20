@@ -3,6 +3,8 @@ package com.lisheng.slashexpansion.specialattack;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.entity.SenbonzakuraSwordEntity;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.vfx.SaVfx;
+import com.lisheng.slashexpansion.vfx.Vfx;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -32,29 +34,44 @@ public class Senbonzakura {
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.Senbonzakura.damageMultiplier());
         float speed = SlashExpansionConfig.Sa.Senbonzakura.projectileSpeed();
 
+        // ---- 动画：樱花法阵 → 粉色漩涡 → 花瓣爆散 ----
+        SaVfx.senbonzakura(player, targets);
+
+        int delay = 6;
         for (LivingEntity target : targets) {
             int count = minSwords + world.random.nextInt(rangeSize);
             for (int i = 0; i < count; i++) {
-                SenbonzakuraSwordEntity sword = new SenbonzakuraSwordEntity(
-                        SlashExpansionEntities.SENBONZAKURA_SWORD.get(), world);
-
-                double angle = world.random.nextDouble() * Math.PI * 2;
-                double radius = 3 + world.random.nextDouble() * 2;
-                double x = target.getX() + Math.cos(angle) * radius;
-                double z = target.getZ() + Math.sin(angle) * radius;
-                double y = target.getY() + 10 + world.random.nextDouble() * 8;
-
-                sword.setPos(x, y, z);
-                sword.setDamage(finalDamage);
-                sword.setIsCritical(critical);
-                sword.setOwner(player);
-
-                Vec3 targetPos = target.getEyePosition();
-                Vec3 direction = targetPos.subtract(sword.position()).normalize();
-                sword.shoot(direction.x, direction.y, direction.z, speed, 0.5f);
-
-                world.addFreshEntity(sword);
+                final LivingEntity aim = target;
+                final int tick = delay;
+                Vfx.playUncapped(world, tick, (level, age) -> {
+                    spawnPetalBlade(level, player, aim, finalDamage, critical, speed);
+                    return false;
+                });
+                delay += 1;
             }
         }
+    }
+
+    private static void spawnPetalBlade(Level world, LivingEntity owner, LivingEntity target,
+                                        float damage, boolean critical, float speed) {
+        SenbonzakuraSwordEntity sword = new SenbonzakuraSwordEntity(
+                SlashExpansionEntities.SENBONZAKURA_SWORD.get(), world);
+
+        double angle = world.random.nextDouble() * Math.PI * 2;
+        double radius = 3 + world.random.nextDouble() * 2;
+        double x = target.getX() + Math.cos(angle) * radius;
+        double z = target.getZ() + Math.sin(angle) * radius;
+        double y = target.getY() + 10 + world.random.nextDouble() * 8;
+
+        sword.setPos(x, y, z);
+        sword.setDamage(damage);
+        sword.setIsCritical(critical);
+        sword.setOwner(owner);
+
+        Vec3 targetPos = target.getEyePosition();
+        Vec3 direction = targetPos.subtract(sword.position()).normalize();
+        sword.shoot(direction.x, direction.y, direction.z, speed, 0.5f);
+
+        world.addFreshEntity(sword);
     }
 }

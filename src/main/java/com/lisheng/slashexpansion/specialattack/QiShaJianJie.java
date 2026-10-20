@@ -2,9 +2,11 @@ package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.entity.QiShaJianJieDomainEntity;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class QiShaJianJie {
 
@@ -26,6 +28,12 @@ public class QiShaJianJie {
         int radius = Math.max(baseRadius, Math.min(maxRadius, baseRadius + killCount / killsPerRadius));
 
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.QiShaJianJie.damageMultiplier());
+
+        // ---- 动画：七杀法阵 + 七方杀剑光柱 ----
+        int spawnDistance = SlashExpansionConfig.Sa.QiShaJianJie.spawnDistance();
+        Vec3 look = player.getLookAngle();
+        Vec3 domainCenter = player.position().add(look.x * spawnDistance, 0.2, look.z * spawnDistance);
+        SaVfx.qiShaJianJie(player, domainCenter, radius);
 
         QiShaJianJieDomainEntity domain = new QiShaJianJieDomainEntity(world, player, finalDamage, radius);
         world.addFreshEntity(domain);

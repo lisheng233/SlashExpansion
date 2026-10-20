@@ -43,6 +43,33 @@ This base is then multiplied by each SA's **damage multiplier**, ensuring that s
 
 > The damage floor, refine bonus, power bonus and every SA's multiplier can all be tuned in the config file.
 
+### Visual Effects
+
+Every SA now plays a **multi-stage timeline animation** (charge → slash → impact → afterglow) instead of a single particle burst:
+
+| SA                        | What you see                                                                                             |
+| :------------------------ | :------------------------------------------------------------------------------------------------------- |
+| **Wan Jian Gui Zong**     | Golden summoning circle unfolds → sword aura gathers overhead → blades rain down one by one, each with a falling light pillar and ground shockwave |
+| **Senbonzakura**          | Pink sakura circle → petal vortex rises → petals converge over each target then burst, sakura drifting down |
+| **Rift Slash**            | Dash afterimages → a dark violet rift tears open ahead (white core) → shockwave ring + cyan flash and camera shake |
+| **Frost Domain**          | Ice-blue circle spreads → 12 ice spikes erupt in a ring → freezing vortex and snowfall, ice crystals burst on targets |
+| **Inferno**               | Fire ring expands from the caster → flames spiral upward → pillar of hellfire with lava embers, targets erupt |
+| **Zhan Tian Ba Jian Shu** | Charge beam descends from high above → the sky splits with a golden seam → vertical slash sweeps by + ground shockwave (strongest flash and shake) |
+| **Jian Dang Ba Huang**    | Two layers of wide golden blade arcs sweep out → facing impact ring → ground ripple                                |
+| **Geng Jin Jian Jue**     | Two counter-rotating golden arrays → light converges inward → dozens of golden blades fall from the sky             |
+| **Qi Sha Jian Jie**       | Violet domain circle with a rotating edge curtain → seven blade pillars → shockwave ring and soul-light burst on every damage tick |
+| **Blood Moon Slash**      | A blood moon rises overhead and shatters → crimson blade arc sweeps the cone ahead → blood mist burst with deep red flash and vignette |
+| **Thor's Wrath**          | Storm clouds gather → warning arcs → each strike is a jagged bolt with a ground ring, chained arcs jump between targets at the end |
+| **Immovable King**        | Golden mandala unfolds → eight pillars → sustained golden aura with periodic array pulses → golden body detonates with a final shockwave |
+
+Three layers make this work:
+
+- **Custom particles** — two procedurally drawn textures (`glow.png` soft halo, `rune.png` mandala) rendered with an **additive, depth-write-disabled** particle render type, so overlapping glows naturally bloom.
+- **Server-side timeline** — `vfx/VfxDirector` advances effect tasks every tick, `vfx/Vfx` offers primitives (rings, shells, pillars, spirals, implosions, blade sweeps, jagged lightning, trails), and `vfx/SaVfx` choreographs each SA.
+- **Client screen feel** — impact flash, edge vignette and camera shake, sent through the `slashexpansion:main` channel to every player in range.
+
+> Intensity is controlled globally in the `[vfx]` section; lower `particleScale` if you need the frames. Disabling effects never changes damage.
+
 ---
 
 ## ✨ New Special Effects
@@ -112,6 +139,7 @@ Numeric changes take effect after restarting the game; `[loot]` / `[recipe]` cha
 | `[se.<effect>]`          | Per-SE duration, amplifier, multiplier, check interval                          |
 | `[loot]`                 | How SAs are obtained from structure chests                                      |
 | `[recipe]`               | SE crafting recipes                                                             |
+| `[vfx]`                  | Visual effects: master switch, particle scale, effect cap, screen flash/vignette, camera shake |
 
 ### SA Acquisition (`[loot]`)
 
@@ -145,6 +173,21 @@ ingredients = []                         # used only when shapeless = true
 - `enabled = false` removes that recipe; `overrideJsonRecipes = false` keeps the built-in JSON recipes (datapack-overridable) instead.
 - The result always carries `SpecialEffectType = slashexpansion:<se id>`.
 
+### Effect Config (`[vfx]`)
+
+```toml
+[vfx]
+enabled = true               # master switch (damage still works when disabled)
+particleScale = 1.0          # particle count multiplier, 0.0 ~ 3.0
+maxConcurrentEffects = 96    # cap on simultaneously playing effects
+particleBudgetPerTick = 320 # per-tick particle emission budget
+screenEffects = true         # impact flash / edge vignette
+screenShake = true           # camera shake
+screenEffectScale = 1.0      # screen effect strength, 0.0 ~ 2.0
+```
+
+This section is read at runtime: changes apply as soon as you return to the game, no restart needed.
+
 ---
 
 ## 🛠️ Test Commands (Creative Mode)
@@ -168,6 +211,19 @@ Replace `wan_jian_gui_zong` with any of the following:
 - `blood_moon_slash` — Blood Moon Slash
 - `thors_wrath` — Thor's Wrath
 - `immovable_king` — Immovable King
+
+### Effect Preview
+
+If you just want to watch the animations without fighting anything (permission level 2 required):
+
+```
+/slashexpansion vfx blood_moon_slash
+/slashexpansion vfx list
+```
+
+Available names: `wan_jian_gui_zong`, `senbonzakura`, `rift_slash`, `frost_domain`, `inferno`,
+`zhan_tian_ba_jian_shu`, `jian_dang_ba_huang`, `geng_jin_jian_jue`, `qi_sha_jian_jie`,
+`blood_moon_slash`, `thors_wrath`, `immovable_king_cast`, `immovable_king_release`.
 
 ### SE Testing
 
@@ -210,7 +266,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.9.4.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.10.0.jar`.
 
 ### Importing into IDE
 
@@ -228,18 +284,27 @@ src/main/
 │   │   └── ConfigRecipeInjector.java      # Builds & injects SE recipes from config
 │   ├── util/ DamageCalculator.java        # Dynamic damage calculation
 │   ├── entity/                            # Custom entities
-│   ├── specialattack/                     # 9 SA implementations
-│   ├── specialeffect/                     # 6 SE implementations
+│   ├── specialattack/                     # 12 SA damage/hit implementations
+│   ├── specialeffect/                     # 12 SE implementations
+│   ├── vfx/
+│   │   ├── Vfx.java                       # Drawing primitives (rings/pillars/spirals/arcs/bolts…)
+│   │   ├── VfxDirector.java               # Server-side effect timeline
+│   │   └── SaVfx.java                     # Per-SA choreography
+│   ├── particle/                          # Custom particles (glow / ground rune)
+│   ├── net/                               # Network channel (screen effects)
+│   ├── command/ VfxCommand.java           # /slashexpansion vfx preview command
 │   ├── mixin/                             # Mixin guards (health / removal / kick)
 │   ├── registry/                          # Registration classes
 │   ├── loot/ LootInjector.java            # Config-driven loot injection
-│   └── client/ ClientEvents.java          # Client-side rendering
+│   └── client/                            # Client rendering & screen effects
 └── resources/
     ├── slashexpansion.png
     ├── pack.mcmeta
     ├── META-INF/mods.toml
     ├── data/slashexpansion/recipes/       # Built-in default recipes (overridable by config)
     └── assets/slashexpansion/
+        ├── particles/                     # Particle descriptions (glow / rune)
+        ├── textures/particle/             # Procedurally drawn particle textures
         └── lang/
             ├── zh_cn.json                 # Chinese language file
             └── en_us.json                 # English language file

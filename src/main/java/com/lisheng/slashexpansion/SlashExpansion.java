@@ -1,8 +1,10 @@
 package com.lisheng.slashexpansion;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.net.SfxNet;
 import com.lisheng.slashexpansion.registry.SlashExpansionComboStateRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.lisheng.slashexpansion.registry.SlashExpansionSlashArtsRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 
@@ -26,9 +28,13 @@ public class SlashExpansion {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SlashExpansionConfig.SPEC);
 
         SlashExpansionEntities.register(modBus);
+        SlashExpansionParticles.register(modBus);
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
+
+        // 网络通道：下发屏幕特效（闪光 / 暗角 / 镜头震动）
+        SfxNet.register();
 
         MinecraftForge.EVENT_BUS.register(this);
     }

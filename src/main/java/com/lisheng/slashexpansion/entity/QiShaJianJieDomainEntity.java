@@ -1,7 +1,10 @@
 package com.lisheng.slashexpansion.entity;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.particle.GlowParticleOptions;
+import com.lisheng.slashexpansion.particle.RuneParticleOptions;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.vfx.Vfx;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -18,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Holder;
 
 import java.util.List;
@@ -53,12 +57,32 @@ public class QiShaJianJieDomainEntity extends Entity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide()) {
-            for (int i = 0; i < 3; i++) {
-                double angle = this.tickCount * 0.1 + i * 2.0;
+            this.tickCount++;
+
+            // 边界旋转光幕
+            for (int i = 0; i < 6; i++) {
+                double angle = this.tickCount * 0.07 + i * Math.PI / 3.0;
                 double x = this.getX() + Math.cos(angle) * radius;
                 double z = this.getZ() + Math.sin(angle) * radius;
-                this.level().addParticle(ParticleTypes.END_ROD, x, this.getY() + 0.5, z, 0, 0.1, 0);
-                this.level().addParticle(ParticleTypes.ENCHANT, x, this.getY() + 1, z, 0, 0.2, 0);
+                this.level().addParticle(new GlowParticleOptions(0xCC7C3AED, 0.55F, 14),
+                        x, this.getY() + 0.4, z, 0.0, 0.012, 0.0);
+                this.level().addParticle(new GlowParticleOptions(0x66C4B5FD, 1.2F, 18),
+                        x, this.getY() + 0.06, z, 0.0, 0.0, 0.0);
+            }
+
+            // 地面法阵周期性重刷
+            if (this.tickCount % 34 == 0) {
+                this.level().addParticle(new RuneParticleOptions(0xAAAA6BFF, (float) (radius * 2.1D), 38, -0.02F, 0.55F),
+                        this.getX(), this.getY() + 0.06, this.getZ(), 0.0, 0.0, 0.0);
+            }
+
+            // 中心上浮的魂光
+            if (this.tickCount % 2 == 0) {
+                double a = this.level().random.nextDouble() * Math.PI * 2.0D;
+                double r = this.level().random.nextDouble() * radius;
+                this.level().addParticle(ParticleTypes.END_ROD,
+                        this.getX() + Math.cos(a) * r, this.getY() + 0.2, this.getZ() + Math.sin(a) * r,
+                        0.0, 0.02, 0.0);
             }
             return;
         }
@@ -115,6 +139,10 @@ public class QiShaJianJieDomainEntity extends Entity {
                     serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
                         this.getX(), this.getY() + 0.5, this.getZ(),
                         1, 0, 0, 0, 0);
+                    Vec3 center = new Vec3(this.getX(), this.getY() + 0.3, this.getZ());
+                    Vfx.play(serverLevel, Vfx.halo(center, new Vec3(0.0, 1.0, 0.0),
+                            0.3D, radius * 0.92D, Vfx.VIOLET, 16, 6, 0.4F, 8));
+                    Vfx.play(serverLevel, Vfx.burst(center, Vfx.VIOLET, 24, radius * 0.45D, 0.4F, 10));
                 }
                 hitCount++;
             }

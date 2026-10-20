@@ -2,14 +2,13 @@ package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.SlashExpansion;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.Holder;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.LivingEntity;
@@ -93,16 +92,7 @@ public class BloodMoonSlash {
         }
 
         // ---- 4. 血月特效 ----
-        if (world instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.CRIT,
-                    player.getX(), player.getY() + 1.0, player.getZ(),
-                    40, 1.2, 1.0, 1.2, 0.4);
-            for (LivingEntity target : targets) {
-                serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
-                        target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ(),
-                        8, 0.3, 0.3, 0.3, 0.1);
-            }
-        }
+        SaVfx.bloodMoonSlash(player, targets, range);
     }
 
     private static boolean isInFront(LivingEntity player, LivingEntity target, Vec3 look) {

@@ -1,9 +1,8 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.util.TargetSelector;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.monster.Strider;
@@ -28,17 +27,8 @@ public class Inferno {
                 e -> e != player && e.isAlive() && !e.isSpectator()
                         && TargetSelector.test.test(player, e));
 
-        if (world instanceof ServerLevel serverLevel) {
-            for (int i = 0; i < 200; i++) {
-                double radius = 2 + world.random.nextDouble() * range;
-                double angle = world.random.nextDouble() * Math.PI * 2;
-                double x = player.getX() + Math.cos(angle) * radius;
-                double z = player.getZ() + Math.sin(angle) * radius;
-                double y = player.getY() + world.random.nextDouble() * 2;
-                serverLevel.sendParticles(ParticleTypes.FLAME, x, y, z, 1, 0.2, 0.5, 0.2, 0.1);
-                serverLevel.sendParticles(ParticleTypes.LAVA, x, y, z, 1, 0, 0, 0, 0);
-            }
-        }
+        // ---- 动画：火环扩散 → 业火升腾 → 焚城爆发 ----
+        SaVfx.inferno(player, targets, range);
 
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.Inferno.damageMultiplier());
         float netherMultiplier = SlashExpansionConfig.Sa.Inferno.netherDamageMultiplier();
@@ -56,14 +46,6 @@ public class Inferno {
 
             target.hurt(player.damageSources().mobAttack(player), targetDamage);
             target.setSecondsOnFire(fireSeconds);
-
-            if (world instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
-                        target.getX(), target.getY(), target.getZ(), 1, 0, 0, 0, 0);
-                serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-                        target.getX(), target.getY() + 0.5, target.getZ(),
-                        10, 0.5, 0.5, 0.5, 0.1);
-            }
         }
     }
 }

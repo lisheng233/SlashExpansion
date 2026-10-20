@@ -3,9 +3,10 @@ package com.lisheng.slashexpansion.specialattack;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.entity.WanJianGuiZongSwordEntity;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.vfx.SaVfx;
+import com.lisheng.slashexpansion.vfx.Vfx;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.TargetSelector;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -53,42 +54,48 @@ public class GengJinJianJue {
         float finalDamage = (float) (damage * SlashExpansionConfig.Sa.GengJinJianJue.damageMultiplier());
         float speed = SlashExpansionConfig.Sa.GengJinJianJue.projectileSpeed();
 
+        // ---- 动画：双层庚金法阵 → 金光汇聚 ----
+        SaVfx.gengJinJianJue(player, targets);
+
         // 分配剑数
         int perTarget = swordCount / targets.size();
         int extra = swordCount % targets.size();
 
+        int delay = 6;
         for (int idx = 0; idx < targets.size(); idx++) {
             LivingEntity target = targets.get(idx);
             int count = perTarget + (idx < extra ? 1 : 0);
             for (int i = 0; i < count; i++) {
-                WanJianGuiZongSwordEntity sword = new WanJianGuiZongSwordEntity(
-                        SlashExpansionEntities.WAN_JIAN_SWORD.get(), world);
-                double offsetX = (world.random.nextDouble() - 0.5) * 4;
-                double offsetZ = (world.random.nextDouble() - 0.5) * 4;
-                double height = 10 + world.random.nextDouble() * 8;
-                sword.setPos(
-                        target.getX() + offsetX,
-                        target.getY() + height,
-                        target.getZ() + offsetZ
-                );
-                sword.setDamage(finalDamage);
-                sword.setIsCritical(true);
-                sword.setSpeed(speed);
-                sword.setOwner(player);
-                sword.setColor(0xFFD700);
-
-                sword.fireAt(target);
-                world.addFreshEntity(sword);
+                final LivingEntity aim = target;
+                final int tick = delay;
+                Vfx.playUncapped(world, tick, (level, age) -> {
+                    spawnSword(level, player, aim, finalDamage, critical, speed);
+                    return false;
+                });
+                delay += 1;
             }
         }
+    }
 
-        // 粒子：金色闪光
-        if (world instanceof ServerLevel serverLevel) {
-            for (LivingEntity target : targets) {
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
-                        target.getX(), target.getY() + 1, target.getZ(),
-                        20, 1, 1, 1, 0.2);
-            }
-        }
+    private static void spawnSword(Level world, LivingEntity owner, LivingEntity target,
+                                   float damage, boolean critical, float speed) {
+        WanJianGuiZongSwordEntity sword = new WanJianGuiZongSwordEntity(
+                SlashExpansionEntities.WAN_JIAN_SWORD.get(), world);
+        double offsetX = (world.random.nextDouble() - 0.5) * 4;
+        double offsetZ = (world.random.nextDouble() - 0.5) * 4;
+        double height = 10 + world.random.nextDouble() * 8;
+        sword.setPos(
+                target.getX() + offsetX,
+                target.getY() + height,
+                target.getZ() + offsetZ
+        );
+        sword.setDamage(damage);
+        sword.setIsCritical(true);
+        sword.setSpeed(speed);
+        sword.setOwner(owner);
+        sword.setColor(0xFFD700);
+
+        sword.fireAt(target);
+        world.addFreshEntity(sword);
     }
 }

@@ -2,6 +2,7 @@ package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.entity.GiantSlashEntity;
+import com.lisheng.slashexpansion.vfx.SaVfx;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -14,6 +15,9 @@ public class JianDangBaHuang {
 
         Level world = player.level();
         Vec3 lookVec = player.getLookAngle();
+
+        // ---- 动画：宽幅横扫刀光 + 八荒震荡 ----
+        SaVfx.jianDangBaHuang(player);
 
         GiantSlashEntity slash = new GiantSlashEntity(
                 world,
