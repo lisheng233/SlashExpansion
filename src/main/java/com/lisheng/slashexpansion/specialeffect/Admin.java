@@ -1,13 +1,16 @@
 package com.lisheng.slashexpansion.specialeffect;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.mixin.EntityLevelCallbackAccessor;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.entity.EntityInLevelCallback;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -277,8 +281,9 @@ public class Admin extends SpecialEffect {
      * 从 level 侧强制移除实体。
      *
      * <p>刻意不调用 {@link Entity#remove}：多数保护类模组都会拦截它。
-     * 这里改为调用 {@code ServerLevel#getChunkSource().removeEntity(...)}（level 侧、很少被拦截）
-     * 取消客户端追踪，再直接 {@link Entity#setRemoved} 标记服务端移除。</p>
+     * 这里通过 {@link EntityLevelCallbackAccessor} 拿到实体内部的 level 侧回调，
+     * 直接触发 {@code onRemove(KILLED)}——这会真正把实体从区块实体表、tick 列表与追踪表中摘掉；
+     * 随后补发 {@link ClientboundRemoveEntitiesPacket} 让客户端立即删除实体。</p>
      */
     private static void forceLevelRemove(Entity entity) {
         // 不误伤处于管理员保护中的玩家
@@ -288,11 +293,28 @@ public class Admin extends SpecialEffect {
             return;
         }
 
-        if (entity.level() instanceof ServerLevel serverLevel) {
-            serverLevel.getChunkSource().removeEntity(entity);
+        if (entity instanceof EntityLevelCallbackAccessor accessor) {
+            EntityInLevelCallback callback = accessor.slashexpansion$getLevelCallback();
+            if (callback != null && callback != EntityInLevelCallback.NULL) {
+                callback.onRemove(Entity.RemovalReason.KILLED);
+                sendRemovalPacket(entity);
+            }
         }
+
+        // 统一标记移除状态；上面已把 levelCallback 置为 NULL，不会重复处理
         entity.setRemoved(Entity.RemovalReason.KILLED);
         entity.invalidateCaps();
+    }
+
+    /** 立即通知客户端删除该实体，避免出现残影。 */
+    private static void sendRemovalPacket(Entity entity) {
+        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        ClientboundRemoveEntitiesPacket packet = new ClientboundRemoveEntitiesPacket(entity.getId());
+        for (ServerPlayer player : serverLevel.players()) {
+            player.connection.send(packet);
+        }
     }
 
     // ================================================================

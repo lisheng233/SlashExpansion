@@ -210,7 +210,7 @@ Replace `wind_god_power` with any of the following:
 gradlew build
 ```
 
-The built JAR will be located at `build/libs/slashexpansion-1.9.1.jar`.
+The built JAR will be located at `build/libs/slashexpansion-1.9.2.jar`.
 
 ### Importing into IDE
 
