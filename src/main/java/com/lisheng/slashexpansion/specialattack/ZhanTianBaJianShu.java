@@ -1,0 +1,33 @@
+package com.lisheng.slashexpansion.specialattack;
+
+import com.lisheng.slashexpansion.config.SlashExpansionConfig;
+import com.lisheng.slashexpansion.entity.GiantSlashEntity;
+import com.lisheng.slashexpansion.vfx.SaVfx;
+import mods.flammpfeil.slashblade.util.KnockBacks;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+
+public class ZhanTianBaJianShu {
+
+    public static void doSlash(LivingEntity player, boolean critical, double damage) {
+        if (player.level().isClientSide()) return;
+
+        Level world = player.level();
+        Vec3 lookVec = player.getLookAngle();
+
+        // ---- 动画：天空蓄势 → 天裂 → 竖劈刀光 ----
+        SaVfx.zhanTianBaJianShu(player);
+
+        GiantSlashEntity slash = new GiantSlashEntity(
+                world,
+                player,
+                damage * SlashExpansionConfig.Sa.ZhanTianBaJianShu.damageMultiplier(),
+                KnockBacks.meteor,
+                true,
+                lookVec
+        );
+
+        world.addFreshEntity(slash);
+    }
+}

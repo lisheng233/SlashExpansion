@@ -3,6 +3,8 @@ package com.lisheng.slashexpansion;
 import com.mojang.logging.LogUtils;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionComboStateRegistry;
+import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.lisheng.slashexpansion.registry.SlashExpansionSlashArtsRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionSpecialEffectsRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -31,11 +33,13 @@ public class SlashExpansion {
         // config/slashexpansion-common.toml
         container.registerConfig(ModConfig.Type.COMMON, SlashExpansionConfig.SPEC);
 
+        SlashExpansionEntities.register(modBus);
+        SlashExpansionParticles.register(modBus);
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
         SlashExpansionSpecialEffectsRegistry.SPECIAL_EFFECTS.register(modBus);
 
-        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 阶段一已加载（2 SA / 2 SE）");
+        LOGGER.info("[SlashExpansion] NeoForge 1.21.1 已加载：12 SA / 2 SE / 4 实体 / 2 粒子");
     }
 
     /** 1.21 起 ResourceLocation 构造器已私有化，统一走工厂方法。 */
