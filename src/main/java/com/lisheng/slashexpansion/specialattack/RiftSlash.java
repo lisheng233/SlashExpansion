@@ -1,7 +1,7 @@
 package com.lisheng.slashexpansion.specialattack;
 
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.RegistryEvents;
 import mods.flammpfeil.slashblade.entity.EntityDrive;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.VectorHelper;
@@ -52,7 +52,7 @@ public class RiftSlash {
 
         for (int i = 0; i < count; i++) {
             float angle = i * angleStep;
-            EntityDrive drive = new EntityDrive(SlashBlade.RegistryEvents.Drive, player.level());
+            EntityDrive drive = new EntityDrive(RegistryEvents.Drive, player.level());
 
             Vec3 dir = VectorHelper.getVectorForRotation(0, player.getYRot() + angle);
             drive.setPos(player.getX(), player.getY() + 0.5, player.getZ());

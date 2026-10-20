@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
@@ -51,13 +51,13 @@ public class FlameHeart extends SpecialEffect {
 
         int seconds = SlashExpansionConfig.Se.FlameHeart.igniteSeconds();
         if (seconds > 0) {
-            event.getTarget().setSecondsOnFire(seconds);
+            event.getTarget().igniteForSeconds(seconds);
         }
     }
 
     /** 免疫火焰伤害。 */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onLivingHurt(LivingHurtEvent event) {
+    public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
         if (!SlashExpansionConfig.Se.FlameHeart.immuneToFire()) return;
         if (!(event.getEntity() instanceof Player player)) return;
         if (!hasSE(player.getMainHandItem())) return;
@@ -89,7 +89,7 @@ public class FlameHeart extends SpecialEffect {
         if (active) {
             double amount = SlashExpansionConfig.Se.FlameHeart.netherSpeedBonus();
             AttributeModifier existing = speed.getModifier(SPEED_MOD_ID);
-            if (existing == null || Double.compare(existing.getAmount(), amount) != 0) {
+            if (existing == null || Double.compare(existing.amount(), amount) != 0) {
                 speed.removeModifier(SPEED_MOD_ID);
                 speed.addTransientModifier(new AttributeModifier(
                         SPEED_MOD_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));

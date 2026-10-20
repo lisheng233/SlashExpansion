@@ -1,0 +1,16 @@
+1.21.1: 阶段一编译通过（NeoForge 21.1.249 + SlashBlade 2.1.9）
+
+构建：
+- 仓库改为镜像优先 + 官方兜底，BMCLAPI 会 302 到 USTC，实测 7MB/s
+- 排除 net.neoforged:minecraft-dependencies：NeoForm 1.21.1 的 pom 声明了它，
+  但官方仓库与所有镜像都是 404，反编译与编译都不需要它
+- Gradle 分发改用腾讯镜像；JDK 21 由 toolchain 指定
+
+API 适配（编译期暴露的 5 处）：
+- Enchantments.POWER 在 1.21.1 是 ResourceKey，需要 registryAccess().holderOrThrow 解析成 Holder
+- RegistryEvents 是 SlashBlade 的顶层类，不在 SlashBlade 内部
+- LivingHurtEvent 改为 LivingIncomingDamageEvent
+- setSecondsOnFire 改为 igniteForSeconds
+- AttributeModifier#getAmount 改为 amount（1.21 改成 record，id 由 UUID 换成 ResourceLocation）
+
+文档：README 顶部加 1.21.1 分支状态表与构建注意事项

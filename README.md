@@ -6,6 +6,42 @@
 
 # SlashExpansion
 
+> ## ⚠️ 你正在看 `1.21.1-neoforge` 分支
+>
+> 这是 **Minecraft 1.21.1 / NeoForge 21.1.249** 的移植分支，移植仍在进行中：
+>
+> | 阶段 | 内容 | 状态 |
+> | :--- | :--- | :--- |
+> | 一 | 构建链跑通（Gradle 9.2.1 + JDK 21 + NeoForge 21.1.249 + SlashBlade 2.1.9） | ✅ 已完成 |
+> | 一 | **2 个 SA**：裂空斩（`EntityDrive` 路径）、冰霜领域（纯效果路径） | ✅ 已移植 |
+> | 一 | **2 个 SE**：烈焰之心（事件路径）、千锤百炼（刀状态 + 数据组件路径） | ✅ 已移植 |
+> | 一 | 开发服务器启动验证 | 🔄 进行中 |
+> | 二 | 其余 10 个 SA / 10 个 SE | ⏳ 待迁移 |
+> | 二 | 自定义实体（幻影剑、巨型剑气、七杀领域）与客户端渲染器 | ⏳ 待迁移 |
+> | 二 | 自定义粒子 / 屏幕特效 / 网络通道 | ⏳ 待迁移 |
+> | 二 | Mixin（管理员之力的移除/生命值/踢出保护） | ⏳ 待迁移 |
+> | 二 | 战利品注入与 SE 配方注入（1.21 的战利品表/配方 API 变了） | ⏳ 待迁移 |
+>
+> **1.20.1 / Forge 47 的完整功能版在 `main` 分支**，两者互相独立。
+>
+> ### 在 1.21.1 分支构建
+>
+> ```bash
+> # 需要 JDK 21（本仓库用 Gradle toolchain，配好 org.gradle.java.installations.paths 即可）
+> gradlew build
+> ```
+>
+> - 依赖解析默认走 BMCLAPI 镜像（官方 `maven.neoforged.net` 在部分网络下被 DNS 污染）：
+>   `-PneoforgeMirror=` 关闭镜像，`-PneoforgeMirror=URL` 换自定义镜像。
+> - **必须**保留对 `net.neoforged:minecraft-dependencies` 的排除：NeoForm 1.21.1 的 pom 声明了
+>   这个构件，但它在官方仓库和所有镜像里都不存在（404），不排除会直接构建失败。
+>   反编译与编译本身并不需要它。
+> - 若官方源需要走代理，在 `~/.gradle/gradle.properties` 里加
+>   `systemProp.https.proxyHost/Port`，或给 Gradle 传 `-Dorg.gradle.jvmargs="-Dhttps.proxyHost=..."`
+>   （注意 `systemProp.*` 对 ModDevGradle 拉取 NeoForm 运行时不一定生效，实测用 JVM 参数更可靠）。
+
+---
+
 **SlashExpansion** 是一个 [拔刀剑：重锋 (SlashBlade: Resharped)](https://www.curseforge.com/minecraft/mc-mods/slashblade-resharped) 的附属模组，为 Minecraft 1.20.1 添加了 **12 种全新的 SA（特殊攻击）** 和 **12 种强大的 SE（特殊效果）**。
 
 模组**不添加新刀剑**，专注于丰富拔刀剑的技能体系。所有 SA 的伤害基于玩家当前持有的刀动态计算，随装备成长而提升。

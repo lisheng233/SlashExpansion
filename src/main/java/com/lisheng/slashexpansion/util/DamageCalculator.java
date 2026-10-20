@@ -4,7 +4,9 @@ import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.BladeStateAccess;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -38,8 +40,10 @@ public class DamageCalculator {
         int refine = state.getRefine();
         float refineBonus = refine * SlashExpansionConfig.Damage.refineBonus();
 
-        // 1.21：附魔改为 Holder，Enchantments.POWER 取代旧的 POWER_ARROWS
-        int power = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER, blade);
+        // 1.21：Enchantments.POWER 是 ResourceKey，getItemEnchantmentLevel 要 Holder，先解析
+        Holder<Enchantment> powerEnchantment = player.level().registryAccess()
+                .holderOrThrow(Enchantments.POWER);
+        int power = EnchantmentHelper.getItemEnchantmentLevel(powerEnchantment, blade);
         float powerBonus = power * SlashExpansionConfig.Damage.powerEnchantBonus();
 
         float playerAttack = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);

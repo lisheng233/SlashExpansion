@@ -19,10 +19,19 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 // ==================================================================
 // 注意：官方 maven.neoforged.net 在部分网络环境下会被 DNS 污染（解析到无关 IP，
 // 443 直接不通），NeoForm 与 NeoForge 构件都取不到，构建会卡死或失败。
-// 因此这里默认把 net.neoforged 的依赖重写到 BMCLAPI 镜像；
-// 网络正常的环境用 -PneoforgeMirror= 关掉重写即可。
-def mirrorUrl = (findProperty('neoforgeMirror') ?: 'https://bmclapi2.bangbang93.com/maven').toString()
-boolean useMirror = !mirrorUrl.isBlank()
+// 因此这里默认把 net.neoforged 的依赖重写到 BMCLAPI 镜像。
+//
+// 用法：
+//   默认                 -> 使用 BMCLAPI 镜像
+//   -PneoforgeMirror=    -> 关闭镜像，走官方仓库（需要能访问 maven.neoforged.net，例如挂了代理）
+//   -PneoforgeMirror=URL -> 使用自定义镜像
+def mirrorProp = project.hasProperty('neoforgeMirror')
+        ? project.property('neoforgeMirror').toString().trim()
+        : null
+boolean useMirror = mirrorProp == null || !mirrorProp.isEmpty()
+def mirrorUrl = (mirrorProp != null && !mirrorProp.isEmpty())
+        ? mirrorProp
+        : 'https://bmclapi2.bangbang93.com/maven'
 
 repositories {
     if (useMirror) {
@@ -30,6 +39,12 @@ repositories {
             name = 'NeoForgeMirror'
             url = mirrorUrl
         }
+    }
+    // 官方仓库作为兜底：镜像缺少的构件（例如 neoform-runtime）会回落到这里。
+    // 镜像本身会 302 到 USTC，速度很快，所以正常情况下不会走到这一条。
+    maven {
+        name = 'NeoForgeOfficial'
+        url = 'https://maven.neoforged.net/releases'
     }
     mavenCentral()
     maven {
@@ -42,8 +57,10 @@ repositories {
 }
 
 if (useMirror) {
-    // moddev 插件会自己往 project 上挂官方仓库，这里统一改写到镜像
+    // moddev 插件会自己往 project 上挂官方仓库，这里统一改写到镜像；
+    // 上面显式声明的 NeoForgeOfficial 保持不动，作为兜底。
     repositories.all { repo ->
+        if (repo.name == 'NeoForgeOfficial') return
         if (repo instanceof MavenArtifactRepository
                 && repo.url.toString().contains('maven.neoforged.net')) {
             repo.url = uri(mirrorUrl)
@@ -54,6 +71,14 @@ if (useMirror) {
 dependencies {
     // 拔刀剑：重锋（1.21.1 / NeoForge）
     implementation "maven.modrinth:slashblade-resharped:${slashblade_version}"
+}
+
+// NeoForm 1.21.1 的 pom 声明了 net.neoforged:minecraft-dependencies:1.21.1，
+// 但这个构件在官方仓库（以及所有镜像）里都是 404，会让 :createMinecraftArtifacts /
+// :compileJava 在解析依赖时直接失败。它只是把 MC 依赖清单塞进 NeoForm 的类路径，
+// 反编译与编译本身都不需要，所以对所有配置排除掉。
+configurations.configureEach { cfg ->
+    cfg.exclude group: 'net.neoforged', module: 'minecraft-dependencies'
 }
 
 neoForge {
