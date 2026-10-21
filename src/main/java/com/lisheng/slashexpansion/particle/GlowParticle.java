@@ -26,7 +26,9 @@ public class GlowParticle extends TextureSheetParticle {
         super(level, x, y, z);
         this.pickSprite(sprites);
         this.baseSize = Math.max(0.02F, options.size());
-        this.baseAlpha = ((options.color() >>> 24) & 0xFF) / 255.0F;
+        int alphaByte = (options.color() >>> 24) & 0xFF;
+        // 调用方只写 0xRRGGBB 时 alpha 为 0，这里按不透明处理，避免粒子完全透明
+        this.baseAlpha = (alphaByte == 0 ? 255 : alphaByte) / 255.0F;
         this.setColor(((options.color() >> 16) & 0xFF) / 255.0F,
                 ((options.color() >> 8) & 0xFF) / 255.0F,
                 (options.color() & 0xFF) / 255.0F);

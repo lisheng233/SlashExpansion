@@ -10,6 +10,7 @@ import com.lisheng.slashexpansion.particle.RuneParticle;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
 import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mods.flammpfeil.slashblade.client.renderer.entity.SummonedSwordRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -35,8 +36,9 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(SlashExpansionEntities.WAN_JIAN_SWORD.get(), EmptyRenderer::new);
-        event.registerEntityRenderer(SlashExpansionEntities.SENBONZAKURA_SWORD.get(), EmptyRenderer::new);
+        // 幻影剑直接用 SlashBlade 的召唤剑渲染器，才能显示刀身模型
+        event.registerEntityRenderer(SlashExpansionEntities.WAN_JIAN_SWORD.get(), SummonedSwordRenderer::new);
+        event.registerEntityRenderer(SlashExpansionEntities.SENBONZAKURA_SWORD.get(), SummonedSwordRenderer::new);
         event.registerEntityRenderer(SlashExpansionEntities.QI_SHA_JIAN_JIE_DOMAIN.get(), EmptyRenderer::new);
         event.registerEntityRenderer(SlashExpansionEntities.GIANT_SLASH.get(), EmptyRenderer::new);
     }
