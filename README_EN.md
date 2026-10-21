@@ -30,8 +30,15 @@
 
 ---
 
-## Installation
+## Download
 
+- **GitHub Releases**: <https://github.com/lisheng233/SlashExpansion/releases>
+
+> Pick the jar that matches your game version (the filename contains `1.20.1` or `1.21.1`).
+
+---
+
+## Installation
 | Requirement | Version |
 | :--- | :--- |
 | Minecraft | **1.20.1** |
@@ -222,8 +229,20 @@ Swap the ID for any SA / SE listed above.
 
 ---
 
-## Languages
+## Feedback
 
+Bugs, suggestions, or mod compatibility conflicts? Please open an [issue on GitHub](https://github.com/lisheng233/SlashExpansion/issues).
+
+Please include:
+
+- Minecraft version, loader version, SlashBlade version
+- This mod's version (the one in the jar filename)
+- `logs/latest.log` or the crash report from `crash-reports/`
+- Steps to reproduce (which SA / SE, and whether other mods are involved)
+
+---
+
+## Languages
 Simplified Chinese and English are bundled (`zh_cn` / `en_us`).
 
 ---
@@ -242,6 +261,6 @@ Requires JDK 17 and the bundled Gradle wrapper:
 gradlew build
 ```
 
-Output: `build/libs/slashexpansion-1.10.1.jar`.
+Output: `build/libs/slashexpansion-1.20.1-2.0.jar`.
 
 </details>

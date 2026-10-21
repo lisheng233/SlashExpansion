@@ -30,8 +30,15 @@
 
 ---
 
-## 安装
+## 下载
 
+- **GitHub Releases**：<https://github.com/lisheng233/SlashExpansion/releases>
+
+> 下载时请认准与你的游戏版本对应的 jar（文件名里带 `1.20.1` 或 `1.21.1`）。
+
+---
+
+## 安装
 | 依赖 | 版本 |
 | :--- | :--- |
 | Minecraft | **1.20.1** |
@@ -222,8 +229,20 @@ screenEffectScale = 1.0       # 屏幕效果强度倍率
 
 ---
 
-## 语言
+## 反馈与问题
 
+遇到问题、想提建议，或者想报告兼容性冲突，请到 [GitHub Issues](https://github.com/lisheng233/SlashExpansion/issues) 反馈。
+
+提交时请附上：
+
+- 游戏版本、加载器版本、拔刀剑版本
+- 本模组的版本号（文件名里的那串）
+- `logs/latest.log` 或崩溃报告（`crash-reports/` 下的文件）
+- 能复现的操作步骤（用了哪个 SA / SE、周围有无其它模组介入）
+
+---
+
+## 语言
 内置简体中文与英文（`zh_cn` / `en_us`）。
 
 ---
@@ -242,6 +261,6 @@ screenEffectScale = 1.0       # 屏幕效果强度倍率
 gradlew build
 ```
 
-产物：`build/libs/slashexpansion-1.10.1.jar`。
+产物：`build/libs/slashexpansion-1.20.1-2.0.jar`。
 
 </details>
