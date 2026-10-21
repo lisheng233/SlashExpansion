@@ -1,0 +1,34 @@
+{
+    "type":  "minecraft:crafting_shaped",
+    "pattern":  [
+                    "ECM",
+                    "CSC",
+                    "PCP"
+                ],
+    "key":  {
+                "C":  {
+                          "item":  "slashblade:proudsoul_crystal"
+                      },
+                "E":  {
+                          "item":  "minecraft:elytra"
+                      },
+                "S":  {
+                          "item":  "minecraft:nether_star"
+                      },
+                "P":  {
+                          "item":  "minecraft:beacon"
+                      },
+                "M":  {
+                          "item":  "minecraft:phantom_membrane"
+                      }
+            },
+    "result":  {
+                   "id":  "slashblade:proudsoul_crystal",
+                   "count":  1,
+                   "components":  {
+                                      "minecraft:custom_data":  {
+                                                                    "SpecialEffectType":  "slashexpansion:wind_god_power"
+                                                                }
+                                  }
+               }
+}

@@ -1,0 +1,34 @@
+{
+    "type":  "minecraft:crafting_shaped",
+    "pattern":  [
+                    "CWC",
+                    "SCD",
+                    "CEC"
+                ],
+    "key":  {
+                "C":  {
+                          "item":  "slashblade:proudsoul_crystal"
+                      },
+                "E":  {
+                          "item":  "minecraft:echo_shard"
+                      },
+                "S":  {
+                          "item":  "minecraft:sculk_shrieker"
+                      },
+                "W":  {
+                          "item":  "minecraft:wither_skeleton_skull"
+                      },
+                "D":  {
+                          "item":  "minecraft:end_crystal"
+                      }
+            },
+    "result":  {
+                   "id":  "slashblade:proudsoul_crystal",
+                   "count":  1,
+                   "components":  {
+                                      "minecraft:custom_data":  {
+                                                                    "SpecialEffectType":  "slashexpansion:abyss_whisper"
+                                                                }
+                                  }
+               }
+}

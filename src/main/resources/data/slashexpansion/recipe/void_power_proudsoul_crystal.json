@@ -1,0 +1,31 @@
+{
+    "type":  "minecraft:crafting_shaped",
+    "pattern":  [
+                    "CEC",
+                    "DAD",
+                    "CEC"
+                ],
+    "key":  {
+                "C":  {
+                          "item":  "minecraft:bedrock"
+                      },
+                "E":  {
+                          "item":  "minecraft:echo_shard"
+                      },
+                "D":  {
+                          "item":  "minecraft:end_crystal"
+                      },
+                "A":  {
+                          "item":  "slashblade:proudsoul_crystal"
+                      }
+            },
+    "result":  {
+                   "id":  "slashblade:proudsoul_crystal",
+                   "count":  1,
+                   "components":  {
+                                      "minecraft:custom_data":  {
+                                                                    "SpecialEffectType":  "slashexpansion:void_power"
+                                                                }
+                                  }
+               }
+}
