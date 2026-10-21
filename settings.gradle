@@ -1,0 +1,13 @@
+// 1.20.1 / Forge 47 项目：独立 Gradle 构建
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        // ForgeGradle 与 MixinGradle 的插件构件在 Forge 官方 Maven 上
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+    }
+}
+
+rootProject.name = 'slashexpansion'

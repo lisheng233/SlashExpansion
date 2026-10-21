@@ -4,6 +4,18 @@
 
 ---
 
+> ## 📦 这是 1.20.1 / Forge 47 的独立项目
+>
+> 本目录（`blade-1.20.1`）是 **Minecraft 1.20.1 + Forge 47** 版本的独立 Gradle 项目，
+> 有自己的 git 仓库和构建，不再与 1.21.1 版本共享工作区、也不需要切分支。
+>
+> - **1.21.1 / NeoForge 21.1.249 版本**：`D:\programs\coding\java\blade`（分支 `1.21.1-neoforge`）
+> - 构建：`gradlew build`（需要 JDK 17，ForgeGradle 6）
+>
+> 两个项目分别维护、分别出包、互不干扰。
+
+---
+
 # SlashExpansion
 
 **SlashExpansion** 是一个 [拔刀剑：重锋 (SlashBlade: Resharped)](https://www.curseforge.com/minecraft/mc-mods/slashblade-resharped) 的附属模组，为 Minecraft 1.20.1 添加了 **12 种全新的 SA（特殊攻击）** 和 **12 种强大的 SE（特殊效果）**。
