@@ -23,7 +23,7 @@
 > | 二 | Mixin：防踢保护（注入 `ServerCommonPacketListenerImpl#disconnect`） | ✅ 已完成 |
 > | 二 | 战利品注入（Global Loot Modifier，配置语义与 1.20.1 一致） | ✅ 已完成 |
 > | 二 | 数据包内容：6 条 SE 配方 + 伤害类型（1.21 格式） | ✅ 已完成 |
-> | 二 | SE 配方可配置注入（ConfigRecipeInjector） | ⏳ 待迁移 |
+> | 二 | SE 配方可配置：1.21 直接用数据包覆盖 data/slashexpansion/recipe/*.json（比代码注入更灵活，无需移植 ConfigRecipeInjector） | ✅ 已改为数据包方案 |
 >
 > 当前服务端验证输出：`12 SA / 12 SE / 4 实体 / 2 粒子 + 保护 Mixin` 后接 `Done`。
 >
