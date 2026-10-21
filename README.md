@@ -27,9 +27,10 @@
 >
 > 当前服务端验证输出：`12 SA / 12 SE / 4 实体 / 2 粒子 + 保护 Mixin` 后接 `Done`。
 >
-> **1.20.1 / Forge 47 的完整功能版在 `main` 分支**，两者互相独立。
+> **1.20.1 / Forge 47 版是另一个独立项目**：`D:\programs\coding\java\blade-1.20.1`
+> （独立 git 仓库、`main` 分支、独立 Gradle 构建），两个项目互不影响。
 >
-> ### 在 1.21.1 分支构建
+> ### 构建
 >
 > ```bash
 > # 需要 JDK 21（本仓库用 Gradle toolchain，配好 org.gradle.java.installations.paths 即可）
