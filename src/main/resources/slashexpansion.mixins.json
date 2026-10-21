@@ -6,7 +6,8 @@
   "mixins": [
     "EntityMixin",
     "LivingEntityMixin",
-    "EntityLevelCallbackAccessor"
+    "EntityLevelCallbackAccessor",
+    "ServerCommonPacketListenerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1

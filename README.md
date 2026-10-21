@@ -20,9 +20,10 @@
 > | 二 | 4 个自定义实体（幻影剑、千本樱剑、巨型剑气、七杀领域） | ✅ 已完成 |
 > | 二 | 客户端渲染器 / 粒子 provider / 屏幕特效 / 网络通道 | ✅ 已完成 |
 > | 二 | Mixin：移除与生命值保护 | ✅ 已完成 |
-> | 二 | Mixin：防踢保护（1.21 的 disconnect 已迁到 `ServerCommonPacketListenerImpl`） | ⏳ 待补 |
-> | 二 | 战利品注入与 SE 配方注入（1.21 改用 Global Loot Modifier 与数据包配方） | ⏳ 待迁移 |
-> | 二 | 数据包内容（配方 JSON、伤害类型） | ⏳ 待迁移 |
+> | 二 | Mixin：防踢保护（注入 `ServerCommonPacketListenerImpl#disconnect`） | ✅ 已完成 |
+> | 二 | 战利品注入（Global Loot Modifier，配置语义与 1.20.1 一致） | ✅ 已完成 |
+> | 二 | 数据包内容：6 条 SE 配方 + 伤害类型（1.21 格式） | ✅ 已完成 |
+> | 二 | SE 配方可配置注入（ConfigRecipeInjector） | ⏳ 待迁移 |
 >
 > 当前服务端验证输出：`12 SA / 12 SE / 4 实体 / 2 粒子 + 保护 Mixin` 后接 `Done`。
 >

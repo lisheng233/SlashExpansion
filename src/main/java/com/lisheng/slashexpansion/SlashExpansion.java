@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.lisheng.slashexpansion.config.SlashExpansionConfig;
 import com.lisheng.slashexpansion.registry.SlashExpansionComboStateRegistry;
 import com.lisheng.slashexpansion.registry.SlashExpansionEntities;
+import com.lisheng.slashexpansion.registry.SlashExpansionLootModifiers;
 import com.lisheng.slashexpansion.net.SfxNet;
 import com.lisheng.slashexpansion.registry.SlashExpansionParticles;
 import com.lisheng.slashexpansion.registry.SlashExpansionSlashArtsRegistry;
@@ -36,6 +37,7 @@ public class SlashExpansion {
 
         modBus.addListener(SfxNet::register);
         SlashExpansionEntities.register(modBus);
+        SlashExpansionLootModifiers.register(modBus);
         SlashExpansionParticles.register(modBus);
         SlashExpansionComboStateRegistry.COMBO_STATES.register(modBus);
         SlashExpansionSlashArtsRegistry.SLASH_ARTS.register(modBus);
