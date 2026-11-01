@@ -49,7 +49,8 @@ public final class VfxCommand {
                         .then(Commands.argument("id", StringArgumentType.word())
                                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(IDS, builder))
                                 .executes(VfxCommand::execute))
-                        .then(Commands.literal("list").executes(VfxCommand::list))));
+                        .then(Commands.literal("list").executes(VfxCommand::list))
+                        .then(Commands.literal("ping").executes(VfxCommand::ping))));
     }
 
     private static int list(CommandContext<CommandSourceStack> context) {
@@ -107,6 +108,62 @@ public final class VfxCommand {
         return 1;
     }
 
+
+    /**
+     * 诊断用：直接在脚下打出一圈自定义粒子与一发屏幕闪光。
+     *
+     * <p>用来区分「特效调度没跑」与「粒子层没渲染」：
+     * 看到光点说明粒子与网络都正常，问题在 VfxDirector 的时间轴；
+     * 什么都看不到则说明粒子层或资源有问题。</p>
+     */
+    private static int ping(CommandContext<CommandSourceStack> context) {
+        ServerPlayer player;
+        try {
+            player = context.getSource().getPlayerOrException();
+        } catch (Exception exception) {
+            context.getSource().sendFailure(Component.literal("该命令只能由玩家执行"));
+            return 0;
+        }
+
+        Level level = player.level();
+        if (!(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            context.getSource().sendFailure(Component.literal("该命令只能在服务端执行"));
+            return 0;
+        }
+
+        double cx = player.getX();
+        double cy = player.getY() + 1.0D;
+        double cz = player.getZ();
+
+        // 1) 自定义柔光粒子：一圈 64 个
+        for (int i = 0; i < 64; i++) {
+            double angle = Math.PI * 2.0D * i / 64.0D;
+            double x = cx + Math.cos(angle) * 2.0D;
+            double z = cz + Math.sin(angle) * 2.0D;
+            serverLevel.sendParticles(
+                    new com.lisheng.slashexpansion.particle.GlowParticleOptions(0xFFFFD24A, 0.9F, 40),
+                    x, cy, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+
+        // 2) 自定义法阵粒子：地面 1 发、较大
+        serverLevel.sendParticles(
+                new com.lisheng.slashexpansion.particle.RuneParticleOptions(0xFF5FD8FF, 6.0F, 60, 0.02F, 0.2F),
+                cx, cy - 0.9D, cz, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+
+        // 3) 原版粒子对照：如果这一圈也没有，说明是客户端粒子渲染整体问题
+        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                cx, cy + 0.5D, cz, 16, 0.6D, 0.6D, 0.6D, 0.02D);
+
+        // 4) 屏幕闪光：验证网络通道
+        com.lisheng.slashexpansion.net.SfxNet.screenEffect(level, player.position(), 16.0D,
+                0xFFD24A, 0.35F, 10, 0.0F);
+
+        int tasks = com.lisheng.slashexpansion.vfx.VfxDirector.activeCount();
+        context.getSource().sendSuccess(() -> Component.literal(
+                "诊断已触发：64 个 glow + 1 个 rune + 16 个原版 END_ROD，当前特效任务数 " + tasks)
+                .withStyle(ChatFormatting.AQUA), false);
+        return 1;
+    }
     private VfxCommand() {
     }
 }
