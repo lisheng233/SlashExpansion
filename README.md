@@ -30,6 +30,58 @@
 
 ---
 
+## 效果展示
+
+> 以下画面取自游戏内实机录制，未做调色。
+
+### 动态演示
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/01-wan-jian-gui-zong.webp" width="470"><br><sub>万剑归宗</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/02-senbonzakura.webp" width="470"><br><sub>千本樱</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/09-qi-sha-jian-jie.webp" width="470"><br><sub>七杀剑界</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/10-blood-moon-slash.webp" width="470"><br><sub>血月斩</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/11-thors-wrath.webp" width="470"><br><sub>雷神之怒</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/12-immovable-king.webp" width="470"><br><sub>不动明王</sub></td>
+  </tr>
+</table>
+
+### 静态截图
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01-wan-jian-gui-zong.webp" width="470"><br><sub>万剑归宗</sub></td>
+    <td align="center"><img src="docs/screenshots/02-senbonzakura.webp" width="470"><br><sub>千本樱</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/03-rift-slash.webp" width="470"><br><sub>裂空斩</sub></td>
+    <td align="center"><img src="docs/screenshots/04-frost-domain.webp" width="470"><br><sub>冰霜领域</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/05-inferno.webp" width="470"><br><sub>业火焚城</sub></td>
+    <td align="center"><img src="docs/screenshots/06-zhan-tian-ba-jian-shu.webp" width="470"><br><sub>斩天拔剑术</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/07-jian-dang-ba-huang.webp" width="470"><br><sub>剑荡八荒</sub></td>
+    <td align="center"><img src="docs/screenshots/08-geng-jin-jian-jue.webp" width="470"><br><sub>庚金剑诀</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/09-qi-sha-jian-jie.webp" width="470"><br><sub>七杀剑界</sub></td>
+    <td align="center"><img src="docs/screenshots/10-blood-moon-slash.webp" width="470"><br><sub>血月斩</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/11-thors-wrath.webp" width="470"><br><sub>雷神之怒</sub></td>
+    <td align="center"><img src="docs/screenshots/12-immovable-king.webp" width="470"><br><sub>不动明王</sub></td>
+  </tr>
+</table>
+
+---
+
 ## 下载
 
 - **GitHub Releases**：<https://github.com/lisheng233/SlashExpansion/releases>
