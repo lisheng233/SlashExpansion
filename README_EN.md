@@ -30,6 +30,58 @@
 
 ---
 
+## Showcase
+
+> Captured in game, no color grading applied.
+
+### Animations
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/01-wan-jian-gui-zong.webp" width="470"><br><sub>Wan Jian Gui Zong</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/02-senbonzakura.webp" width="470"><br><sub>Senbonzakura</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/09-qi-sha-jian-jie.webp" width="470"><br><sub>Qi Sha Jian Jie</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/10-blood-moon-slash.webp" width="470"><br><sub>Blood Moon Slash</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/anim/11-thors-wrath.webp" width="470"><br><sub>Thor's Wrath</sub></td>
+    <td align="center"><img src="docs/screenshots/anim/12-immovable-king.webp" width="470"><br><sub>Immovable King</sub></td>
+  </tr>
+</table>
+
+### Still frames
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01-wan-jian-gui-zong.webp" width="470"><br><sub>Wan Jian Gui Zong</sub></td>
+    <td align="center"><img src="docs/screenshots/02-senbonzakura.webp" width="470"><br><sub>Senbonzakura</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/03-rift-slash.webp" width="470"><br><sub>Rift Slash</sub></td>
+    <td align="center"><img src="docs/screenshots/04-frost-domain.webp" width="470"><br><sub>Frost Domain</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/05-inferno.webp" width="470"><br><sub>Inferno</sub></td>
+    <td align="center"><img src="docs/screenshots/06-zhan-tian-ba-jian-shu.webp" width="470"><br><sub>Zhan Tian Ba Jian Shu</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/07-jian-dang-ba-huang.webp" width="470"><br><sub>Jian Dang Ba Huang</sub></td>
+    <td align="center"><img src="docs/screenshots/08-geng-jin-jian-jue.webp" width="470"><br><sub>Geng Jin Jian Jue</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/09-qi-sha-jian-jie.webp" width="470"><br><sub>Qi Sha Jian Jie</sub></td>
+    <td align="center"><img src="docs/screenshots/10-blood-moon-slash.webp" width="470"><br><sub>Blood Moon Slash</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/11-thors-wrath.webp" width="470"><br><sub>Thor's Wrath</sub></td>
+    <td align="center"><img src="docs/screenshots/12-immovable-king.webp" width="470"><br><sub>Immovable King</sub></td>
+  </tr>
+</table>
+
+---
+
 ## Download
 
 - **GitHub Releases**: <https://github.com/lisheng233/SlashExpansion/releases>

@@ -23,3 +23,16 @@ Thumbs.db
 *.lock
 *.mca
 *.dat
+
+# 本机杂项（非项目文件）
+.dsh/
+.playwright-mcp/
+blade-recorder/
+_sakura_tinker/
+*.cjs
+course-page*.json
+
+# 截图原始素材（17MB 动态 AVIF，不入库；转换后的 webp 在 docs/screenshots）
+*.avif
+course-*
+*.out
