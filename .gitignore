@@ -37,3 +37,6 @@ course-page*.json
 *.avif
 course-*
 *.out
+# 发布辅助文件
+curseforge-changelog.md
+slashbladetic-*.jar
