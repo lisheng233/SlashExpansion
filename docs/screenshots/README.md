@@ -29,8 +29,3 @@ docs/screenshots/
 ```bash
 python make_shots.py 素材目录 docs/screenshots docs/screenshots/anim
 ```
-
-## 已知问题
-
-- 录制画面里带 Xaero 小地图和聊天栏，裁切后仍有残留；正式发布建议 `F1` 关 HUD 并关闭小地图后重拍。
-- 部分效果（不动明王、千本樱）在低码率 AVIF 上偏曝，静态图偏白；重拍时把 `[vfx] particleScale` 调到 0.7 左右会更好看。
