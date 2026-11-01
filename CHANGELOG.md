@@ -35,15 +35,6 @@ First release of SlashExpansion for **Minecraft 1.21.1 / NeoForge 21.1.249**, bu
   the `minecraft:custom_data` component.
 - Admin's Might kick protection now hooks `ServerCommonPacketListenerImpl#disconnect`.
 
-### Fixed
-
-- **Phantom swords did not render.** Wan Jian Gui Zong, Geng Jin Jian Jue and Senbonzakura
-  now use SlashBlade's `SummonedSwordRenderer`, so the blade model is visible again.
-- **Custom particles were invisible** when a caller passed a colour without an alpha byte;
-  alpha `0` is now treated as fully opaque.
-- **Only 6 of 12 SEs were obtainable.** The config-driven recipe generator is back, so every
-  SE has a recipe, and `overrideJsonRecipes = false` still falls back to the 6 bundled JSONs.
-
 ### Notes
 
 - Requires Minecraft 1.21.1, NeoForge 21.1.249 or newer, and SlashBlade: Resharped 2.1.9-1.21.1.
